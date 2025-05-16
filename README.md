@@ -1,0 +1,3 @@
+# BACnetCodec
+
+BACnet通讯协议的编码解码库，可将BACnet数据包翻译成库内自定义的类对象或者JSON字符串，不涉及更具体的BACnet服务的实现
