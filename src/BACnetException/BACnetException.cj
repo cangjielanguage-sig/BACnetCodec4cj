@@ -1,25 +1,25 @@
 public package BACnetCodec4cj.BACnetException
 
-public open class Bacnet解码错误类 <: Exception {
+public open class BacnetDecodeErro <: Exception {
     public init() {
-        super("Bacnet解码错误类.")
+        super("Bacnet解码错误类.BacnetDecodeErro")
     }
     public init(message: String) {
         super(message)
     }
     public open override func getClassName(): String {
-        "Bacnet解码错误类"
+        "BacnetDecodeErro"
     }
 }
 
-public open class Bacnet编码错误类 <: Exception {
+public open class BacnetEncodeErro <: Exception {
     public init() {
-        super("Bacnet编码错误类")
+        super("Bacnet编码错误类.BacnetEncodeErro")
     }
     public init(message: String) {
         super(message)
     }
     public open override func getClassName(): String {
-        "Bacnet编码错误类"
+        "BacnetEncodeErro"
     }
 }
