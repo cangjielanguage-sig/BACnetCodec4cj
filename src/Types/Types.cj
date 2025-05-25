@@ -1,5 +1,5 @@
 public package BACnetCodec4cj.Types
-import BACnetCodec4cj.*
+import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 
 
@@ -23,7 +23,7 @@ open public class APDU{
 }
 
 //BACnet 的PDU类型枚举
-public enum PDUTypeChoice <: IFromUInt8<PDUTypeChoice> & IToUInt8<PDUTypeChoice>{
+public enum PDUTypeChoice <: IFromUInt8<PDUTypeChoice> & IToUInt8{
     |Confirmed_Request_Pdu    // [0] BACnet-Confirmed-Request-PDU
     |Unconfirmed_Request_Pdu  // [1] BACnet-Unconfirmed-Request-PDU
     |Simple_Ack_Pdu           // [2] BACnet-SimpleACK-PDU
@@ -61,8 +61,8 @@ public enum PDUTypeChoice <: IFromUInt8<PDUTypeChoice> & IToUInt8<PDUTypeChoice>
         }
     }
 
-    public func 转换到UInt8(pdu: PDUTypeChoice): UInt8 {
-        match(pdu) {
+    public func 转换到UInt8(): UInt8 {
+        match(this) {
             case PDUTypeChoice.Confirmed_Request_Pdu   => 0  // [0] BACnet-Confirmed-Request-PDU
             case PDUTypeChoice.Unconfirmed_Request_Pdu => 1  // [1] BACnet-Unconfirmed-Request-PDU
             case PDUTypeChoice.Simple_Ack_Pdu          => 2  // [2] BACnet-SimpleACK-PDU
@@ -74,8 +74,8 @@ public enum PDUTypeChoice <: IFromUInt8<PDUTypeChoice> & IToUInt8<PDUTypeChoice>
         }
     }
 
-    public func toUInt8(pdu:PDUTypeChoice):UInt8{
-        match(pdu) {
+    public func toUInt8():UInt8{
+        match(this) {
             case PDUTypeChoice.Confirmed_Request_Pdu   => 0  // [0] BACnet-Confirmed-Request-PDU
             case PDUTypeChoice.Unconfirmed_Request_Pdu => 1  // [1] BACnet-Unconfirmed-Request-PDU
             case PDUTypeChoice.Simple_Ack_Pdu          => 2  // [2] BACnet-SimpleACK-PDU

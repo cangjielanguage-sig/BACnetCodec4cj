@@ -1,6 +1,8 @@
 public package BACnetCodec4cj.BACnetException
 
-public open class BacnetDecodeErro <: Exception {
+public open class BacnetDecodeErro 
+<: Exception 
+{
     public init() {
         super("Bacnet解码错误类.BacnetDecodeErro")
     }
@@ -12,7 +14,9 @@ public open class BacnetDecodeErro <: Exception {
     }
 }
 
-public open class BacnetEncodeErro <: Exception {
+public open class BacnetEncodeErro 
+<: Exception 
+{
     public init() {
         super("Bacnet编码错误类.BacnetEncodeErro")
     }

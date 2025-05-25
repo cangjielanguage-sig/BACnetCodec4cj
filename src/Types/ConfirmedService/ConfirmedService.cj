@@ -1,8 +1,11 @@
 public package BACnetCodec4cj.Types.ConfirmedService
-import BACnetCodec4cj.*
+import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 
-public enum ConfirmedServiceChoice  <: IFromUInt8<ConfirmedServiceChoice> & IToUInt8<ConfirmedServiceChoice>{
+public enum ConfirmedServiceChoice  
+<: IFromUInt8<ConfirmedServiceChoice> 
+& IToUInt8
+{
     // ==================== Alarm and Event Services ====================
     |AcknowledgeAlarm                   // (0)
     |ConfirmedCOVNotification           // (1)
@@ -48,8 +51,10 @@ public enum ConfirmedServiceChoice  <: IFromUInt8<ConfirmedServiceChoice> & IToU
     |Authenticate                       // (24)//已删除服务removed in version 1 revision 12  
 
     // ============== 正向转换函数（Int8 → 枚举） ==============
-    public static func 从UInt8转换而来(标签: UInt8): ConfirmedServiceChoice {
-        match (标签) {
+    public static func 从UInt8转换而来(标签: UInt8): ConfirmedServiceChoice 
+    {
+        match (标签) 
+        {
             // Alarm and Event Services
             case 0  => ConfirmedServiceChoice.AcknowledgeAlarm
             case 1  => ConfirmedServiceChoice.ConfirmedCOVNotification
@@ -99,8 +104,10 @@ public enum ConfirmedServiceChoice  <: IFromUInt8<ConfirmedServiceChoice> & IToU
         }
     }
 
-    public static func fromUInt8(tag: UInt8): ConfirmedServiceChoice {
-        match (tag) {
+    public static func fromUInt8(tag: UInt8): ConfirmedServiceChoice 
+    {
+        match (tag) 
+        {
             // Alarm and Event Services
             case 0  => ConfirmedServiceChoice.AcknowledgeAlarm
             case 1  => ConfirmedServiceChoice.ConfirmedCOVNotification
@@ -150,8 +157,10 @@ public enum ConfirmedServiceChoice  <: IFromUInt8<ConfirmedServiceChoice> & IToU
         }
     }
 
-    public func 转换到UInt8(服务: ConfirmedServiceChoice): UInt8 {
-        match (服务) {
+    public func 转换到UInt8(): UInt8 
+    {
+        match (this) 
+        {
             // Alarm and Event Services
             case ConfirmedServiceChoice.AcknowledgeAlarm                  => 0
             case ConfirmedServiceChoice.ConfirmedCOVNotification          => 1
@@ -200,8 +209,10 @@ public enum ConfirmedServiceChoice  <: IFromUInt8<ConfirmedServiceChoice> & IToU
         }
     }
 
-    public func toUInt8(serviceChoice: ConfirmedServiceChoice): UInt8 {
-        match (serviceChoice) {
+    public func toUInt8(): UInt8 
+    {
+        match (this) 
+        {
             // Alarm and Event Services
             case ConfirmedServiceChoice.AcknowledgeAlarm                  => 0
             case ConfirmedServiceChoice.ConfirmedCOVNotification          => 1
@@ -251,7 +262,10 @@ public enum ConfirmedServiceChoice  <: IFromUInt8<ConfirmedServiceChoice> & IToU
     }
 }
 
-public enum ConfirmedServiceRequestChoice   <: IFromUInt8<ConfirmedServiceRequestChoice> & IToUInt8<ConfirmedServiceRequestChoice>{
+public enum ConfirmedServiceRequestChoice   
+<: IFromUInt8<ConfirmedServiceRequestChoice> 
+& IToUInt8
+{
     // ==================== Alarm and Event Services ====================
     |Acknowledge_alarm                   // [0]
     |Confirmed_cov_notification          // [1]
@@ -297,8 +311,10 @@ public enum ConfirmedServiceRequestChoice   <: IFromUInt8<ConfirmedServiceReques
     |Request_key                         // [25] //已删除服务Removed in v1r11
     |Read_property_conditional           // [13] //已删除服务Removed in v1r12
 
-    public static func 从UInt8转换而来(标签: UInt8): ConfirmedServiceRequestChoice {
-        match (标签) {
+    public static func 从UInt8转换而来(标签: UInt8): ConfirmedServiceRequestChoice 
+    {
+        match (标签) 
+        {
             // Alarm and Event Services
             case 0  => ConfirmedServiceRequestChoice.Acknowledge_alarm
             case 1  => ConfirmedServiceRequestChoice.Confirmed_cov_notification
@@ -349,8 +365,10 @@ public enum ConfirmedServiceRequestChoice   <: IFromUInt8<ConfirmedServiceReques
         }
     }
 
-    public static func fromUInt8(tag: UInt8): ConfirmedServiceRequestChoice {
-        match (tag) {
+    public static func fromUInt8(tag: UInt8): ConfirmedServiceRequestChoice 
+    {
+        match (tag) 
+        {
             // Alarm and Event Services
             case 0  => ConfirmedServiceRequestChoice.Acknowledge_alarm
             case 1  => ConfirmedServiceRequestChoice.Confirmed_cov_notification
@@ -401,8 +419,10 @@ public enum ConfirmedServiceRequestChoice   <: IFromUInt8<ConfirmedServiceReques
         }
     }
 
-    public func 转换到UInt8(请求: ConfirmedServiceRequestChoice): UInt8 {
-        match (请求) {
+    public func 转换到UInt8(): UInt8 
+    {
+        match (this) 
+        {
             // ========== 合法服务分支 ==========
             // Alarm and Event Services
             case ConfirmedServiceRequestChoice.Acknowledge_alarm                   => 0
@@ -451,8 +471,10 @@ public enum ConfirmedServiceRequestChoice   <: IFromUInt8<ConfirmedServiceReques
         }
     }
 
-    public func toUInt8(request: ConfirmedServiceRequestChoice): UInt8 {
-        match (request ) {
+    public func toUInt8(): UInt8 
+    {
+        match (this) 
+        {
             // ========== 合法服务分支 ==========
             // Alarm and Event Services
             case ConfirmedServiceRequestChoice.Acknowledge_alarm                   => 0
@@ -502,7 +524,10 @@ public enum ConfirmedServiceRequestChoice   <: IFromUInt8<ConfirmedServiceReques
     }
 }
 
-public enum ConfirmedServiceACKChoice    <: IFromUInt8<ConfirmedServiceACKChoice> & IToUInt8<ConfirmedServiceACKChoice>{
+public enum ConfirmedServiceACKChoice    
+<: IFromUInt8<ConfirmedServiceACKChoice> 
+& IToUInt8
+{
     // ==================== Alarm and Event Services ====================
     |Get_alarm_summary           // [3]
     |Get_enrollment_summary      // [4]
@@ -530,8 +555,10 @@ public enum ConfirmedServiceACKChoice    <: IFromUInt8<ConfirmedServiceACKChoice
     |Authenticate                // [24] (已删除)
     |Read_property_conditional   // [13] (已删除)
 
-    public static func 从UInt8转换而来(标签: UInt8): ConfirmedServiceACKChoice {
-        match (标签) {
+    public static func 从UInt8转换而来(标签: UInt8): ConfirmedServiceACKChoice 
+    {
+        match (标签) 
+        {
             // ========== 合法服务分支 ==========
             // Alarm and Event Services
             case 3  => ConfirmedServiceACKChoice.Get_alarm_summary
@@ -567,8 +594,10 @@ public enum ConfirmedServiceACKChoice    <: IFromUInt8<ConfirmedServiceACKChoice
         }
     }
 
-    public static func fromUInt8(tag : UInt8): ConfirmedServiceACKChoice {
-        match (tag ) {
+    public static func fromUInt8(tag : UInt8): ConfirmedServiceACKChoice 
+    {
+        match (tag ) 
+        {
             // ========== 合法服务分支 ==========
             // Alarm and Event Services
             case 3  => ConfirmedServiceACKChoice.Get_alarm_summary
@@ -606,8 +635,9 @@ public enum ConfirmedServiceACKChoice    <: IFromUInt8<ConfirmedServiceACKChoice
 
 
     // ============== 反向转换函数 (枚举 → Int8) ==============
-    public func 转换到UInt8(ACK: ConfirmedServiceACKChoice): UInt8 {
-        match (ACK) {
+    public func 转换到UInt8(): UInt8 {
+        match (this) 
+        {
             // ========== 合法服务分支 ==========
             case ConfirmedServiceACKChoice.Get_alarm_summary          => 3
             case ConfirmedServiceACKChoice.Get_enrollment_summary     => 4
@@ -633,8 +663,9 @@ public enum ConfirmedServiceACKChoice    <: IFromUInt8<ConfirmedServiceACKChoice
         }
     }
 
-    public func toUInt8(ACK: ConfirmedServiceACKChoice): UInt8 {
-        match (ACK) {
+    public func toUInt8(): UInt8 {
+        match (this) 
+        {
             // ========== 合法服务分支 ==========
             case ConfirmedServiceACKChoice.Get_alarm_summary          => 3
             case ConfirmedServiceACKChoice.Get_enrollment_summary     => 4
@@ -663,13 +694,18 @@ public enum ConfirmedServiceACKChoice    <: IFromUInt8<ConfirmedServiceACKChoice
 
 
 
-public enum AtomicWriteFileACK  <: IFromUInt8<AtomicWriteFileACK> & IToUInt8<AtomicWriteFileACK>{
+public enum AtomicWriteFileACK  
+<: IFromUInt8<AtomicWriteFileACK> 
+& IToUInt8
+{
     |File_start_position  // [0]
     |File_start_record    // [1]
 
     // ==================== 正向转换函数 (Int8 → 枚举) ====================
-    public static func 从UInt8转换而来(标签: UInt8): AtomicWriteFileACK {
-        match (标签) {
+    public static func 从UInt8转换而来(标签: UInt8): AtomicWriteFileACK 
+    {
+        match (标签) 
+        {
             // 合法分支
             case 0 => AtomicWriteFileACK.File_start_position
             case 1 => AtomicWriteFileACK.File_start_record
@@ -678,8 +714,10 @@ public enum AtomicWriteFileACK  <: IFromUInt8<AtomicWriteFileACK> & IToUInt8<Ato
             case _ => throw BacnetDecodeErro("协议错误.无效服务标签")
         }
     }
-    public static func fromUInt8(标签: UInt8): AtomicWriteFileACK {
-        match (标签) {
+    public static func fromUInt8(标签: UInt8): AtomicWriteFileACK 
+    {
+        match (标签) 
+        {
             // 合法分支
             case 0 => AtomicWriteFileACK.File_start_position
             case 1 => AtomicWriteFileACK.File_start_record
@@ -690,15 +728,19 @@ public enum AtomicWriteFileACK  <: IFromUInt8<AtomicWriteFileACK> & IToUInt8<Ato
     }
 
     // ==================== 反向转换函数 (枚举 → Int8) ====================
-    public func 转换到UInt8(ack: AtomicWriteFileACK): UInt8 {
-        match (ack) {
+    public func 转换到UInt8(): UInt8 
+    {
+        match (this) 
+        {
             // 显式列出所有枚举分支
             case AtomicWriteFileACK.File_start_position => 0
             case AtomicWriteFileACK.File_start_record   => 1
         }
     }
-    public func toUInt8(ack: AtomicWriteFileACK): UInt8 {
-        match (ack) {
+    public func toUInt8(): UInt8 
+    {
+        match (this) 
+        {
             // 显式列出所有枚举分支
             case AtomicWriteFileACK.File_start_position => 0
             case AtomicWriteFileACK.File_start_record   => 1

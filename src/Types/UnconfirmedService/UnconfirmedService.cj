@@ -1,9 +1,12 @@
 public package BACnetCodec4cj.Types.UnconfirmedService
-import BACnetCodec4cj.*
+import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 
 
-public enum UnconfirmedServiceChoice  <: IFromUInt8<UnconfirmedServiceChoice> & IToUInt8<UnconfirmedServiceChoice>{
+public enum UnconfirmedServiceChoice  
+<: IFromUInt8<UnconfirmedServiceChoice> 
+& IToUInt8
+{
     |I_am                            // [0]
     |I_have                          // [1]
     |Unconfirmed_cov_notification    // [2]
@@ -22,8 +25,10 @@ public enum UnconfirmedServiceChoice  <: IFromUInt8<UnconfirmedServiceChoice> & 
 
 
     // ==================== 正向转换函数 (Int8 → 枚举) ====================
-    public static func 从UInt8转换而来(标签: UInt8): UnconfirmedServiceChoice {
-        match (标签) {
+    public static func 从UInt8转换而来(标签: UInt8): UnconfirmedServiceChoice 
+    {
+        match (标签) 
+        {
             // 合法分支（覆盖所有协议定义标签 0-14）
             case 0  => UnconfirmedServiceChoice.I_am
             case 1  => UnconfirmedServiceChoice.I_have
@@ -46,8 +51,10 @@ public enum UnconfirmedServiceChoice  <: IFromUInt8<UnconfirmedServiceChoice> & 
         }
     }
 
-    public static func fromUInt8(tag : UInt8): UnconfirmedServiceChoice {
-        match (tag ) {
+    public static func fromUInt8(tag : UInt8): UnconfirmedServiceChoice 
+    {
+        match (tag ) 
+        {
             // 合法分支（覆盖所有协议定义标签 0-14）
             case 0  => UnconfirmedServiceChoice.I_am
             case 1  => UnconfirmedServiceChoice.I_have
@@ -71,8 +78,10 @@ public enum UnconfirmedServiceChoice  <: IFromUInt8<UnconfirmedServiceChoice> & 
     }
 
     // ==================== 反向转换函数 (枚举 → Int8) ====================
-    public func 转换到UInt8(服务: UnconfirmedServiceChoice): UInt8 {
-        match (服务) {
+    public func 转换到UInt8(): UInt8 
+    {
+        match (this) 
+        {
             // 显式列出所有枚举分支
             case UnconfirmedServiceChoice.I_am                            => 0
             case UnconfirmedServiceChoice.I_have                          => 1
@@ -92,8 +101,10 @@ public enum UnconfirmedServiceChoice  <: IFromUInt8<UnconfirmedServiceChoice> & 
         }
     }
 
-    public func toUInt8(serviceChoice: UnconfirmedServiceChoice): UInt8 {
-        match (serviceChoice) {
+    public func toUInt8(): UInt8 
+    {
+        match (this) 
+        {
             // 显式列出所有枚举分支
             case UnconfirmedServiceChoice.I_am                            => 0
             case UnconfirmedServiceChoice.I_have                          => 1
@@ -115,7 +126,10 @@ public enum UnconfirmedServiceChoice  <: IFromUInt8<UnconfirmedServiceChoice> & 
 
 }
 
-public enum UnconfirmedServiceRequest  <: IFromUInt8<UnconfirmedServiceRequestv> & IToUInt8<UnconfirmedServiceRequest>{
+public enum UnconfirmedServiceRequest  
+<: IFromUInt8<UnconfirmedServiceRequest> 
+& IToUInt8
+{
     |I_am_request                          // [0] I-Am-Request
     |I_have_request                        // [1] I-Have-Request
     |Unconfirmed_cov_notification_request  // [2] UnconfirmedCOVNotification-Request
@@ -133,8 +147,10 @@ public enum UnconfirmedServiceRequest  <: IFromUInt8<UnconfirmedServiceRequestv>
     |You_are_request                        // [14] You-Are-Request
 
     // ==================== 正向转换函数 (Int8 → 枚举) ====================
-    public static func 从UInt8转换而来(标签: UInt8): UnconfirmedServiceRequest {
-        match (标签) {
+    public static func 从UInt8转换而来(标签: UInt8): UnconfirmedServiceRequest 
+    {
+        match (标签) 
+        {
             // 合法分支（覆盖所有协议定义标签 0-14）
             case 0  => UnconfirmedServiceRequest.I_am_request
             case 1  => UnconfirmedServiceRequest.I_have_request
@@ -157,8 +173,10 @@ public enum UnconfirmedServiceRequest  <: IFromUInt8<UnconfirmedServiceRequestv>
         }
     }
 
-    public static func fromUInt8(tag : UInt8): UnconfirmedServiceRequest {
-        match (tag ) {
+    public static func fromUInt8(tag : UInt8): UnconfirmedServiceRequest 
+    {
+        match (tag ) 
+        {
             // 合法分支（覆盖所有协议定义标签 0-14）
             case 0  => UnconfirmedServiceRequest.I_am_request
             case 1  => UnconfirmedServiceRequest.I_have_request
@@ -182,8 +200,10 @@ public enum UnconfirmedServiceRequest  <: IFromUInt8<UnconfirmedServiceRequestv>
     }
 
     // ==================== 反向转换函数 (枚举 → Int8) ====================
-    public func 转换到UInt8(请求: UnconfirmedServiceRequest): UInt8 {
-        match (请求) {
+    public func 转换到UInt8(): UInt8 
+    {
+        match (this)
+        {
             // 显式列出所有枚举分支
             case UnconfirmedServiceRequest.I_am_request                          => 0
             case UnconfirmedServiceRequest.I_have_request                        => 1
@@ -202,8 +222,10 @@ public enum UnconfirmedServiceRequest  <: IFromUInt8<UnconfirmedServiceRequestv>
             case UnconfirmedServiceRequest.You_are_request                        => 14
         }
     }
-    public func toUInt8(request: UnconfirmedServiceRequest): UInt8 {
-        match (request) {
+    public func toUInt8(): UInt8 
+    {
+        match (this) 
+        {
             // 显式列出所有枚举分支
             case UnconfirmedServiceRequest.I_am_request                          => 0
             case UnconfirmedServiceRequest.I_have_request                        => 1

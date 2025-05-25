@@ -6,7 +6,7 @@
   description = "使用仓颉语言制作的bacnet编解码库"
   link-option = ""
   name = "BACnetCodec4cj"
-  output-type = "static"
+  output-type = "executable"
   src-dir = ""
   target-dir = ""
   version = "1.0.0"

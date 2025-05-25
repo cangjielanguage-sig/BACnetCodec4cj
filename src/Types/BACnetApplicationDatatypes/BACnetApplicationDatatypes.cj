@@ -1,8 +1,11 @@
 package BACnetCodec4cj.Types.BACnetApplicationDatatypes
-import BACnetCodec4cj.*
+import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 
-public enum BACnetApplicationDatatypesChoice  <: IFromUInt8<BACnetApplicationDatatypesChoice> & IToUInt8<BACnetApplicationDatatypesChoice>{
+public enum BACnetApplicationDatatypesChoice
+<: IFromUInt8<BACnetApplicationDatatypesChoice> 
+& IToUInt8 
+{
     //20.2.1.4 Application Tags 
     //The Tag Number field of an encoded BACnet application tag shall specify the application datatype as follows: 
     |Null                   //0
@@ -22,9 +25,10 @@ public enum BACnetApplicationDatatypesChoice  <: IFromUInt8<BACnetApplicationDat
     |ReservedForASHRAE14    //14
     |ReservedForASHRAE15    //15
 
-    public static func 从UInt8转换而来(标签: UInt8): BACnetApplicationDatatypesChoice {
-        match (标签) {
-            // Alarm and Event Services
+    public static func 从UInt8转换而来(标签: UInt8): BACnetApplicationDatatypesChoice 
+    {
+        match (标签) 
+        {
             case 0  => BACnetApplicationDatatypesChoice.Null
             case 1  => BACnetApplicationDatatypesChoice.Boolean
             case 2  => BACnetApplicationDatatypesChoice.UnsignedInteger
@@ -46,9 +50,10 @@ public enum BACnetApplicationDatatypesChoice  <: IFromUInt8<BACnetApplicationDat
         }
     }
 
-    public static func fromUInt8(tag: UInt8): BACnetApplicationDatatypesChoice {
-        match (tag) {
-            // Alarm and Event Services
+    public static func fromUInt8(tag: UInt8): BACnetApplicationDatatypesChoice 
+    {
+        match (tag) 
+        {
             case 0  => BACnetApplicationDatatypesChoice.Null
             case 1  => BACnetApplicationDatatypesChoice.Boolean
             case 2  => BACnetApplicationDatatypesChoice.UnsignedInteger
@@ -70,9 +75,10 @@ public enum BACnetApplicationDatatypesChoice  <: IFromUInt8<BACnetApplicationDat
         }
     }
 
-    public func 转换到UInt8(pdu: BACnetApplicationDatatypesChoice): UInt8 {
-        match (pdu) {
-            // Alarm and Event Services
+    public func 转换到UInt8(): UInt8 
+    {
+        match (this) 
+        {
             case BACnetApplicationDatatypesChoice.Null                  => 0
             case BACnetApplicationDatatypesChoice.Boolean               => 1
             case BACnetApplicationDatatypesChoice.UnsignedInteger       => 2
@@ -92,9 +98,10 @@ public enum BACnetApplicationDatatypesChoice  <: IFromUInt8<BACnetApplicationDat
         }
     }
 
-    public func toUInt8(pdu: BACnetApplicationDatatypesChoice): UInt8 {
-        match (pdu) {
-            // Alarm and Event Services
+    public func toUInt8(): UInt8 
+    {
+        match (this) 
+        {
             case BACnetApplicationDatatypesChoice.Null                  => 0
             case BACnetApplicationDatatypesChoice.Boolean               => 1
             case BACnetApplicationDatatypesChoice.UnsignedInteger       => 2
@@ -114,12 +121,93 @@ public enum BACnetApplicationDatatypesChoice  <: IFromUInt8<BACnetApplicationDat
         }
     }
 }
+
+public enum BACnetTagClassChoice
+<: IFromUInt8<BACnetTagClassChoice> 
+& IToUInt8
+{
+    |applicationTag
+    |contextSpecificTag
+
+    public static func 从UInt8转换而来(标签: UInt8): BACnetTagClassChoice 
+    {
+        match (标签) {
+            case 0b0000_0000  => BACnetTagClassChoice.applicationTag
+            case 0b0000_1000  => BACnetTagClassChoice.contextSpecificTag
+            
+            case _ => throw BacnetDecodeErro("协议错误.无效标签")
+        }
+    }
+
+    public static func fromUInt8(tag: UInt8): BACnetTagClassChoice 
+    {
+        match (tag) {
+            case 0b0000_0000  => BACnetTagClassChoice.applicationTag
+            case 0b0000_1000  => BACnetTagClassChoice.contextSpecificTag
+            
+            case _ => throw BacnetDecodeErro("协议错误.无效标签")
+        }
+    }
+
+    public func 转换到UInt8(): UInt8 
+    {
+        match (this) 
+        {
+            case BACnetTagClassChoice.applicationTag       => 0b0000_0000
+            case BACnetTagClassChoice.contextSpecificTag   => 0b0000_1000
+        }
+    }
+
+    public func toUInt8(): UInt8 
+    {
+        match (this) 
+        {
+            case BACnetTagClassChoice.applicationTag       => 0b0000_0000
+            case BACnetTagClassChoice.contextSpecificTag   => 0b0000_1000
+        }
+    }
+
+    public func toUint8this():UInt8
+    {
+        match (this) 
+        {
+            case BACnetTagClassChoice.applicationTag       => 0b0000_0000
+            case BACnetTagClassChoice.contextSpecificTag   => 0b0000_1000
+        }
+
+    }
+}
+
+public open class BACnetApplicationDatatype
+{
+    var tagNumber:UInt8
+    var tagClass:UInt8
+    var tagLength:UInt64
+    var applicationDatatype:BACnetApplicationDatatypesChoice
+
+    init()
+    {
+        tagNumber = 0
+        tagClass = BACnetTagClassChoice.applicationTag.toUInt8()
+        tagLength = 0
+        applicationDatatype = BACnetApplicationDatatypesChoice.Null
+    }
+
+    func decodingFromArrayByte(packet:Array<Byte>):BACnetApplicationDatatype{
+        return BACnet_NULL()
+    }
+
+}
 //Bacnet的空值
-public class BACnet_NULL{
+public class BACnet_NULL <: BACnetApplicationDatatype{
     public init() {
+        tagNumber = 0
+        tagClass = BACnetTagClassChoice.applicationTag.toUInt8()
+        tagLength = 0
+        applicationDatatype = BACnetApplicationDatatypesChoice.Null
     }
     public func encodeToSimplCode():Byte{
-        return 0b000_0000
+        return 0b0000_0000
     }
     public func encodeToStructCode():Byte{
         return 0b0101_1000
