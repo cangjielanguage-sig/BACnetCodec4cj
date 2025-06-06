@@ -1,6 +1,7 @@
 package BACnetCodec4cj.Types.BACnetApplicationDatatypes
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
+import BACnetCodec4cj.ByteBuff.*
 
 public enum BACnetApplicationDatatypesChoice
 <: IFromUInt8<BACnetApplicationDatatypesChoice> 
@@ -46,7 +47,7 @@ public enum BACnetApplicationDatatypesChoice
             case 14  => BACnetApplicationDatatypesChoice.ReservedForASHRAE14
             case 15  => BACnetApplicationDatatypesChoice.ReservedForASHRAE15
             
-            case _ => throw BacnetDecodeErro("协议错误.无效标签")
+            case _ => throw BACnetDecodeErro("协议错误.无效标签")
         }
     }
 
@@ -71,7 +72,7 @@ public enum BACnetApplicationDatatypesChoice
             case 14  => BACnetApplicationDatatypesChoice.ReservedForASHRAE14
             case 15  => BACnetApplicationDatatypesChoice.ReservedForASHRAE15
             
-            case _ => throw BacnetDecodeErro("协议错误.无效标签")
+            case _ => throw BACnetDecodeErro("协议错误.无效标签")
         }
     }
 
@@ -135,7 +136,7 @@ public enum BACnetTagClassChoice
             case 0b0000_0000  => BACnetTagClassChoice.applicationTag
             case 0b0000_1000  => BACnetTagClassChoice.contextSpecificTag
             
-            case _ => throw BacnetDecodeErro("协议错误.无效标签")
+            case _ => throw BACnetDecodeErro("协议错误.无效标签")
         }
     }
 
@@ -145,7 +146,7 @@ public enum BACnetTagClassChoice
             case 0b0000_0000  => BACnetTagClassChoice.applicationTag
             case 0b0000_1000  => BACnetTagClassChoice.contextSpecificTag
             
-            case _ => throw BacnetDecodeErro("协议错误.无效标签")
+            case _ => throw BACnetDecodeErro("协议错误.无效标签")
         }
     }
 
@@ -178,7 +179,7 @@ public enum BACnetTagClassChoice
     }
 }
 
-public open class BACnetApplicationDatatype <T>
+public open class BACnetApplicationDatatype<T,F>
 {
     let tagNumber:UInt8 =0
     let tagClass:UInt8 =BACnetTagClassChoice.applicationTag.toUInt8()
@@ -192,9 +193,10 @@ public open class BACnetApplicationDatatype <T>
 
     }
 
-    func decodingFromArrayByte(packet:Array<Byte>):BACnetApplicationDatatype<Option<Bool>>{
-        return BACnet_NULL(None)
-    }
+    // func decodingFromArrayByte(packet:ByteBuff): F  <: BACnetApplicationDatatype{
+
+    //     return BACnet_NULL(None)
+    // }
 
 }
 //Bacnet的空值
@@ -209,7 +211,6 @@ public class BACnet_NULL <: BACnetApplicationDatatype<Option<Bool>>{
     public func encodeToStructCode():Byte{
         return 0b0101_1000
     }
-     
 }
 
 public class BACnet_BOOLEAN{

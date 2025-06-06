@@ -1,6 +1,6 @@
 public package BACnetCodec4cj.BACnetException
 
-public open class BacnetDecodeErro 
+public open class BACnetDecodeErro 
 <: Exception 
 {
     public init() {
@@ -14,7 +14,7 @@ public open class BacnetDecodeErro
     }
 }
 
-public open class BacnetEncodeErro 
+public open class BACnetEncodeErro 
 <: Exception 
 {
     public init() {

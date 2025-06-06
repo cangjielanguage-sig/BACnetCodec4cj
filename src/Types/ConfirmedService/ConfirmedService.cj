@@ -100,7 +100,7 @@ public enum ConfirmedServiceChoice
             case 13 => ConfirmedServiceChoice.Read_Property_Conditional
             case 24 => ConfirmedServiceChoice.Authenticate
             case 25 => ConfirmedServiceChoice.Request_Key
-            case _ => throw BacnetDecodeErro("协议错误.无效服务标签")
+            case _ => throw BACnetDecodeErro("协议错误.无效服务标签")
         }
     }
 
@@ -153,7 +153,7 @@ public enum ConfirmedServiceChoice
             case 13 => ConfirmedServiceChoice.Read_Property_Conditional
             case 24 => ConfirmedServiceChoice.Authenticate
             case 25 => ConfirmedServiceChoice.Request_Key
-            case _ => throw BacnetDecodeErro("Encountered an undefined value when decoding the BACnetConfirmedServiceChoice field.")
+            case _ => throw BACnetDecodeErro("Encountered an undefined value when decoding the BACnetConfirmedServiceChoice field.")
         }
     }
 
@@ -361,7 +361,7 @@ public enum ConfirmedServiceRequestChoice
             case 25 => ConfirmedServiceRequestChoice.Request_key
 
             // 非法标签值
-            case _  => throw BacnetDecodeErro("协议错误.无效服务标签")
+            case _  => throw BACnetDecodeErro("协议错误.无效服务标签")
         }
     }
 
@@ -415,7 +415,7 @@ public enum ConfirmedServiceRequestChoice
             case 25 => ConfirmedServiceRequestChoice.Request_key
 
             // 非法标签值
-            case _  => throw BacnetDecodeErro("Encountered an undefined value when decoding the BACnetConfirmedServiceRequest field.")
+            case _  => throw BACnetDecodeErro("Encountered an undefined value when decoding the BACnetConfirmedServiceRequest field.")
         }
     }
 
@@ -588,7 +588,7 @@ public enum ConfirmedServiceACKChoice
             case 24 => ConfirmedServiceACKChoice.Authenticate
 
             // ========== 非法标签值 ==========
-            case _  => throw BacnetDecodeErro(
+            case _  => throw BACnetDecodeErro(
                 "协议错误.无效服务标签"
             )
         }
@@ -627,7 +627,7 @@ public enum ConfirmedServiceACKChoice
             case 24 => ConfirmedServiceACKChoice.Authenticate
 
             // ========== 非法标签值 ==========
-            case _  => throw BacnetDecodeErro(
+            case _  => throw BACnetDecodeErro(
                 "Encountered an undefined value when decoding the BACnetConfirmedServiceACK field."
             )
         }
@@ -711,7 +711,7 @@ public enum AtomicWriteFileACK
             case 1 => AtomicWriteFileACK.File_start_record
             
             // 非法标签值（直接抛出字符串描述错误）
-            case _ => throw BacnetDecodeErro("协议错误.无效服务标签")
+            case _ => throw BACnetDecodeErro("协议错误.无效服务标签")
         }
     }
     public static func fromUInt8(标签: UInt8): AtomicWriteFileACK 
@@ -723,7 +723,7 @@ public enum AtomicWriteFileACK
             case 1 => AtomicWriteFileACK.File_start_record
             
             // 非法标签值（直接抛出字符串描述错误）
-            case _ => throw BacnetDecodeErro("Encountered an undefined value when decoding the AtomicWriteFileACK field.")
+            case _ => throw BACnetDecodeErro("Encountered an undefined value when decoding the AtomicWriteFileACK field.")
         }
     }
 

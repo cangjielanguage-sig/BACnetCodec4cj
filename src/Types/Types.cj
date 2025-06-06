@@ -43,7 +43,7 @@ public enum PDUTypeChoice <: IFromUInt8<PDUTypeChoice> & IToUInt8{
             case 5 => PDUTypeChoice.Error_Pdu               // [5] BACnet-Error-PDU
             case 6 => PDUTypeChoice.Reject_Pdu              // [6] BACnet-Reject-PDU
             case 7 => PDUTypeChoice.Abort_Pdu               // [7] BACnet-Abort-PDU
-            case _ => throw BacnetDecodeErro("解码BACnetPDU Typs字段时出现未定义的值") // 处理非法值
+            case _ => throw BACnetDecodeErro("解码BACnetPDU Typs字段时出现未定义的值") // 处理非法值
         }
     }
 
@@ -57,7 +57,7 @@ public enum PDUTypeChoice <: IFromUInt8<PDUTypeChoice> & IToUInt8{
             case 5 => PDUTypeChoice.Error_Pdu               // [5] BACnet-Error-PDU
             case 6 => PDUTypeChoice.Reject_Pdu              // [6] BACnet-Reject-PDU
             case 7 => PDUTypeChoice.Abort_Pdu               // [7] BACnet-Abort-PDU
-            case _ => throw BacnetDecodeErro("Encountered an undefined value when decoding the BACnet PDU Type field.") // 处理非法值
+            case _ => throw BACnetDecodeErro("Encountered an undefined value when decoding the BACnet PDU Type field.") // 处理非法值
         }
     }
 

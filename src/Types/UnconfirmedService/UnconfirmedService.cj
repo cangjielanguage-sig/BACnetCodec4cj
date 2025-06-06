@@ -47,7 +47,7 @@ public enum UnconfirmedServiceChoice
             case 14 => UnconfirmedServiceChoice.You_Are
             
             // 非法标签值（直接抛出字符串描述错误）
-            case _ => throw BacnetDecodeErro("协议错误.无效服务标签")
+            case _ => throw BACnetDecodeErro("协议错误.无效服务标签")
         }
     }
 
@@ -73,7 +73,7 @@ public enum UnconfirmedServiceChoice
             case 14 => UnconfirmedServiceChoice.You_Are
             
             // 非法标签值（直接抛出字符串描述错误）
-            case _ => throw BacnetDecodeErro("Encountered an undefined value when decoding the BACnetUnconfirmedServiceChoice field.")
+            case _ => throw BACnetDecodeErro("Encountered an undefined value when decoding the BACnetUnconfirmedServiceChoice field.")
         }
     }
 
@@ -169,7 +169,7 @@ public enum UnconfirmedServiceRequest
             case 14 => UnconfirmedServiceRequest.You_are_request
             
             // 非法标签值（直接抛出字符串描述错误）
-            case _ => throw BacnetDecodeErro("协议错误.无效服务标签")
+            case _ => throw BACnetDecodeErro("协议错误.无效服务标签")
         }
     }
 
@@ -195,7 +195,7 @@ public enum UnconfirmedServiceRequest
             case 14 => UnconfirmedServiceRequest.You_are_request
             
             // 非法标签值（直接抛出字符串描述错误）
-            case _ => throw BacnetDecodeErro("Encountered an undefined value when decoding the BACnetUnconfirmedServiceRequest field.")
+            case _ => throw BACnetDecodeErro("Encountered an undefined value when decoding the BACnetUnconfirmedServiceRequest field.")
         }
     }
 
