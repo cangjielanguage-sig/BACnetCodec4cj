@@ -178,33 +178,30 @@ public enum BACnetTagClassChoice
     }
 }
 
-public open class BACnetApplicationDatatype
+public open class BACnetApplicationDatatype <T>
 {
-    var tagNumber:UInt8
-    var tagClass:UInt8
-    var tagLength:UInt64
-    var applicationDatatype:BACnetApplicationDatatypesChoice
+    let tagNumber:UInt8 =0
+    let tagClass:UInt8 =BACnetTagClassChoice.applicationTag.toUInt8()
+    let tagLength:UInt64 =0
+    let applicationDatatype:BACnetApplicationDatatypesChoice = BACnetApplicationDatatypesChoice.Null
+    let dataValue:T
 
-    init()
+    public init(dataValue:T)
     {
-        tagNumber = 0
-        tagClass = BACnetTagClassChoice.applicationTag.toUInt8()
-        tagLength = 0
-        applicationDatatype = BACnetApplicationDatatypesChoice.Null
+        this.dataValue = dataValue
+
     }
 
-    func decodingFromArrayByte(packet:Array<Byte>):BACnetApplicationDatatype{
-        return BACnet_NULL()
+    func decodingFromArrayByte(packet:Array<Byte>):BACnetApplicationDatatype<Option<Bool>>{
+        return BACnet_NULL(None)
     }
 
 }
 //Bacnet的空值
-public class BACnet_NULL <: BACnetApplicationDatatype{
-    public init() {
-        tagNumber = 0
-        tagClass = BACnetTagClassChoice.applicationTag.toUInt8()
-        tagLength = 0
-        applicationDatatype = BACnetApplicationDatatypesChoice.Null
+public class BACnet_NULL <: BACnetApplicationDatatype<Option<Bool>>{
+    public init(dataValue:Option<Bool>) {
+        super(None)
+        
     }
     public func encodeToSimplCode():Byte{
         return 0b0000_0000
