@@ -179,7 +179,7 @@ public enum BACnetTagClassChoice
     }
 }
 
-public open class BACnetApplicationDatatype<T,F>
+public open class BACnetApplicationDatatype<T>
 {
     let tagNumber:UInt8 =0
     let tagClass:UInt8 =BACnetTagClassChoice.applicationTag.toUInt8()
