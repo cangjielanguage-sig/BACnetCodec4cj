@@ -27,3 +27,31 @@ public open class BACnetEncodeErro
         "BacnetEncodeErro"
     }
 }
+
+public open class BACnetParmErro 
+<: Exception 
+{
+    public init() {
+        super("Bacnet参数设置错误类.BACnetParmErro")
+    }
+    public init(message: String) {
+        super(message)
+    }
+    public open override func getClassName(): String {
+        "BACnetParmErro"
+    }
+}
+
+public open class ByteBufErro 
+<: Exception 
+{
+    public init() {
+        super("缓冲错误类.ByteBufErro")
+    }
+    public init(message: String) {
+        super(message)
+    }
+    public open override func getClassName(): String {
+        "ByteBufErro"
+    }
+}

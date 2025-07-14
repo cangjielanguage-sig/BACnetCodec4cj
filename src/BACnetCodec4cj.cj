@@ -1,7 +1,9 @@
 public package BACnetCodec4cj
-import BACnetCodec4cj.Types.BACnetApplicationDatatypes.*
-main() :UInt64{
-    let a = BACnetApplicationDatatypesChoice.BACnetObjectIdentifier.转换到UInt8()
-    println(a)
-    return 0
+import std.convert
+
+public func printArrayAsFormat(arg_array:Array<Byte>,formatStr:String){
+    for(bitem in arg_array){
+        print("${bitem.format(formatStr)}, ")
+    }
+    println()
 }
