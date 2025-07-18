@@ -23,7 +23,7 @@ public interface ICodecBACnetApplicationData<T>{
     static func decodingPrimitiveDataFromArrayByte(packet:ByteBuf):T
     //使用带上下文标记的方式解码
     //由上下文标记预知此处出来的结果是什么类，然后预先建立该类对象，再调用该对象解码
-    static func decodingContextSpecificDataFromArrayByte(packet:ByteBuf):T
+    func decodingContextSpecificDataFromArrayByte(packet:ByteBuf):Unit
     //将对象以原语数据方式编码为字节数组，值需要预先存在对象中再调用这个函数
     func encodingToPrimitiveData():Array<Byte>
     //将对象以上下文标记的方式编码为字节数组,所需要的上下文标记号和值需要预先存在对象中再调用这个函数

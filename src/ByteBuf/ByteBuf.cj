@@ -30,6 +30,13 @@ public class ByteBuf {
         dataBuf = Array<Byte>(arg_lenth,repeat:0)
     }
 
+    public init(arg_data:Array<Byte>){
+        var arg_lenth = arg_data.size
+        dataBuf = Array<Byte>(arg_lenth,repeat:0)
+        arg_data.copyTo(dataBuf, 0, 0, arg_lenth)
+        _cursor = 0
+    }
+
     public init(arg_data:Array<Byte>,arg_lenth:Int64){
         dataBuf = Array<Byte>(arg_lenth,repeat:0)
         arg_data.copyTo(dataBuf, 0, 0, arg_lenth)
@@ -209,7 +216,7 @@ public class ByteBuf {
     public func read_FromBuff(arg_Lenth:Int64):Array<Byte>{
         var _rtu:Array<Byte> = Array<Byte>(arg_Lenth,repeat:0)
         let _end:Int64 = cursor + arg_Lenth
-        if(_end >= dataBuf.size){
+        if(_end > dataBuf.size){
             //已读完
             throw ByteBufErro("剩余未读缓存不足${arg_Lenth}字节")
         }
