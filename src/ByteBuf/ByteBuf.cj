@@ -141,7 +141,13 @@ public class ByteBuf {
             throw ByteBufErro("超出UInt32长度正常范围")
         }
         let _valueByte = read_FromBuff(arg_Lenth)
-        let _Int32Byte:Array<Byte> = Array<Byte>(4,repeat:0)
+        let _valueBitMask:UInt8 = _valueByte[0] >> 7
+        var _Int32Byte:Array<Byte>
+        if (_valueBitMask == 0) {
+            _Int32Byte = Array<Byte>(4,repeat:0X00u8)
+        }else{
+            _Int32Byte = Array<Byte>(4,repeat:0XFFu8)
+        }
         _valueByte.copyTo(_Int32Byte, 0, 4-arg_Lenth, arg_Lenth)
         let _rtu = Int32.readBigEndian(_Int32Byte)
         return _rtu

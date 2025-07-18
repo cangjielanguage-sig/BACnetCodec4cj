@@ -251,3 +251,260 @@ func test_BACnet_UnsignedInteger(){
 
 
 }
+
+@Test
+func test_BACnet_SignedInteger(){
+    var _test_SignedInteger = BACnet_SignedInteger()
+    _test_SignedInteger.dataValue = -128
+    var _arr_test_1:Array<Byte> = _test_SignedInteger.encodingToPrimitiveData()
+    @Expect(_arr_test_1,[0b0011_0001u8,0X80u8])
+    var _packet_test = ByteBuf(_arr_test_1)
+    var _decode_value:BACnetApplicationDatatype = BACnet_SignedInteger.decodingPrimitiveDataFromArrayByte(_packet_test)
+    @Expect(_decode_value is BACnet_SignedInteger,true)
+    var _decode_value_as = _decode_value as BACnet_SignedInteger
+    var _decode_value_as_value = _decode_value_as.getOrThrow()
+    @Expect(_decode_value_as_value.dataValue,-128i32)
+    @Expect(_packet_test.cursor,2i64)
+
+    _test_SignedInteger.dataValue = 127
+    _arr_test_1 = _test_SignedInteger.encodingToPrimitiveData()
+    @Expect(_arr_test_1,[0b0011_0001u8,0X7Fu8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_value = BACnet_SignedInteger.decodingPrimitiveDataFromArrayByte(_packet_test)
+    @Expect(_decode_value is BACnet_SignedInteger,true)
+    _decode_value_as = _decode_value as BACnet_SignedInteger
+    _decode_value_as_value = _decode_value_as.getOrThrow()
+    @Expect(_decode_value_as_value.dataValue,127i32)
+    @Expect(_packet_test.cursor,2i64)
+
+    _test_SignedInteger.dataValue = -32768
+    _arr_test_1 = _test_SignedInteger.encodingToPrimitiveData()
+    @Expect(_arr_test_1,[0b0011_0010u8,0X80u8,0X00u8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_value = BACnet_SignedInteger.decodingPrimitiveDataFromArrayByte(_packet_test)
+    @Expect(_decode_value is BACnet_SignedInteger,true)
+    _decode_value_as = _decode_value as BACnet_SignedInteger
+    _decode_value_as_value = _decode_value_as.getOrThrow()
+    @Expect(_decode_value_as_value.dataValue,-32768i32)
+    @Expect(_packet_test.cursor,3i64)
+
+    _test_SignedInteger.dataValue = 32767
+    _arr_test_1 = _test_SignedInteger.encodingToPrimitiveData()
+    @Expect(_arr_test_1,[0b0011_0010u8,0X7Fu8,0XFFu8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_value = BACnet_SignedInteger.decodingPrimitiveDataFromArrayByte(_packet_test)
+    @Expect(_decode_value is BACnet_SignedInteger,true)
+    _decode_value_as = _decode_value as BACnet_SignedInteger
+    _decode_value_as_value = _decode_value_as.getOrThrow()
+    @Expect(_decode_value_as_value.dataValue,32767i32)
+    @Expect(_packet_test.cursor,3i64)
+
+    _test_SignedInteger.dataValue = -8388608
+    _arr_test_1 = _test_SignedInteger.encodingToPrimitiveData()
+    @Expect(_arr_test_1,[0b0011_0011u8,0X80u8,0X00u8,0X00u8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_value = BACnet_SignedInteger.decodingPrimitiveDataFromArrayByte(_packet_test)
+    @Expect(_decode_value is BACnet_SignedInteger,true)
+    _decode_value_as = _decode_value as BACnet_SignedInteger
+    _decode_value_as_value = _decode_value_as.getOrThrow()
+    @Expect(_decode_value_as_value.dataValue,-8388608i32)
+    @Expect(_packet_test.cursor,4i64)
+
+    _test_SignedInteger.dataValue = 8388607
+    _arr_test_1 = _test_SignedInteger.encodingToPrimitiveData()
+    @Expect(_arr_test_1,[0b0011_0011u8,0X7Fu8,0XFFu8,0XFFu8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_value = BACnet_SignedInteger.decodingPrimitiveDataFromArrayByte(_packet_test)
+    @Expect(_decode_value is BACnet_SignedInteger,true)
+    _decode_value_as = _decode_value as BACnet_SignedInteger
+    _decode_value_as_value = _decode_value_as.getOrThrow()
+    @Expect(_decode_value_as_value.dataValue,8388607i32)
+    @Expect(_packet_test.cursor,4i64)
+
+    _test_SignedInteger.dataValue = -2147483648
+    _arr_test_1 = _test_SignedInteger.encodingToPrimitiveData()
+    @Expect(_arr_test_1,[0b0011_0100u8,0X80u8,0X00u8,0X00u8,0X00u8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_value = BACnet_SignedInteger.decodingPrimitiveDataFromArrayByte(_packet_test)
+    @Expect(_decode_value is BACnet_SignedInteger,true)
+    _decode_value_as = _decode_value as BACnet_SignedInteger
+    _decode_value_as_value = _decode_value_as.getOrThrow()
+    @Expect(_decode_value_as_value.dataValue,-2147483648i32)
+    @Expect(_packet_test.cursor,5i64)
+
+    _test_SignedInteger.dataValue = 2147483647
+    _arr_test_1 = _test_SignedInteger.encodingToPrimitiveData()
+    @Expect(_arr_test_1,[0b0011_0100u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_value = BACnet_SignedInteger.decodingPrimitiveDataFromArrayByte(_packet_test)
+    @Expect(_decode_value is BACnet_SignedInteger,true)
+    _decode_value_as = _decode_value as BACnet_SignedInteger
+    _decode_value_as_value = _decode_value_as.getOrThrow()
+    @Expect(_decode_value_as_value.dataValue,2147483647i32)
+    @Expect(_packet_test.cursor,5i64)
+
+    _arr_test_1 = [0b0011_1100u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8]
+    _packet_test = ByteBuf(_arr_test_1)
+    @ExpectThrows[BACnetDecodeErro](BACnet_SignedInteger.decodingPrimitiveDataFromArrayByte(_packet_test))
+
+    _arr_test_1 = [0b0011_0101u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    _packet_test = ByteBuf(_arr_test_1)
+    @ExpectThrows[BACnetDecodeErro](BACnet_SignedInteger.decodingPrimitiveDataFromArrayByte(_packet_test))
+
+    _arr_test_1 = [0b0011_0000u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    _packet_test = ByteBuf(_arr_test_1)
+    @ExpectThrows[BACnetDecodeErro](BACnet_SignedInteger.decodingPrimitiveDataFromArrayByte(_packet_test))
+
+    //<<----------------------------------->>
+    var _decode_SignedInteger = BACnet_SignedInteger()
+
+    _test_SignedInteger.tagNumber = 8
+    _test_SignedInteger.dataValue = -128
+    _arr_test_1 = _test_SignedInteger.encodingToContextSpecificData()
+    @Expect(_arr_test_1,[0b1000_1001u8,0X80u8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_SignedInteger.decodingContextSpecificDataFromArrayByte(_packet_test)
+    @Expect(_decode_SignedInteger.dataValue,-128i32)
+    @Expect(_packet_test.cursor,2i64)
+
+    _test_SignedInteger.tagNumber = 8
+    _test_SignedInteger.dataValue = 127
+    _arr_test_1 = _test_SignedInteger.encodingToContextSpecificData()
+    @Expect(_arr_test_1,[0b1000_1001u8,0X7Fu8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_SignedInteger.decodingContextSpecificDataFromArrayByte(_packet_test)
+    @Expect(_decode_SignedInteger.dataValue,127i32)
+    @Expect(_packet_test.cursor,2i64)
+
+    _test_SignedInteger.tagNumber = 8
+    _test_SignedInteger.dataValue = -32768
+    _arr_test_1 = _test_SignedInteger.encodingToContextSpecificData()
+    @Expect(_arr_test_1,[0b1000_1010u8,0X80u8,0X00u8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_SignedInteger.decodingContextSpecificDataFromArrayByte(_packet_test)
+    @Expect(_decode_SignedInteger.dataValue,-32768i32)
+    @Expect(_packet_test.cursor,3i64)
+
+    _test_SignedInteger.tagNumber = 8
+    _test_SignedInteger.dataValue = 32767
+    _arr_test_1 = _test_SignedInteger.encodingToContextSpecificData()
+    @Expect(_arr_test_1,[0b1000_1010u8,0X7Fu8,0XFFu8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_SignedInteger.decodingContextSpecificDataFromArrayByte(_packet_test)
+    @Expect(_decode_SignedInteger.dataValue,32767i32)
+    @Expect(_packet_test.cursor,3i64)
+
+    _test_SignedInteger.tagNumber = 8
+    _test_SignedInteger.dataValue = -8388608
+    _arr_test_1 = _test_SignedInteger.encodingToContextSpecificData()
+    @Expect(_arr_test_1,[0b1000_1011u8,0X80u8,0X00u8,0X00u8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_SignedInteger.decodingContextSpecificDataFromArrayByte(_packet_test)
+    @Expect(_decode_SignedInteger.dataValue,-8388608i32)
+    @Expect(_packet_test.cursor,4i64)
+
+    _test_SignedInteger.tagNumber = 8
+    _test_SignedInteger.dataValue = 8388607
+    _arr_test_1 = _test_SignedInteger.encodingToContextSpecificData()
+    @Expect(_arr_test_1,[0b1000_1011u8,0X7Fu8,0XFFu8,0XFFu8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_SignedInteger.decodingContextSpecificDataFromArrayByte(_packet_test)
+    @Expect(_decode_SignedInteger.dataValue,8388607i32)
+    @Expect(_packet_test.cursor,4i64)
+
+    _test_SignedInteger.tagNumber = 8
+    _test_SignedInteger.dataValue = -2147483648
+    _arr_test_1 = _test_SignedInteger.encodingToContextSpecificData()
+    @Expect(_arr_test_1,[0b1000_1100u8,0X80u8,0X00u8,0X00u8,0X00u8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_SignedInteger.decodingContextSpecificDataFromArrayByte(_packet_test)
+    @Expect(_decode_SignedInteger.dataValue,-2147483648)
+    @Expect(_packet_test.cursor,5i64)
+
+    _test_SignedInteger.tagNumber = 8
+    _test_SignedInteger.dataValue = 2147483647
+    _arr_test_1 = _test_SignedInteger.encodingToContextSpecificData()
+    @Expect(_arr_test_1,[0b1000_1100u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_SignedInteger.decodingContextSpecificDataFromArrayByte(_packet_test)
+    @Expect(_decode_SignedInteger.dataValue,2147483647i32)
+    @Expect(_packet_test.cursor,5i64)
+
+    _arr_test_1 = [0b0011_0100u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8]
+    _packet_test = ByteBuf(_arr_test_1)
+    @ExpectThrows[BACnetDecodeErro](_decode_SignedInteger.decodingContextSpecificDataFromArrayByte(_packet_test))
+
+    _arr_test_1 = [0b0011_1101u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    _packet_test = ByteBuf(_arr_test_1)
+    @ExpectThrows[BACnetDecodeErro](_decode_SignedInteger.decodingContextSpecificDataFromArrayByte(_packet_test))
+
+    _arr_test_1 = [0b0011_1000u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    _packet_test = ByteBuf(_arr_test_1)
+    @ExpectThrows[BACnetDecodeErro](_decode_SignedInteger.decodingContextSpecificDataFromArrayByte(_packet_test))
+
+}
+
+@Test
+func test_BACnet_Real(){
+    var _test_Real = BACnet_Real()
+    _test_Real.dataValue = -12.7
+    var _arr_test_1:Array<Byte> = _test_Real.encodingToPrimitiveData()
+    @Expect(_arr_test_1,[0b0100_0100u8,0XC1u8,0X4Bu8,0X33u8,0X33u8])
+    var _packet_test = ByteBuf(_arr_test_1)
+    var _decode_value:BACnetApplicationDatatype = BACnet_Real.decodingPrimitiveDataFromArrayByte(_packet_test)
+    @Expect(_decode_value is BACnet_Real,true)
+    var _decode_value_as = _decode_value as BACnet_Real
+    var _decode_value_as_value = _decode_value_as.getOrThrow()
+    @Expect(_decode_value_as_value.dataValue,-12.7f32)
+    @Expect(_packet_test.cursor,5i64)
+
+    _test_Real.dataValue = 0.0
+    _arr_test_1 = _test_Real.encodingToPrimitiveData()
+    @Expect(_arr_test_1,[0b0100_0100u8,0X00u8,0X00u8,0X00u8,0X00u8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _decode_value = BACnet_Real.decodingPrimitiveDataFromArrayByte(_packet_test)
+    @Expect(_decode_value is BACnet_Real,true)
+    _decode_value_as = _decode_value as BACnet_Real
+    _decode_value_as_value = _decode_value_as.getOrThrow()
+    @Expect(_decode_value_as_value.dataValue,0.0f32)
+    @Expect(_packet_test.cursor,5i64)
+
+    _arr_test_1=[0b0100_1100u8,0X00u8,0X00u8,0X00u8,0X00u8]
+    _packet_test = ByteBuf(_arr_test_1)
+    @ExpectThrows[BACnetDecodeErro](BACnet_Real.decodingPrimitiveDataFromArrayByte(_packet_test))
+
+    _arr_test_1=[0b0100_1001u8,0X00u8]
+    _packet_test = ByteBuf(_arr_test_1)
+    @ExpectThrows[BACnetDecodeErro](BACnet_Real.decodingPrimitiveDataFromArrayByte(_packet_test))
+
+//<----------------------------------------->
+
+    var _test_Real_Decode = BACnet_Real()
+    _test_Real.dataValue = 0.0
+    _test_Real.tagNumber = 8
+    _arr_test_1 = _test_Real.encodingToContextSpecificData()
+    @Expect(_arr_test_1,[0b1000_1100u8,0X00u8,0X00u8,0X00u8,0X00u8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _test_Real_Decode.decodingContextSpecificDataFromArrayByte(_packet_test)
+    @Expect(_test_Real_Decode.dataValue,0.0f32)
+    @Expect(_packet_test.cursor,5i64)
+
+    _test_Real.dataValue = -12.7
+    _test_Real.tagNumber = 8
+    _arr_test_1 = _test_Real.encodingToContextSpecificData()
+    @Expect(_arr_test_1,[0b1000_1100u8,0XC1u8,0X4Bu8,0X33u8,0X33u8])
+    _packet_test = ByteBuf(_arr_test_1)
+    _test_Real_Decode.decodingContextSpecificDataFromArrayByte(_packet_test)
+    @Expect(_test_Real_Decode.dataValue,-12.7f32)
+    @Expect(_packet_test.cursor,5i64)
+
+    _arr_test_1=[0b1000_0100u8,0XC1u8,0X4Bu8,0X33u8,0X33u8]
+    _packet_test = ByteBuf(_arr_test_1)
+    @ExpectThrows[BACnetDecodeErro](_test_Real_Decode.decodingContextSpecificDataFromArrayByte(_packet_test))
+
+    _arr_test_1=[0b0100_1001u8,0X00u8]
+    _packet_test = ByteBuf(_arr_test_1)
+    @ExpectThrows[BACnetDecodeErro](_test_Real_Decode.decodingContextSpecificDataFromArrayByte(_packet_test))
+
+
+}
