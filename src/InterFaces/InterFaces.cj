@@ -37,3 +37,11 @@ public interface IDcodingToConstructedData<T>{
     //将对象以构造编码的方式编码为字节数组（有opening tag 和 Closing Tag标记对）
     func encodingToConstructedData(arg_tagNumber:UInt8):Array<Byte>
 }
+
+public interface IHaveDataValue<V> where V<:Equal<V>{
+    mut prop dataValue:V
+    
+    func isDataEqual(arg_OtherData:IHaveDataValue<V>):Bool{
+        return dataValue == arg_OtherData.dataValue
+    }
+}
