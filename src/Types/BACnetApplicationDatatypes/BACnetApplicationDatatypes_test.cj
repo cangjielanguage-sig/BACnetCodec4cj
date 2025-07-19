@@ -417,6 +417,11 @@ func test_BACnet_Double(){
 
     _check_arr = [0b0011_1101u8,0X04u8,0XC0u8,0X29u8,0X66u8,0X66u8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_Double>(_test_Target,_check_arr)
+    
+    _check_arr = [0b0011_1110u8,0X08u8,0XC0u8,0X29u8,0X66u8,0X66u8,0X66u8,0X66u8,0X66u8,0X66u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_Double>(_test_Target,_check_arr)
+
 }
+//更改测试
 
     
