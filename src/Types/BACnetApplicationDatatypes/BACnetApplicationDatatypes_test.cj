@@ -388,7 +388,8 @@ func test_BACnet_Double(){
     _test_Target.dataValue = 0.0
     _check_arr = [0b0101_0101u8,0X08u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8]
     test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_Double,Float64>(_test_Target,_check_arr)
-
+    
+    //上下文报文用原语解码函数，应当报错
     _check_arr = [0b0101_1101u8,0X08u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8]
     test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_Double>(_test_Target,_check_arr)
 
