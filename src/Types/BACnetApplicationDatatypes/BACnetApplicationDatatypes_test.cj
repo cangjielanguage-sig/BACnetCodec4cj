@@ -76,6 +76,7 @@ where T<:ICodecBACnetApplicationData<BACnetApplicationDatatype>
 
 @Test
 func test_BACnet_Null(){
+    //检查当方向不是所解的类型时有没有跳转
     var _arr_test_1 :Array<Byte> = [0b0001_0000]
     var _packet_test = ByteBuf(_arr_test_1, 1)
     var _decode_value:BACnetApplicationDatatype= BACnet_Null.decodingPrimitiveDataFromArrayByte(_packet_test)
@@ -100,6 +101,10 @@ func test_BACnet_Null(){
 
     _test_Target.tagNumber = 9
     _check_arr = [0b1001_1000]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_Null,Option<Bool>>(_test_Target,_check_arr,_context_decode)
+
+    _test_Target.tagNumber = 66
+    _check_arr = [0b1111_1000,0X42u8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_Null,Option<Bool>>(_test_Target,_check_arr,_context_decode)
   
     _check_arr = [0b1001_0000]
@@ -139,6 +144,11 @@ func test_BACnet_Boolean(){
     _check_arr = [0b1001_1001,0b0000_0001]
     test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_Boolean,Bool>(_test_Target,_check_arr,_context_decode)
   
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = true
+    _check_arr = [0b1111_1001,0X42u8,0b0000_0001]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_Boolean,Bool>(_test_Target,_check_arr,_context_decode)
+
     _check_arr = [0b1001_0000]
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_Boolean>(_test_Target,_check_arr)
 
@@ -192,21 +202,43 @@ func test_BACnet_UnsignedInteger(){
     _check_arr = [0b1001_1001u8,0XFFu8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
   
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = 255
+    _check_arr = [0b1111_1001u8,0X42u8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
+ 
+
     _test_Target.tagNumber = 3
     _test_Target.dataValue = 65535
     _check_arr = [0b0011_1010u8,0XFFu8,0XFFu8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
-  
+
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = 65535
+    _check_arr = [0b1111_1010u8,0X42u8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
+ 
     _test_Target.tagNumber = 3
     _test_Target.dataValue = 16777215
     _check_arr = [0b0011_1011u8,0XFFu8,0XFFu8,0XFFu8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
-  
+
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = 16777215
+    _check_arr = [0b1111_1011u8,0X42u8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
+
+
     _test_Target.tagNumber = 3
     _test_Target.dataValue = 4294967295
     _check_arr = [0b0011_1100u8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
     
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = 4294967295
+    _check_arr = [0b1111_1100u8,0X42u8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
+
     //原语报文用上下文解码函数，应当报错
     _check_arr = [0b0011_0100u8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_UnsignedInteger>(_test_Target,_check_arr)
@@ -276,14 +308,30 @@ func test_BACnet_SignedInteger(){
     _check_arr = [0b1000_1001u8,0X80u8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
 
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = -128
+    _check_arr = [0b1111_1001u8,0X42u8,0X80u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+
     _test_Target.tagNumber = 8
     _test_Target.dataValue = 127
     _check_arr = [0b1000_1001u8,0X7Fu8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
 
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = 127
+    _check_arr = [0b1111_1001u8,0X42u8,0X7Fu8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+
+
     _test_Target.tagNumber = 8
     _test_Target.dataValue = -32768
     _check_arr = [0b1000_1010u8,0X80u8,0X00u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = -32768
+    _check_arr = [0b1111_1010u8,0X42u8,0X80u8,0X00u8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
 
     _test_Target.tagNumber = 8
@@ -291,10 +339,22 @@ func test_BACnet_SignedInteger(){
     _check_arr = [0b1000_1010u8,0X7Fu8,0XFFu8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
 
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = 32767
+    _check_arr = [0b1111_1010u8,0X42u8,0X7Fu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+
+
     _test_Target.tagNumber = 8
     _test_Target.dataValue = -8388608
     _check_arr = [0b1000_1011u8,0X80u8,0X00u8,0X00u8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = -8388608
+    _check_arr = [0b1111_1011u8,0X42u8,0X80u8,0X00u8,0X00u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+
 
     _test_Target.tagNumber = 8
     _test_Target.dataValue = 8388607
@@ -356,6 +416,12 @@ func test_BACnet_Real(){
     _check_arr = [0b1000_1100u8,0XC1u8,0X4Bu8,0X33u8,0X33u8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_Real,Float32>(_test_Target,_check_arr,_context_decode)
 
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = -12.7
+    _check_arr = [0b1111_1100u8,0X42u8,0XC1u8,0X4Bu8,0X33u8,0X33u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_Real,Float32>(_test_Target,_check_arr,_context_decode)
+
+
     _test_Target.tagNumber = 8
     _test_Target.dataValue = 0.0
     _check_arr = [0b1000_1100u8,0X00u8,0X00u8,0X00u8,0X00u8]
@@ -405,6 +471,14 @@ func test_BACnet_Double(){
     _check_arr = [0b0011_1101u8,0X08u8,0XC0u8,0X29u8,0X66u8,0X66u8,0X66u8,0X66u8,0X66u8,0X66u8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_Double,Float64>(_test_Target,_check_arr,_context_decode)
 
+    _test_Target.dataValue = -12.7
+    _test_Target.tagNumber = 66
+    _check_arr = [  0b1111_1101u8,0X42u8,0X08u8,0XC0u8,
+                    0X29u8,0X66u8,0X66u8,0X66u8,
+                    0X66u8,0X66u8,0X66u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_Double,Float64>(_test_Target,_check_arr,_context_decode)
+
+    
     _test_Target.dataValue = 0.0
     _test_Target.tagNumber = 3
     _check_arr = [0b0011_1101u8,0X08u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8]
@@ -423,6 +497,5 @@ func test_BACnet_Double(){
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_Double>(_test_Target,_check_arr)
 
 }
-//更改测试
 
     

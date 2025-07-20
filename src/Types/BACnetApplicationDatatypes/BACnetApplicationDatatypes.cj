@@ -3,6 +3,73 @@ import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
 import std.binary.*
+import std.collection.enumerate
+import std.convert.*
+import std.collection.*
+
+//用户数据类型父类
+public open class BACnetApplicationDatatype
+{
+    private var _tagNumber:UInt8 = 0
+    public mut prop tagNumber:UInt8{
+        get(){ return _tagNumber}
+        set(arg_Value){_tagNumber = arg_Value}
+    }
+
+    private var _tagClass:BACnetTagClassChoice =BACnetTagClassChoice.applicationTag
+    public mut prop tagClass:BACnetTagClassChoice{
+        get(){ return _tagClass}
+        set(arg_Value){_tagClass = arg_Value}
+    }
+
+    private var _tagLength:UInt32 =0
+    public mut prop tagLength:UInt32{
+        get(){ return _tagLength}
+        set(arg_Value){_tagLength = arg_Value}
+    }
+
+    private var _applicationDatatype:BACnetApplicationDatatypesChoice = BACnetApplicationDatatypesChoice.Null
+    public mut prop applicationDatatype:BACnetApplicationDatatypesChoice{
+        get(){ return _applicationDatatype}
+        set(arg_Value){this._applicationDatatype = arg_Value}
+    }
+
+    public init(){}
+
+    public static func decodingFromArrayByte(packet:ByteBuf):BACnetApplicationDatatype
+    {
+        let _appTag = packet.read_UInt8_FromBuf();
+        let _classBit = (_appTag & 0b0000_1000)>>3
+        if(_classBit == 1){
+            throw BACnetDecodeErro("解码错误:使用原语类型解码函数解析上下文指定编码")
+        }
+        let _tagNum = (_appTag & 0b1111_0000)>>4
+        var _appDataType = BACnetApplicationDatatypesChoice.fromUInt8(_tagNum)
+        packet.cursorMoveBackward(1)
+        var _rtu = match (_appDataType) 
+        {
+            case BACnetApplicationDatatypesChoice.Null                  => BACnet_Null.decodingPrimitiveDataFromArrayByte(packet)
+            case BACnetApplicationDatatypesChoice.Boolean               => BACnet_Boolean.decodingPrimitiveDataFromArrayByte(packet)
+            case BACnetApplicationDatatypesChoice.UnsignedInteger       => BACnet_UnsignedInteger.decodingPrimitiveDataFromArrayByte(packet)
+            // case BACnetApplicationDatatypesChoice.SignedInteger         => 3
+            // case BACnetApplicationDatatypesChoice.Real                  => 4
+            // case BACnetApplicationDatatypesChoice.Double                => 5
+            // case BACnetApplicationDatatypesChoice.OctetString           => 6
+            // case BACnetApplicationDatatypesChoice.CharacterString       => 7
+            // case BACnetApplicationDatatypesChoice.BitString             => 8
+            // case BACnetApplicationDatatypesChoice.Enumerated            => 9
+            // case BACnetApplicationDatatypesChoice.Date                  => 10
+            // case BACnetApplicationDatatypesChoice.Time                  => 11
+            // case BACnetApplicationDatatypesChoice.BACnetObjectIdentifier  => 12
+            // case BACnetApplicationDatatypesChoice.ReservedForASHRAE13   => 13
+            // case BACnetApplicationDatatypesChoice.ReservedForASHRAE14   => 14
+            // case BACnetApplicationDatatypesChoice.ReservedForASHRAE15   => 15
+            case _=>throw  BACnetDecodeErro("解码错误:无法识别的类型数据")
+        }
+        return _rtu
+
+    }
+}
 
 public enum BACnetApplicationDatatypesChoice
 <: IFromUInt8<BACnetApplicationDatatypesChoice> 
@@ -180,827 +247,144 @@ public enum BACnetTagClassChoice
     }
 }
 
-//用户数据类型父类
-public open class BACnetApplicationDatatype
-{
-    private var _tagNumber:UInt8 = 0
-    public mut prop tagNumber:UInt8{
-        get(){ return _tagNumber}
-        set(arg_Value){_tagNumber = arg_Value}
+
+public func convertArrayToHexString(arg_array:Array<Byte>):String{
+    var _rtu:String = ""
+    for(bitem in arg_array){
+        _rtu += bitem.format("02X")
     }
-
-    private var _tagClass:BACnetTagClassChoice =BACnetTagClassChoice.applicationTag
-    public mut prop tagClass:BACnetTagClassChoice{
-        get(){ return _tagClass}
-        set(arg_Value){_tagClass = arg_Value}
-    }
-
-    private var _tagLength:UInt32 =0
-    public mut prop tagLength:UInt32{
-        get(){ return _tagLength}
-        set(arg_Value){_tagLength = arg_Value}
-    }
-
-    private var _applicationDatatype:BACnetApplicationDatatypesChoice = BACnetApplicationDatatypesChoice.Null
-    public mut prop applicationDatatype:BACnetApplicationDatatypesChoice{
-        get(){ return _applicationDatatype}
-        set(arg_Value){this._applicationDatatype = arg_Value}
-    }
-
-    public init(){}
-
-    public static func decodingFromArrayByte(packet:ByteBuf):BACnetApplicationDatatype
-    {
-        let _appTag = packet.read_UInt8_FromBuf();
-        let _classBit = (_appTag & 0b0000_1000)>>3
-        if(_classBit == 1){
-            throw BACnetDecodeErro("解码错误:使用原语类型解码函数解析上下文指定编码")
-        }
-        let _tagNum = (_appTag & 0b1111_0000)>>4
-        var _appDataType = BACnetApplicationDatatypesChoice.fromUInt8(_tagNum)
-        packet.cursorMoveBackward(1)
-        var _rtu = match (_appDataType) 
-        {
-            case BACnetApplicationDatatypesChoice.Null                  => BACnet_Null.decodingPrimitiveDataFromArrayByte(packet)
-            case BACnetApplicationDatatypesChoice.Boolean               => BACnet_Boolean.decodingPrimitiveDataFromArrayByte(packet)
-            case BACnetApplicationDatatypesChoice.UnsignedInteger       => BACnet_UnsignedInteger.decodingPrimitiveDataFromArrayByte(packet)
-            // case BACnetApplicationDatatypesChoice.SignedInteger         => 3
-            // case BACnetApplicationDatatypesChoice.Real                  => 4
-            // case BACnetApplicationDatatypesChoice.Double                => 5
-            // case BACnetApplicationDatatypesChoice.OctetString           => 6
-            // case BACnetApplicationDatatypesChoice.CharacterString       => 7
-            // case BACnetApplicationDatatypesChoice.BitString             => 8
-            // case BACnetApplicationDatatypesChoice.Enumerated            => 9
-            // case BACnetApplicationDatatypesChoice.Date                  => 10
-            // case BACnetApplicationDatatypesChoice.Time                  => 11
-            // case BACnetApplicationDatatypesChoice.BACnetObjectIdentifier  => 12
-            // case BACnetApplicationDatatypesChoice.ReservedForASHRAE13   => 13
-            // case BACnetApplicationDatatypesChoice.ReservedForASHRAE14   => 14
-            // case BACnetApplicationDatatypesChoice.ReservedForASHRAE15   => 15
-            case _=>throw  BACnetDecodeErro("解码错误:无法识别的类型数据")
-        }
-        return _rtu
-
-    }
+    return _rtu
 }
 
-
-//Bacnet的空值
-public class BACnet_Null 
-<: BACnetApplicationDatatype
-& ICodecBACnetApplicationData<BACnetApplicationDatatype>
-& IHaveDataValue<Option<Bool>>
-{
-    private var _dataValue:Option<Bool> = None
-    public mut prop dataValue:Option<Bool>{
-        get(){ return None}
-        set(_){_dataValue = None}
+public func convertHexStringToArray(arg_str:String):Array<Byte>{
+    var _rtu:Array<Byte>
+    var _str_Size = arg_str.size
+    let _index_max = _str_Size -1
+    var _arrSize = 0
+    if(_str_Size%2 == 0){
+        _arrSize = _str_Size/2
+    }else{
+        _arrSize = _str_Size/2 +1
     }
-
-    public init() {
-        tagNumber = 0
-        tagClass = BACnetTagClassChoice.applicationTag
-        tagLength = 0
-    }
-
-    public static func decodingPrimitiveDataFromArrayByte(packet:ByteBuf): BACnetApplicationDatatype{
-        let _appTag = packet.read_UInt8_FromBuf();
-        let _classBit = (_appTag & 0b0000_1000)>>3
-        if(_classBit == 1){
-            throw BACnetDecodeErro("解码错误:使用原语类型解码函数解析上下文指定编码")
-        }
-        let _tagNum = (_appTag & 0b1111_0000)>>4
-        if (_tagNum == 0) {
-            //是Bool量
-            var _rtu = BACnet_Null()
-            _rtu.applicationDatatype = BACnetApplicationDatatypesChoice.Null
-            _rtu.tagNumber = _tagNum
-            _rtu.tagClass = BACnetTagClassChoice.applicationTag
-            _rtu.tagLength = UInt32(_appTag & 0b0000_0111)
-            
-            if (_rtu.tagLength != 0) {
-                throw  BACnetDecodeErro("解码错误:无法识别的Null数据")
+    _rtu = Array<Byte>(_arrSize,repeat:0)
+    var _byte_buf:Byte = 0
+    var _str_buf:StringBuilder = StringBuilder(2)
+    for ((_index,_item) in arg_str |> enumerate) {        
+        if (_index<_index_max) {
+            if (_index==0 || (_index % 2 == 0)) {
+                _str_buf.append(Rune(_item))
+            }else{
+                _str_buf.append(Rune(_item))
+                let _byteIndex = _index/2
+                _byte_buf = Byte.parse(_str_buf.toString(), radix: 16)
+                _rtu[_byteIndex] = _byte_buf
+                _str_buf.reset()
             }
-            return _rtu
         }else{
-            packet.cursorMoveBackward(1)
-            let _rtu=BACnetApplicationDatatype.decodingFromArrayByte(packet)
-            return _rtu 
+            if (_index % 2 == 0) {
+                _str_buf.append("0")
+                _str_buf.append(Rune(_item))
+                let _byteIndex = _index/2
+                _byte_buf = Byte.parse(_str_buf.toString(), radix: 16)
+                _rtu[_byteIndex] = _byte_buf
+            }else{
+                _str_buf.append(Rune(_item))
+                let _byteIndex = _index/2
+                _byte_buf = Byte.parse(_str_buf.toString(), radix: 16)
+                _rtu[_byteIndex] = _byte_buf
+            }
         }
     }
+    return _rtu
+}
 
-    public func decodingContextSpecificDataFromArrayByte(packet:ByteBuf): Unit{
-        // let _tag = packet.read_UInt8_FromBuf();
-        // if(_tag != 0b0000_0000){
-        //     throw BACnetDecodeErro("BACnet_Null数据只有0b0000_0000一种形式")
-        // }
-        // return BACnet_Null()
+public func redaLengthFromArray(arg_packet:ByteBuf):UInt32{
+    var _rtu:UInt32 = 0
+    let _lenth_1_Byte = arg_packet.read_UInt8_FromBuf()
+    if(_lenth_1_Byte < 0XFEu8){
+        //数据长度为5~253
+        _rtu = UInt32(_lenth_1_Byte)
+    }else if(_lenth_1_Byte == 0XFEu8){
+        //数据长度为254~65535时
+        let _lenth_2_3_Byte = arg_packet.read_Int16_FromBuff()
+        _rtu = UInt32(_lenth_2_3_Byte)
+    }else if(_lenth_1_Byte == 0XFFu8){
 
-        //实际不应出现，BACnet_Null数据只有0b0000_0000一种形式,没有上下文指定形式
-        //但抛异常可能导致后续解码中断，所以留此函数作为预防
-        let _appTag = packet.read_UInt8_FromBuf();
-        let _classBit = (_appTag & 0b0000_1000)>>3
-        if(_classBit == 0){
-            throw BACnetDecodeErro("解码错误:使用上下文指定类型解码函数解码原语类型")
-        }
-
-        this.tagLength = UInt32(_appTag & 0b0000_0111)
-        if (this.tagLength != 0) {
-                throw  BACnetDecodeErro("解码错误:无法识别的Null数据")
-        }
-
-        let _tagNum = (_appTag & 0b1111_0000)>>4
-        this.tagNumber = _tagNum
-        
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.Null
-        this.tagClass = BACnetTagClassChoice.contextSpecificTag
-        
-        return 
     }
 
-    public func encodingToPrimitiveData():Array<Byte>{
-        //Null的简单代码固定
-        return [0b0000_0000]
-    }
+    return _rtu
+}
 
-    public func encodingToContextSpecificData():Array<Byte>{
-        // //Null的简单代码固定
-        // return [0b0000_0000]
-        
-        //实际不应该有
-        var _rtu:Array<Byte> = [0b0000_0000]
-        let _tagNum = this.tagNumber << 4
-        var _SDContextTag = 0u8
+public func readContextSpecificTagNumber(arg_tag:Byte,arg_packet:ByteBuf):UInt8{
+    var _rtu:UInt8 = 0
+    let _tagNum = arg_tag>>4
+    if(_tagNum<15){
+        _rtu = _tagNum
+    }else{
+        //_tagNum == 0b0000_1111时，表明tag后的一个字节是tagNum
+        _rtu = arg_packet.read_UInt8_FromBuf()
+    }
+    return _rtu
+}
+
+public func encodingToContextSpecificDataTagHead(arg_tagNum:UInt8,arg_tagLength:UInt32):Array<Byte>{
+    var _rtu:Array<Byte>
+    var _array_buf:ArrayList<Byte> = ArrayList<Byte>()
+    var _SDContextTag = 0b0000_0000u8
+    //ContextSpecificDataTag在tagClass位是1
+    _SDContextTag = _SDContextTag | 0b0000_1000
+    _array_buf.add(_SDContextTag)
+    if(arg_tagNum<15){
+        //tagnum小于15时，上下文标记号直接写在标记域，没有额外标记号字节
+        let _tagNum = arg_tagNum << 4   
         _SDContextTag = _SDContextTag | _tagNum
-        _SDContextTag = _SDContextTag | 0b0000_1000
-        _rtu[0] = _SDContextTag
-        return _rtu
-    }
-}
-
-public class BACnet_Boolean
-<: BACnetApplicationDatatype
-& ICodecBACnetApplicationData<BACnetApplicationDatatype>
-& IHaveDataValue<Bool>
-{
-    private var _dataValue:Bool = false
-    public mut prop dataValue:Bool{
-        get(){ return _dataValue}
-        set(arg_Value){_dataValue = arg_Value}
+        _array_buf[0] = _SDContextTag
+    }else{
+        //tagNum大于等于15小于255时（U8就限制了不能大于255），有一字节的额外标记号字节
+        //BACnet不支持大于255的上下文标记
+        //The encoding does not allow, nor does BACnet require, tag numbers larger than 254. The value B'11111111' of the subsequent octet is reserved by ASHRAE. 
+        //只是说保留，没说是255是错误，所以这里不去区分是不是等于255，不报错
+        //_tagNum >= 时，表明tag后的一个字节是tagNum
+        _SDContextTag = _SDContextTag | 0b1111_0000u8
+        _array_buf[0] = _SDContextTag
+        _array_buf.add(arg_tagNum)        
     }
 
-    public init(){
-        this.tagNumber = 1
-        this.tagClass = BACnetTagClassChoice.applicationTag
-        this._dataValue = false
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.Boolean        
+    if (arg_tagLength<5) {//没有额外上下文标号字节
+        //没有额外长度字节
+        _SDContextTag = _SDContextTag | UInt8(arg_tagLength)
+        _array_buf[0] = _SDContextTag
+    }else if (arg_tagLength >= 5 && arg_tagLength<=253) {
+        //额外一字节长度
+        _SDContextTag = _SDContextTag | 0b0000_0101u8
+        _array_buf[0] = _SDContextTag
+        //增加1字节长度
+        _array_buf.add(UInt8(arg_tagLength))
+    }else if (arg_tagLength >= 254 && arg_tagLength<=65535) {
+        //额外1字节标记，2字节长度
+        _SDContextTag = _SDContextTag | 0b0000_0101u8
+        _array_buf[0] = _SDContextTag
+        //额外1字节标记，值位0XFE
+        _array_buf.add(0XFEu8)
+        let _lenArray = Array<Byte>(2,repeat:0)
+        let _lenth_U16 = UInt16(arg_tagLength)
+        _lenth_U16.writeBigEndian(_lenArray)
+        _array_buf.add(_lenArray[0])
+        _array_buf.add(_lenArray[1])
+    }else if (arg_tagLength >= 65536 && arg_tagLength<=4294967295) {
+        //额外1字节标记，4字节长度
+        _SDContextTag = _SDContextTag | 0b0000_0101u8
+        _array_buf[0] = _SDContextTag
+        //额外1字节标记，值位0XFF
+        _array_buf.add(0XFFu8)
+        let _lenArray = Array<Byte>(4,repeat:0)
+        let _lenth_U32 = arg_tagLength
+        _lenth_U32.writeBigEndian(_lenArray)
+        _array_buf.add(_lenArray[0])
+        _array_buf.add(_lenArray[1])
+        _array_buf.add(_lenArray[2])
+        _array_buf.add(_lenArray[3])
     }
-
-    public init(arg_tagNumber:UInt8,
-    arg_tagClass:BACnetTagClassChoice,
-    arg_tagLength:UInt32,
-    arg_dataValue:Bool)
-    {
-        this.tagNumber = arg_tagNumber
-        this.tagClass = arg_tagClass
-        this.tagLength = arg_tagLength
-        this._dataValue = arg_dataValue
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.Boolean
-    }
-
-    public static func decodingPrimitiveDataFromArrayByte(packet:ByteBuf): BACnetApplicationDatatype{
-        let _appTag = packet.read_UInt8_FromBuf();
-        let _classBit = (_appTag & 0b0000_1000)>>3
-        if(_classBit == 1){
-            throw BACnetDecodeErro("解码错误:使用原语类型解码函数解析上下文指定编码")
-        }
-        let _tagNum = (_appTag & 0b1111_0000)>>4
-        if (_tagNum == 1) {
-            //是Bool量
-            var _rtu = BACnet_Boolean()
-            _rtu.applicationDatatype = BACnetApplicationDatatypesChoice.Boolean
-            _rtu.tagNumber = _tagNum
-            _rtu.tagClass = BACnetTagClassChoice.applicationTag
-            _rtu.tagLength = UInt32(_appTag & 0b0000_0111)
-            
-            if (_rtu.tagLength == 0) {
-                _rtu.dataValue = false
-            }else if(_rtu.tagLength == 1){
-                _rtu.dataValue = true
-            }else{
-                throw  BACnetDecodeErro("解码错误:无法识别的Bool数据")
-            }
-            return _rtu
-        }else{
-            packet.cursorMoveBackward(1)
-            let _rtu=BACnetApplicationDatatype.decodingFromArrayByte(packet)
-            return _rtu
-        }
-    }
-
-    public func decodingContextSpecificDataFromArrayByte(packet:ByteBuf): Unit{
-        let _appTag = packet.read_UInt8_FromBuf();
-        
-        let _classBit = (_appTag & 0b0000_1000)>>3
-        if(_classBit == 0){
-            throw BACnetDecodeErro("解码错误:使用上下文指定类型解码函数解码原语类型")
-        }
-        this.tagClass = BACnetTagClassChoice.contextSpecificTag
-
-        this.tagLength = UInt32(_appTag & 0b0000_0111)
-        if (this.tagLength != 1) {
-            throw  BACnetDecodeErro("解码错误:检测到AppTag长度为${this.tagLength},BACnet的Bool量长度固定为1，这是个无法识别的Bool数据长度")
-        }
-
-        let _value = packet.read_UInt8_FromBuf();
-        if (_value == 0b0000_0000) {
-            this.dataValue = false
-        }else if (_value == 0b0000_0001) {
-            this.dataValue = true
-        }else{
-            throw  BACnetDecodeErro("解码错误:无法识别的Bool数据")
-        }
-
-        let _tagNum = (_appTag & 0b1111_0000)>>4
-        this.tagNumber = _tagNum
-
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.Boolean
-        
-        return
-    }
-
-    public func encodingToPrimitiveData():Array<Byte>{
-        var _rtu:Array<Byte> = [0b0000_0000]
-        if (this.dataValue == true) {
-            _rtu[0] = 0b0001_0001
-        }else{
-            _rtu[0] = 0b0001_0000
-        }
-        return _rtu        
-    }
-
-    public func encodingToContextSpecificData():Array<Byte>{
-        var _rtu:Array<Byte> = [0b0000_0000,0b0000_0000]
-        let _tagNum = this.tagNumber << 4
-        var _SDContextTag = 0u8
-        _SDContextTag = _SDContextTag | _tagNum
-        _SDContextTag = _SDContextTag | 0b0000_1001
-        _rtu[0] = _SDContextTag
-        if (this.dataValue == true) {
-            _rtu[1] = 0b0000_0001
-        }else{
-            _rtu[1] = 0b0000_0000
-        }
-        return _rtu
-    }
-}
-
-public class BACnet_UnsignedInteger
-<: BACnetApplicationDatatype
-& ICodecBACnetApplicationData<BACnetApplicationDatatype>
-& IHaveDataValue<UInt32>
-{
-    private var _dataValue:UInt32 = 0
-    public mut prop dataValue:UInt32{
-        get(){ return _dataValue}
-        set(arg_Value){_dataValue = arg_Value}
-    }
-
-    public init(){
-        this.tagNumber = 2
-        this.tagClass = BACnetTagClassChoice.applicationTag
-        this._dataValue = 0
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.UnsignedInteger        
-    }
-
-    public init(arg_tagNumber:UInt8,
-    arg_tagClass:BACnetTagClassChoice,
-    arg_tagLength:UInt32,
-    arg_dataValue:UInt32)
-    {
-        this.tagNumber = arg_tagNumber
-        this.tagClass = arg_tagClass
-        this.tagLength = arg_tagLength
-        this._dataValue = arg_dataValue
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.UnsignedInteger
-    }
-
-    public static func decodingPrimitiveDataFromArrayByte(packet:ByteBuf): BACnetApplicationDatatype{
-        let _appTag = packet.read_UInt8_FromBuf();
-        let _classBit = (_appTag & 0b0000_1000)>>3
-        if(_classBit == 1){
-            throw BACnetDecodeErro("解码错误:使用原语类型解码函数解析上下文指定编码")
-        }
-        let _tagNum = (_appTag & 0b1111_0000)>>4
-        if (_tagNum == 2) {
-            //是UnsignedInteger量
-            var _rtu = BACnet_UnsignedInteger()
-            _rtu.applicationDatatype = BACnetApplicationDatatypesChoice.UnsignedInteger
-            _rtu.tagNumber = _tagNum
-            _rtu.tagClass = BACnetTagClassChoice.applicationTag
-            var _len = UInt32(_appTag & 0b0000_0111)
-            _rtu.tagLength = _len
-            
-            if(_len>=1 && _len<=4){
-                _rtu.dataValue = packet.read_UInt32_WithLenth_FromBuff(Int64(_len))
-            }else{
-                throw  BACnetDecodeErro("解码错误:无法识别长度为${_len}的UnsignedInteger数据")
-            }
-            return _rtu
-        }else{
-            packet.cursorMoveBackward(1)
-            let _rtu=BACnetApplicationDatatype.decodingFromArrayByte(packet)
-            return _rtu
-        }
-    }
-
-    public func decodingContextSpecificDataFromArrayByte(packet:ByteBuf): Unit{
-        let _appTag = packet.read_UInt8_FromBuf();
-        let _classBit = (_appTag & 0b0000_1000)>>3
-        if(_classBit == 0){
-            throw BACnetDecodeErro("解码错误:使用上下文指定类型解码函数解码原语类型")
-        }
-        this.tagClass = BACnetTagClassChoice.contextSpecificTag
-
-        var _len = UInt32(_appTag & 0b0000_0111)
-        if(_len<1 || _len>4){
-            throw  BACnetDecodeErro("解码错误:无法识别长度为${_len}的UnsignedInteger数据")
-        }
-
-        this.tagLength = _len
-        this.dataValue = packet.read_UInt32_WithLenth_FromBuff(Int64(_len))
-
-        let _tagNum = (_appTag & 0b1111_0000)>>4
-        this.tagNumber = _tagNum
-        
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.UnsignedInteger
-
-        return
-    }
-
-    public func encodingToPrimitiveData():Array<Byte>{
-        let _tagNum:UInt8 = 2 << 4
-        var _applicationTag = 0u8
-        _applicationTag = _applicationTag | _tagNum
-        _applicationTag = _applicationTag | 0b0000_0000
-        var _len:UInt8 = 1
-        
-        if (dataValue<=255) {
-            //1字节数
-            _len = 1
-        }else if (dataValue>255 && dataValue<=65535) {
-            //2字节数
-            _len = 2
-        }else if (dataValue>65535 && dataValue<=16777215) {
-            //3字节数
-            _len = 3
-        }else if (dataValue>16777215 && dataValue<=4294967295) {
-            //4字节数
-            _len = 4
-        }
-
-        this.tagLength = UInt32(_len)
-        _applicationTag = _applicationTag | _len
-        var _value_Array = Array<Byte>(4,repeat:0)
-        this.dataValue.writeBigEndian(_value_Array)
-
-        var _rtu:Array<Byte> = Array<Byte>(Int64(_len+1),repeat:0)
-        _rtu[0] = _applicationTag
-        _value_Array.copyTo(_rtu, Int64(4-_len), 1, Int64(_len))
-        return _rtu        
-    }
-
-    public func encodingToContextSpecificData():Array<Byte>{
-        let _tagNum:UInt8 = this.tagNumber << 4
-        var _applicationTag = 0u8
-        _applicationTag = _applicationTag | _tagNum
-        _applicationTag = _applicationTag | 0b0000_1000
-        
-        var _len:UInt8 = 1
-        if (dataValue<=255) {
-            //1字节数
-            _len = 1
-        }else if (dataValue>255 && dataValue<=65535) {
-            //2字节数
-            _len = 2
-        }else if (dataValue>65535 && dataValue<=16777215) {
-            //3字节数
-            _len = 3
-        }else if (dataValue>16777215 && dataValue<=4294967295) {
-            //4字节数
-            _len = 4
-        }
-
-        this.tagLength = UInt32(_len)
-        _applicationTag = _applicationTag | _len
-        var _value_Array = Array<Byte>(4,repeat:0)
-        this.dataValue.writeBigEndian(_value_Array)
-
-        var _rtu:Array<Byte> = Array<Byte>(Int64(_len+1),repeat:0)
-        _rtu[0] = _applicationTag
-        _value_Array.copyTo(_rtu, Int64(4-_len), 1, Int64(_len))
-        return _rtu 
-    }
-}
-
-public class BACnet_SignedInteger
-<: BACnetApplicationDatatype
-& ICodecBACnetApplicationData<BACnetApplicationDatatype>
-& IHaveDataValue<Int32>
-
-{
-    private var _dataValue:Int32 = 0
-    public mut prop dataValue:Int32{
-        get(){ return _dataValue}
-        set(arg_Value){_dataValue = arg_Value}
-    }
-
-    public init(){
-        this.tagNumber = 3
-        this.tagClass = BACnetTagClassChoice.applicationTag
-        this._dataValue = 0
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.SignedInteger        
-    }
-
-    public init(arg_tagNumber:UInt8,
-    arg_tagClass:BACnetTagClassChoice,
-    arg_tagLength:UInt32,
-    arg_dataValue:Int32)
-    {
-        this.tagNumber = arg_tagNumber
-        this.tagClass = arg_tagClass
-        this.tagLength = arg_tagLength
-        this._dataValue = arg_dataValue
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.SignedInteger
-    }
-
-    public static func decodingPrimitiveDataFromArrayByte(packet:ByteBuf): BACnetApplicationDatatype{
-        let _appTag = packet.read_UInt8_FromBuf();
-        let _classBit = (_appTag & 0b0000_1000)>>3
-        if(_classBit == 1){
-            throw BACnetDecodeErro("解码错误:使用原语类型解码函数解析上下文指定编码")
-        }
-        let _tagNum = (_appTag & 0b1111_0000)>>4
-        if (_tagNum == 3) {
-            //是BACnet_SignedInteger量
-            var _rtu = BACnet_SignedInteger()
-            _rtu.applicationDatatype = BACnetApplicationDatatypesChoice.SignedInteger
-            _rtu.tagNumber = _tagNum
-            _rtu.tagClass = BACnetTagClassChoice.applicationTag
-            var _len = UInt32(_appTag & 0b0000_0111)
-            _rtu.tagLength = _len
-            
-            if(_len>=1 && _len<=4){
-                _rtu.dataValue = packet.read_Int32_WithLenth_FromBuff(Int64(_len))
-            }else{
-                throw  BACnetDecodeErro("解码错误:无法识别长度为${_len}的UnsignedInteger数据")
-            }
-            return _rtu
-        }else{
-            packet.cursorMoveBackward(1)
-            let _rtu=BACnetApplicationDatatype.decodingFromArrayByte(packet)
-            return _rtu
-        }
-    }
-
-    public func decodingContextSpecificDataFromArrayByte(packet:ByteBuf): Unit{
-        let _appTag = packet.read_UInt8_FromBuf();
-        let _classBit = (_appTag & 0b0000_1000)>>3
-        if(_classBit == 0){
-            throw BACnetDecodeErro("解码错误:使用上下文指定类型解码函数解码原语类型")
-        }
-        this.tagClass = BACnetTagClassChoice.contextSpecificTag
-
-        var _len = UInt32(_appTag & 0b0000_0111)
-        if(_len<1 || _len>4){
-            throw  BACnetDecodeErro("解码错误:无法识别长度为${_len}的UnsignedInteger数据")
-        }
-
-        this.tagLength = _len
-        this.dataValue = packet.read_Int32_WithLenth_FromBuff(Int64(_len))
-
-        let _tagNum = (_appTag & 0b1111_0000)>>4
-        this.tagNumber = _tagNum
-        
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.UnsignedInteger
-
-        return
-    }
-
-    public func encodingToPrimitiveData():Array<Byte>{
-        let _tagNum:UInt8 = 3 << 4
-        var _applicationTag = 0u8
-        _applicationTag = _applicationTag | _tagNum
-        _applicationTag = _applicationTag | 0b0000_0000
-        var _len:UInt8 = 1
-        
-        if (dataValue>=-128 && dataValue<=127) {
-            //1字节数
-            _len = 1
-        }else if ((dataValue>=-32768 && dataValue < -128) || (dataValue>127 && dataValue<=32767)) {
-            //2字节数
-            _len = 2
-        }else if ((dataValue>=-8388608 && dataValue< -32768) || (dataValue>32767 && dataValue<=8388607)) {
-            //3字节数
-            _len = 3
-        }else if ((dataValue >= -2147483648 && dataValue< -8388608) || (dataValue>8388607 && dataValue<=2147483647)) {
-            //4字节
-            _len = 4
-        }
-
-        this.tagLength = UInt32(_len)
-        _applicationTag = _applicationTag | _len
-        var _value_Array = Array<Byte>(4,repeat:0)
-        this.dataValue.writeBigEndian(_value_Array)
-
-        var _rtu:Array<Byte> = Array<Byte>(Int64(_len+1),repeat:0)
-        _rtu[0] = _applicationTag
-        _value_Array.copyTo(_rtu, Int64(4-_len), 1, Int64(_len))
-        return _rtu        
-    }
-
-    public func encodingToContextSpecificData():Array<Byte>{
-        let _tagNum:UInt8 = this.tagNumber << 4
-        var _applicationTag = 0u8
-        _applicationTag = _applicationTag | _tagNum
-        _applicationTag = _applicationTag | 0b0000_1000
-        
-        var _len:UInt8 = 1
-        if (dataValue>=-128 && dataValue<=127) {
-            //1字节数
-            _len = 1
-        }else if ((dataValue>=-32768 && dataValue < -128) || (dataValue>127 && dataValue<=32767)) {
-            //2字节数
-            _len = 2
-        }else if ((dataValue>=-8388608 && dataValue< -32768) || (dataValue>32767 && dataValue<=8388607)) {
-            //3字节数
-            _len = 3
-        }else if ((dataValue >= -2147483648 && dataValue< -8388608) || (dataValue>8388607 && dataValue<=2147483647)) {
-            //4字节
-            _len = 4
-        }
-
-        this.tagLength = UInt32(_len)
-        _applicationTag = _applicationTag | _len
-        var _value_Array = Array<Byte>(4,repeat:0)
-        this.dataValue.writeBigEndian(_value_Array)
-
-        var _rtu:Array<Byte> = Array<Byte>(Int64(_len+1),repeat:0)
-        _rtu[0] = _applicationTag
-        _value_Array.copyTo(_rtu, Int64(4-_len), 1, Int64(_len))
-        return _rtu 
-    }
-}
-
-public class BACnet_Real
-<: BACnetApplicationDatatype
-& ICodecBACnetApplicationData<BACnetApplicationDatatype>
-& IHaveDataValue<Float32>
-{
-    private var _dataValue:Float32 = 0.0
-    public mut prop dataValue:Float32{
-        get(){ return _dataValue}
-        set(arg_Value){_dataValue = arg_Value}
-    }
-
-    public init(){
-        this.tagNumber = 4
-        this.tagClass = BACnetTagClassChoice.applicationTag
-        this._dataValue = 0.0
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.Real        
-    }
-
-    public init(arg_tagNumber:UInt8,
-    arg_tagClass:BACnetTagClassChoice,
-    arg_tagLength:UInt32,
-    arg_dataValue:Float32)
-    {
-        this.tagNumber = arg_tagNumber
-        this.tagClass = arg_tagClass
-        this.tagLength = arg_tagLength
-        this._dataValue = arg_dataValue
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.Real
-    }
-
-    public static func decodingPrimitiveDataFromArrayByte(packet:ByteBuf): BACnetApplicationDatatype{
-        let _appTag = packet.read_UInt8_FromBuf();
-        let _classBit = (_appTag & 0b0000_1000)>>3
-        if(_classBit == 1){
-            throw BACnetDecodeErro("解码错误:使用原语类型解码函数解析上下文指定编码")
-        }
-        let _tagNum = (_appTag & 0b1111_0000)>>4
-        if (_tagNum == 4) {
-            //是Real量
-            var _rtu = BACnet_Real()
-            _rtu.applicationDatatype = BACnetApplicationDatatypesChoice.Real
-            _rtu.tagNumber = _tagNum
-            _rtu.tagClass = BACnetTagClassChoice.applicationTag
-            var _len = UInt32(_appTag & 0b0000_0111)
-            _rtu.tagLength = _len
-            
-            if(_len!=4){
-                throw  BACnetDecodeErro("解码错误:无法识别长度为${_len}的Bacnet_Real数据")
-            }
-            _rtu.dataValue = packet.read_Float32_FromBuff()
-            return _rtu
-        }else{
-            packet.cursorMoveBackward(1)
-            let _rtu=BACnetApplicationDatatype.decodingFromArrayByte(packet)
-            return _rtu
-        }
-    }
-
-    public func decodingContextSpecificDataFromArrayByte(packet:ByteBuf): Unit{
-        let _appTag = packet.read_UInt8_FromBuf();
-
-        let _classBit = (_appTag & 0b0000_1000)>>3
-        if(_classBit == 0){
-            throw BACnetDecodeErro("解码错误:使用上下文指定类型解码函数解码原语类型")
-        }
-        this.tagClass = BACnetTagClassChoice.contextSpecificTag
-
-        var _len = UInt32(_appTag & 0b0000_0111)
-        if(_len!=4){
-            throw  BACnetDecodeErro("解码错误:无法识别长度为${_len}的UnsignedInteger数据")
-        }
-
-        this.tagLength = _len
-        this.dataValue = packet.read_Float32_FromBuff()
-
-        let _tagNum = (_appTag & 0b1111_0000)>>4
-        this.tagNumber = _tagNum
-        
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.UnsignedInteger
-
-        return
-    }
-
-    public func encodingToPrimitiveData():Array<Byte>{
-        let _tagNum:UInt8 = 4 << 4
-        var _applicationTag = 0b0000_0000u8
-        _applicationTag = _applicationTag | _tagNum
-        _applicationTag = _applicationTag | 0b0000_0000
-        let _len:UInt8 = 4
-
-        this.tagLength = UInt32(_len)
-        _applicationTag = _applicationTag | _len
-        var _value_Array = Array<Byte>(4,repeat:0)
-        this.dataValue.writeBigEndian(_value_Array)
-
-        var _rtu:Array<Byte> = Array<Byte>(Int64(_len+1),repeat:0)
-        _rtu[0] = _applicationTag
-        _value_Array.copyTo(_rtu, Int64(4-_len), 1, Int64(_len))
-        return _rtu        
-    }
-
-    public func encodingToContextSpecificData():Array<Byte>{
-        let _tagNum:UInt8 = this.tagNumber << 4
-        var _applicationTag = 0u8
-        _applicationTag = _applicationTag | _tagNum
-        _applicationTag = _applicationTag | 0b0000_1000
-        
-        let _len:UInt8 = 4
-        this.tagLength = UInt32(_len)
-        _applicationTag = _applicationTag | _len
-        var _value_Array = Array<Byte>(4,repeat:0)
-        this.dataValue.writeBigEndian(_value_Array)
-
-        var _rtu:Array<Byte> = Array<Byte>(Int64(_len+1),repeat:0)
-        _rtu[0] = _applicationTag
-        _value_Array.copyTo(_rtu, Int64(4-_len), 1, Int64(_len))
-        return _rtu 
-    }
-}
-
-public class BACnet_Double
-<: BACnetApplicationDatatype
-& ICodecBACnetApplicationData<BACnetApplicationDatatype>
-& IHaveDataValue<Float64>
-{
-    private var _dataValue:Float64 = 0.0
-    public mut prop dataValue:Float64{
-        get(){ return _dataValue}
-        set(arg_Value){_dataValue = arg_Value}
-    }
-
-    public init(){
-        this.tagNumber = 5
-        this.tagClass = BACnetTagClassChoice.applicationTag
-        this._dataValue = 0.0
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.Double        
-    }
-
-    public init(arg_tagNumber:UInt8,
-    arg_tagClass:BACnetTagClassChoice,
-    arg_tagLength:UInt32,
-    arg_dataValue:Float64)
-    {
-        this.tagNumber = arg_tagNumber
-        this.tagClass = arg_tagClass
-        this.tagLength = arg_tagLength
-        this._dataValue = arg_dataValue
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.Double
-    }
-
-    public static func decodingPrimitiveDataFromArrayByte(packet:ByteBuf): BACnetApplicationDatatype{
-        let _appTag = packet.read_UInt8_FromBuf();
-        let _classBit = (_appTag & 0b0000_1000)>>3
-        if(_classBit == 1){
-            throw BACnetDecodeErro("解码错误:使用原语类型解码函数解析上下文指定编码")
-        }
-        let _tagNum = (_appTag & 0b1111_0000)>>4
-        if (_tagNum == 5) {
-            //是Double量
-            var _rtu = BACnet_Double()
-            _rtu.applicationDatatype = BACnetApplicationDatatypesChoice.Double
-            _rtu.tagNumber = _tagNum
-            _rtu.tagClass = BACnetTagClassChoice.applicationTag
-            var _len = _appTag & 0b0000_0111
-            if(_len!=0b0000_0101){
-                throw  BACnetDecodeErro("解码错误:Bacnet_Real数据的Tag_lenth域必须是0b0000_0101")
-            }
-            let _tagLen = UInt32(packet.read_UInt8_FromBuf());
-            _rtu.tagLength = _tagLen
-            
-            if(_rtu.tagLength!=8){
-                throw  BACnetDecodeErro("解码错误:无法识别长度为${_rtu.tagLength}的Bacnet_Real数据")
-            }
-            _rtu.dataValue = packet.read_Float64_FromBuff()
-            return _rtu
-        }else{
-            packet.cursorMoveBackward(1)
-            let _rtu=BACnetApplicationDatatype.decodingFromArrayByte(packet)
-            return _rtu
-        }
-    }
-
-    public func decodingContextSpecificDataFromArrayByte(packet:ByteBuf): Unit{
-        let _appTag = packet.read_UInt8_FromBuf();
-
-        let _classBit = (_appTag & 0b0000_1000)>>3
-        if(_classBit == 0){
-            throw BACnetDecodeErro("解码错误:使用上下文指定类型解码函数解码原语类型")
-        }
-        this.tagClass = BACnetTagClassChoice.contextSpecificTag
-
-        var _len = _appTag & 0b0000_0111
-        if(_len!=0b0000_0101){
-            throw  BACnetDecodeErro("解码错误:Bacnet_Real数据的Tag_lenth域必须是0b0000_0101")
-        }
-        let _tagLen = UInt32(packet.read_UInt8_FromBuf());
-        this.tagLength = _tagLen
-        
-        if(this.tagLength!=8){
-            throw  BACnetDecodeErro("解码错误:无法识别长度为${this.tagLength}的Bacnet_Real数据")
-        }
-        this.dataValue = packet.read_Float64_FromBuff()
-
-        let _tagNum = (_appTag & 0b1111_0000)>>4
-        this.tagNumber = _tagNum
-        
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.Double
-
-        return
-    }
-
-    public func encodingToPrimitiveData():Array<Byte>{
-        let _tagNum:UInt8 = 5 << 4
-        var _applicationTag = 0b0000_0000u8
-        _applicationTag = _applicationTag | _tagNum
-        _applicationTag = _applicationTag | 0b0000_0000
-        let _len:UInt8 = 8
-
-        this.tagLength = UInt32(_len)
-        var _value_Array = Array<Byte>(8,repeat:0)
-        this.dataValue.writeBigEndian(_value_Array)
-        //因为长度固定为8，在5~253范围内，所以tagLength域
-        //固定为0b0101,并在随后的一个字节里标实际长度
-        _applicationTag = _applicationTag | 0b0000_0101
-        var _rtu:Array<Byte> = Array<Byte>(Int64(_len+2),repeat:0)
-        _rtu[0] = _applicationTag
-        _rtu[1] = _len
-        _value_Array.copyTo(_rtu, Int64(8-_len), 2, Int64(_len))
-        return _rtu        
-    }
-
-    public func encodingToContextSpecificData():Array<Byte>{
-        let _tagNum:UInt8 = this.tagNumber << 4
-        var _applicationTag = 0u8
-        _applicationTag = _applicationTag | _tagNum
-        _applicationTag = _applicationTag | 0b0000_1000
-        
-        let _len:UInt8 = 8
-
-        this.tagLength = UInt32(_len)
-        var _value_Array = Array<Byte>(8,repeat:0)
-        this.dataValue.writeBigEndian(_value_Array)
-        //因为长度固定为8，在5~253范围内，所以tagLength域
-        //固定为0b0101,并在随后的一个字节里标实际长度
-        _applicationTag = _applicationTag | 0b0000_0101
-        var _rtu:Array<Byte> = Array<Byte>(Int64(_len+2),repeat:0)
-        _rtu[0] = _applicationTag
-        _rtu[1] = _len
-        _value_Array.copyTo(_rtu, Int64(8-_len), 2, Int64(_len))
-        return _rtu 
-    }
+    _rtu = _array_buf.toArray()
+    return _rtu
 }
