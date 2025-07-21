@@ -139,7 +139,7 @@ public class BACnet_UnsignedInteger
         this.tagLength = UInt32(_len)
 
         var _data_len = Int64(this.tagLength)
-        var _taghead_buf = encodingToContextSpecificDataTagHead(this.tagNumber, this.tagLength)
+        var _taghead_buf = encodingToApplicationDataTagHead(this.tagNumber, this.tagLength,BACnetTagClassChoice.contextSpecificTag)
         let _rtu_len = _taghead_buf.size + Int64(_data_len)
         _rtu = Array<Byte>(_rtu_len,repeat:0u8)
         _taghead_buf.copyTo(_rtu, 0, 0, _taghead_buf.size)

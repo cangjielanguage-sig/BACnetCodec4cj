@@ -298,24 +298,24 @@ public func convertHexStringToArray(arg_str:String):Array<Byte>{
     return _rtu
 }
 
-public func redaLengthFromArray(arg_packet:ByteBuf):UInt32{
-    var _rtu:UInt32 = 0
-    let _lenth_1_Byte = arg_packet.read_UInt8_FromBuf()
-    if(_lenth_1_Byte < 0XFEu8){
-        //数据长度为5~253
-        _rtu = UInt32(_lenth_1_Byte)
-    }else if(_lenth_1_Byte == 0XFEu8){
-        //数据长度为254~65535时
-        let _lenth_2_3_Byte = arg_packet.read_Int16_FromBuff()
-        _rtu = UInt32(_lenth_2_3_Byte)
-    }else if(_lenth_1_Byte == 0XFFu8){
+// public func redaLengthFromArray(arg_packet:ByteBuf):UInt32{
+//     var _rtu:UInt32 = 0
+//     let _lenth_1_Byte = arg_packet.read_UInt8_FromBuf()
+//     if(_lenth_1_Byte < 0XFEu8){
+//         //数据长度为5~253
+//         _rtu = UInt32(_lenth_1_Byte)
+//     }else if(_lenth_1_Byte == 0XFEu8){
+//         //数据长度为254~65535时
+//         let _lenth_2_3_Byte = arg_packet.read_Int16_FromBuff()
+//         _rtu = UInt32(_lenth_2_3_Byte)
+//     }else if(_lenth_1_Byte == 0XFFu8){
 
-    }
-
-    return _rtu
-}
+//     }
+//     return _rtu
+// }
 
 public func readContextSpecificTagNumber(arg_tag:Byte,arg_packet:ByteBuf):UInt8{
+    //若存在扩展tagNumber字节，则游标会前进一步
     var _rtu:UInt8 = 0
     let _tagNum = arg_tag>>4
     if(_tagNum<15){
@@ -327,12 +327,58 @@ public func readContextSpecificTagNumber(arg_tag:Byte,arg_packet:ByteBuf):UInt8{
     return _rtu
 }
 
-public func encodingToContextSpecificDataTagHead(arg_tagNum:UInt8,arg_tagLength:UInt32):Array<Byte>{
+public func read_BACnetApplicationDataLength(arg_tag:Byte,arg_packet:ByteBuf):UInt32{
+    //读取数据的可变长度
+    //只适用于PrimitiveData
+    //应该在读取完tagNumber域的值，若存在扩展tagNumber字节则指针已过该字节后再调用本函数读取用户数据的长度
+    //若存在扩展dataLength字节，则游标会前进1到4步，最多4步
+    var _rtu:UInt32 = 0
+    var _len = arg_tag & 0b0000_0111
+    if (_len < 0b0000_0101u8) {
+        //0~4间无需扩展dataLength字节
+        _rtu = UInt32(_len)
+        return _rtu
+    }else if (_len > 0b0000_0111u8) {
+        throw  BACnetDecodeErro("解码错误:无法识别的类型数据")
+    }else if (_len == 0b0000_0110u8) {
+        //ConstructedData 的 Opening Tag ，无可用长度信息
+        //因为ConstructedData应该是要预先知道那个位置是构造数据，主动去解析的，所以实际上不应该调用到此函数
+        throw  BACnetDecodeErro("解码错误:得到ConstructedData 的 Opening Tag ，无可用长度信息")
+    }else if (_len == 0b0000_0111u8) {
+        //ConstructedData 的 Closeing Tag ，无可用长度信息
+        //因为ConstructedData应该是要预先知道那个位置是构造数据，主动去解析的，所以实际上不应该调用到此函数
+        throw  BACnetDecodeErro("解码错误:得到ConstructedData 的 Opening Tag ，无可用长度信息")
+    }
+
+    //_len == 0b0000_0111u8 有扩展长度字节
+    //读取1字节数，游标+1
+    let _len_add_1 = arg_packet.read_UInt8_FromBuf()
+    if(_len < 254){
+        //只有1个扩展长度字节
+        _rtu = UInt32(_len_add_1)
+        return _rtu
+    }else if (_len == 254) {
+        //后跟2个字节的扩展长度
+        //读取2字节数，游标加2
+        let _len_add_2_3 = arg_packet.read_UInt16_FromBuff()
+        _rtu = UInt32(_len_add_2_3)
+        return _rtu
+    }else if (_len == 255) {
+        //后跟4个字节的扩展长度
+        //读取4字节数，游标加4
+        _rtu = arg_packet.read_UInt32_FromBuff()
+        return _rtu
+    }
+
+    return _rtu
+}
+
+public func encodingToApplicationDataTagHead(arg_tagNum:UInt8,arg_tagLength:UInt32,arg_tagClass:BACnetTagClassChoice):Array<Byte>{
     var _rtu:Array<Byte>
     var _array_buf:ArrayList<Byte> = ArrayList<Byte>()
     var _SDContextTag = 0b0000_0000u8
-    //ContextSpecificDataTag在tagClass位是1
-    _SDContextTag = _SDContextTag | 0b0000_1000
+    let arg_tagClass_mask = arg_tagClass.toUInt8()
+    _SDContextTag = _SDContextTag | arg_tagClass_mask
     _array_buf.add(_SDContextTag)
     if(arg_tagNum<15){
         //tagnum小于15时，上下文标记号直接写在标记域，没有额外标记号字节

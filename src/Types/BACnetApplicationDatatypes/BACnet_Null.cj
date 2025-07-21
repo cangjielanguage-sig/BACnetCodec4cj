@@ -93,7 +93,7 @@ public class BACnet_Null
         //     throw  BACnetDecodeErro("编码错误:BACnet的Null量长度必须为0")
         // }
         this.tagLength = 0
-        var _taghead_buf = encodingToContextSpecificDataTagHead(this.tagNumber, this.tagLength)
+        var _taghead_buf = encodingToApplicationDataTagHead(this.tagNumber, this.tagLength,BACnetTagClassChoice.contextSpecificTag)
         let _rtu_len = _taghead_buf.size
         _rtu = Array<Byte>(_rtu_len,repeat:0u8)
         _taghead_buf.copyTo(_rtu, 0, 0, _taghead_buf.size)

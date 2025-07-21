@@ -498,4 +498,39 @@ func test_BACnet_Double(){
 
 }
 
+@Test
+func test_BACnet_OctetString(){
+    var _test_Target = BACnet_OctetString()
+    var _context_decode = BACnet_OctetString()
+    var _check_arr:Array<Byte>
+
+    _test_Target.dataValue = "FEDCBA98"
+    _check_arr = [0b0110_0100u8,0XFEu8,0XDCu8,0XBAu8,0X98u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_OctetString,String>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = "FEDCBA98FEDCBA98"
+    _check_arr = [0b0110_0101u8,0X08u8,0XFEu8,0XDCu8,0XBAu8,0X98u8,0XFEu8,0XDCu8,0XBAu8,0X98u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_OctetString,String>(_test_Target,_check_arr)
+
+    //上下文报文用原语解码函数，应当报错
+    _check_arr = [0b0110_1100u8,0XFEu8,0XDCu8,0XBAu8,0X98u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_OctetString>(_test_Target,_check_arr)
+
+
+
+    _test_Target.dataValue = "FEDCBA98"
+    _test_Target.tagNumber = 66
+    _check_arr = [  0b1111_1100u8,0X42u8,0XFEu8,0XDCu8,0XBAu8,0X98u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_OctetString,String>(_test_Target,_check_arr,_context_decode)
+
+    _test_Target.dataValue = "FEDCBA98FEDCBA98"
+    _test_Target.tagNumber = 66
+    _check_arr = [  0b1111_1101u8,0X42u8,0X08u8,0XFEu8,
+                    0XDCu8,0XBAu8,0X98u8,0XFEu8,
+                    0XDCu8,0XBAu8,0X98u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_OctetString,String>(_test_Target,_check_arr,_context_decode)
+
+    _check_arr = [0b1111_0100u8,0X42u8,0XFEu8,0XDCu8,0XBAu8,0X98u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_OctetString>(_test_Target,_check_arr)
+}
     

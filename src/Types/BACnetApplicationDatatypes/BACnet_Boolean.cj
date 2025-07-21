@@ -109,7 +109,7 @@ public class BACnet_Boolean
         //     throw  BACnetDecodeErro("解码错误:检测到AppTag长度为${this.tagLength},BACnet的Bool量长度固定为1，这是个无法识别的Bool数据长度")
         // }
         this.tagLength = 1
-        var _taghead_buf = encodingToContextSpecificDataTagHead(this.tagNumber, this.tagLength)
+        var _taghead_buf = encodingToApplicationDataTagHead(this.tagNumber, this.tagLength,BACnetTagClassChoice.contextSpecificTag)
         let _rtu_len = _taghead_buf.size + 1
         _rtu = Array<Byte>(_rtu_len,repeat:0u8)
         _taghead_buf.copyTo(_rtu, 0, 0, _taghead_buf.size)
