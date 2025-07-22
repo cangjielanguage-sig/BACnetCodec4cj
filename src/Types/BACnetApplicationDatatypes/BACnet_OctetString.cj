@@ -4,6 +4,7 @@ import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
 import std.binary.*
 import std.collection.*
+import std.convert.*
 
 public class BACnet_OctetString
 <: BACnetApplicationDatatype
@@ -34,6 +35,60 @@ public class BACnet_OctetString
         this.applicationDatatype = BACnetApplicationDatatypesChoice.OctetString
     }
 
+        
+    
+
+    public static func decodingArrayToHexString(arg_array:Array<Byte>):String{
+        var _rtu:String = ""
+        for(bitem in arg_array){
+            _rtu += bitem.format("02X")
+        }
+        return _rtu
+    }
+
+    public func encodingHexStringToArray(arg_str:String):Array<Byte>{
+        var _rtu:Array<Byte>
+        var _str_Size = arg_str.size
+        let _index_max = _str_Size -1
+        var _arrSize = 0
+        if(_str_Size%2 == 0){
+            _arrSize = _str_Size/2
+        }else{
+            _arrSize = _str_Size/2 +1
+        }
+        _rtu = Array<Byte>(_arrSize,repeat:0)
+        var _byte_buf:Byte = 0
+        var _str_buf:StringBuilder = StringBuilder(2)
+        for ((_index,_item) in arg_str |> enumerate) {        
+            if (_index<_index_max) {
+                if (_index==0 || (_index % 2 == 0)) {
+                    _str_buf.append(Rune(_item))
+                }else{
+                    _str_buf.append(Rune(_item))
+                    let _byteIndex = _index/2
+                    _byte_buf = Byte.parse(_str_buf.toString(), radix: 16)
+                    _rtu[_byteIndex] = _byte_buf
+                    _str_buf.reset()
+                }
+            }else{
+                if (_index % 2 == 0) {
+                    _str_buf.append("0")
+                    _str_buf.append(Rune(_item))
+                    let _byteIndex = _index/2
+                    _byte_buf = Byte.parse(_str_buf.toString(), radix: 16)
+                    _rtu[_byteIndex] = _byte_buf
+                }else{
+                    _str_buf.append(Rune(_item))
+                    let _byteIndex = _index/2
+                    _byte_buf = Byte.parse(_str_buf.toString(), radix: 16)
+                    _rtu[_byteIndex] = _byte_buf
+                }
+            }
+        }
+        return _rtu
+    }
+
+
     public static func decodingPrimitiveDataFromArrayByte(packet:ByteBuf): BACnetApplicationDatatype{
         let _appTag = packet.read_UInt8_FromBuf();
         let _classBit = (_appTag & 0b0000_1000)>>3
@@ -48,10 +103,10 @@ public class BACnet_OctetString
             _rtu.tagNumber = _tagNum
             _rtu.tagClass = BACnetTagClassChoice.applicationTag
             //var _len = _appTag & 0b0000_0111
-            let _tagLen = read_BACnetApplicationDataLength(_appTag,packet)
+            let _tagLen = readBACnetApplicationDataLength(_appTag,packet)
             _rtu.tagLength = _tagLen
             let _dataOct = packet.read_FromBuff(Int64(_tagLen))
-            _rtu.dataValue = convertArrayToHexString(_dataOct)
+            _rtu.dataValue = decodingArrayToHexString(_dataOct)
             return _rtu
         }else{
             packet.cursorMoveBackward(1)
@@ -73,20 +128,20 @@ public class BACnet_OctetString
         this.tagNumber = _tagNum
 
         //var _len = _appTag & 0b0000_0111
-        let _tagLen = read_BACnetApplicationDataLength(_appTag,packet)
+        let _tagLen = readBACnetApplicationDataLength(_appTag,packet)
         this.tagLength = _tagLen
         
         let _dataOct = packet.read_FromBuff(Int64(_tagLen))
-        this.dataValue = convertArrayToHexString(_dataOct)
+        this.dataValue = decodingArrayToHexString(_dataOct)
 
-        this.applicationDatatype = BACnetApplicationDatatypesChoice.Double
+        this.applicationDatatype = BACnetApplicationDatatypesChoice.OctetString
 
         return
     }
 
     public func encodingToPrimitiveData():Array<Byte>{
         this.tagNumber = 6
-        var _value_Array = convertHexStringToArray(this.dataValue)
+        var _value_Array = encodingHexStringToArray(this.dataValue)
         this.tagLength = UInt32(_value_Array.size)
         let _tagHead = encodingToApplicationDataTagHead(this.tagNumber, this.tagLength,BACnetTagClassChoice.applicationTag)
         let _rtu_len = _tagHead.size + _value_Array.size
@@ -97,7 +152,7 @@ public class BACnet_OctetString
     }
 
     public func encodingToContextSpecificData():Array<Byte>{
-        var _value_Array = convertHexStringToArray(this.dataValue)
+        var _value_Array = encodingHexStringToArray(this.dataValue)
         this.tagLength = UInt32(_value_Array.size)
         let _tagHead = encodingToApplicationDataTagHead(this.tagNumber, this.tagLength,BACnetTagClassChoice.contextSpecificTag)
         let _rtu_len = _tagHead.size + _value_Array.size
@@ -106,4 +161,5 @@ public class BACnet_OctetString
         _value_Array.copyTo(_rtu, 0, _tagHead.size, _value_Array.size)
         return _rtu 
     }
+
 }

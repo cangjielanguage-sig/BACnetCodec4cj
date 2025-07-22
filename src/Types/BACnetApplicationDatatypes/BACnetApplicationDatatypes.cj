@@ -247,73 +247,6 @@ public enum BACnetTagClassChoice
     }
 }
 
-
-public func convertArrayToHexString(arg_array:Array<Byte>):String{
-    var _rtu:String = ""
-    for(bitem in arg_array){
-        _rtu += bitem.format("02X")
-    }
-    return _rtu
-}
-
-public func convertHexStringToArray(arg_str:String):Array<Byte>{
-    var _rtu:Array<Byte>
-    var _str_Size = arg_str.size
-    let _index_max = _str_Size -1
-    var _arrSize = 0
-    if(_str_Size%2 == 0){
-        _arrSize = _str_Size/2
-    }else{
-        _arrSize = _str_Size/2 +1
-    }
-    _rtu = Array<Byte>(_arrSize,repeat:0)
-    var _byte_buf:Byte = 0
-    var _str_buf:StringBuilder = StringBuilder(2)
-    for ((_index,_item) in arg_str |> enumerate) {        
-        if (_index<_index_max) {
-            if (_index==0 || (_index % 2 == 0)) {
-                _str_buf.append(Rune(_item))
-            }else{
-                _str_buf.append(Rune(_item))
-                let _byteIndex = _index/2
-                _byte_buf = Byte.parse(_str_buf.toString(), radix: 16)
-                _rtu[_byteIndex] = _byte_buf
-                _str_buf.reset()
-            }
-        }else{
-            if (_index % 2 == 0) {
-                _str_buf.append("0")
-                _str_buf.append(Rune(_item))
-                let _byteIndex = _index/2
-                _byte_buf = Byte.parse(_str_buf.toString(), radix: 16)
-                _rtu[_byteIndex] = _byte_buf
-            }else{
-                _str_buf.append(Rune(_item))
-                let _byteIndex = _index/2
-                _byte_buf = Byte.parse(_str_buf.toString(), radix: 16)
-                _rtu[_byteIndex] = _byte_buf
-            }
-        }
-    }
-    return _rtu
-}
-
-// public func redaLengthFromArray(arg_packet:ByteBuf):UInt32{
-//     var _rtu:UInt32 = 0
-//     let _lenth_1_Byte = arg_packet.read_UInt8_FromBuf()
-//     if(_lenth_1_Byte < 0XFEu8){
-//         //数据长度为5~253
-//         _rtu = UInt32(_lenth_1_Byte)
-//     }else if(_lenth_1_Byte == 0XFEu8){
-//         //数据长度为254~65535时
-//         let _lenth_2_3_Byte = arg_packet.read_Int16_FromBuff()
-//         _rtu = UInt32(_lenth_2_3_Byte)
-//     }else if(_lenth_1_Byte == 0XFFu8){
-
-//     }
-//     return _rtu
-// }
-
 public func readContextSpecificTagNumber(arg_tag:Byte,arg_packet:ByteBuf):UInt8{
     //若存在扩展tagNumber字节，则游标会前进一步
     var _rtu:UInt8 = 0
@@ -327,7 +260,7 @@ public func readContextSpecificTagNumber(arg_tag:Byte,arg_packet:ByteBuf):UInt8{
     return _rtu
 }
 
-public func read_BACnetApplicationDataLength(arg_tag:Byte,arg_packet:ByteBuf):UInt32{
+public func readBACnetApplicationDataLength(arg_tag:Byte,arg_packet:ByteBuf):UInt32{
     //读取数据的可变长度
     //只适用于PrimitiveData
     //应该在读取完tagNumber域的值，若存在扩展tagNumber字节则指针已过该字节后再调用本函数读取用户数据的长度

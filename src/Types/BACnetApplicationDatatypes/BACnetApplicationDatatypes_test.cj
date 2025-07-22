@@ -533,4 +533,160 @@ func test_BACnet_OctetString(){
     _check_arr = [0b1111_0100u8,0X42u8,0XFEu8,0XDCu8,0XBAu8,0X98u8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_OctetString>(_test_Target,_check_arr)
 }
+
+@Test
+func test_BACnet_CharacterString(){
+    var _test_Target = BACnet_CharacterString()
+    var _context_decode = BACnet_CharacterString()
+    var _check_arr:Array<Byte>
+
+    //UTF_8
+    _test_Target.dataValue = "ÊString"
+    _test_Target.encodeCharSet = BacnetCharSetChoice.UTF_8
+    //75, 09, 00, C3, 8A, 53, 74, 72, 69, 6E, 67,
+    _check_arr = [0b0111_0101u8,0X09u8,0X00u8,0XC3u8,0X8Au8,0X53u8,0X74u8,0X72u8,0X69u8,0X6Eu8,0X67u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr)
+
+    //CodePage(1252)
+    //01, 04, E4 这3个字节指定了CodePage(1252)  编解码器
+    //可以看到编码内容明显变化
+    _test_Target.dataValue = "ÊString"
+    _test_Target.encodeCharSet = BacnetCharSetChoice.CodePage(1252)
+    //75, 0A, 01, 04, E4, CA, 53, 74, 72, 69, 6E, 67, 
+    _check_arr = [0b0111_0101u8,0X0Au8,0X01u8,0X04u8,0XE4u8,0XCAu8,0X53u8,0X74u8,0X72u8,0X69u8,0X6Eu8,0X67u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr)
     
+    //ISO_8859_1
+    //对比CodePage(1252)编码，01, 04, E4 这3个字节变成一个字节05,
+    //后续字符一样，因为内码1252其实本来就对应的是ISO_8859_1或者也叫WINDOWS_1252
+    _test_Target.dataValue = "ÊString"
+    _test_Target.encodeCharSet = BacnetCharSetChoice.ISO_8859_1
+    //75, 08, 05, CA, 53, 74, 72, 69, 6E, 67, 
+    _check_arr = [0b0111_0101u8,0X08u8,0X05u8,0XCAu8,0X53u8,0X74u8,0X72u8,0X69u8,0X6Eu8,0X67u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr)
+    
+    //JISX0208
+    //因为JISX0208没有Ê，charset4cj库编码是抛出异常，自动换UTF_8解码，所以最后编出来的码是UTF_8编码
+    _test_Target.dataValue = "ÊString"
+    _test_Target.encodeCharSet = BacnetCharSetChoice.JISX0208
+    //75, 09, 00, C3, 8A, 53, 74, 72, 69, 6E, 67,
+    _check_arr = [0b0111_0101u8,0X09u8,0X00u8,0XC3u8,0X8Au8,0X53u8,0X74u8,0X72u8,0X69u8,0X6Eu8,0X67u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr)
+
+    //JISX0208
+    //这个没异常，所以最后编出来的是ISO_2022_JP编码
+    _test_Target.dataValue = "かString"
+    _test_Target.encodeCharSet = BacnetCharSetChoice.JISX0208
+    //75, 0F, 02, 1B, 24, 42, 24, 2B, 1B, 28, 42, 53, 74, 72, 69, 6E, 67,
+    _check_arr = [0b0111_0101u8,0X0Fu8,0X02u8,
+    0X1Bu8,0X24u8,0X42u8,0X24u8,0X2Bu8,0X1Bu8,0X28u8,0X42u8
+    ,0X53u8,0X74u8,0X72u8,0X69u8,0X6Eu8,0X67u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr)
+
+    //UTF_32
+    //可以看到和JISX0208编码有明显差异，当然这个不能说明JISX0208那个编码就是对的
+    _test_Target.dataValue = "かString"
+    _test_Target.encodeCharSet = BacnetCharSetChoice.UTF_32
+    //75, 1D, 03, 00, 00, 30, 4B, 00, 00, 00, 53, 00, 00, 00, 74, 00, 00, 00, 72, 00, 00, 00, 69, 00, 00, 00, 6E, 00, 00, 00, 67, 
+    _check_arr = [0b0111_0101u8,0X1Du8,0X03u8,
+    0X00u8,0X00u8,0X30u8,0X4Bu8,0X00u8,0X00u8,0X00u8,0X53u8,0X00u8,0X00u8,0X00u8,0X74u8,0X00u8,0X00u8,0X00u8,0X72u8
+    ,0X00u8,0X00u8,0X00u8,0X69u8,0X00u8,0X00u8,0X00u8,0X6Eu8,0X00u8,0X00u8,0X00u8,0X67u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr)
+
+    //UTF_16
+    //可以看到和JISX0208编码有明显差异，当然这个不能说明JISX0208那个编码就是对的
+    _test_Target.dataValue = "かString"
+    _test_Target.encodeCharSet = BacnetCharSetChoice.UTF_16
+    //75, 0F, 04, 30, 4B, 00, 53, 00, 74, 00, 72, 00, 69, 00, 6E, 00, 67, 
+    _check_arr = [0b0111_0101u8,0X0Fu8,0X04u8,
+    0X30u8,0X4Bu8,0X00u8,0X53u8,0X00u8,0X74u8,0X00u8,0X72u8
+    ,0X00u8,0X69u8,0X00u8,0X6Eu8,0X00u8,0X67u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr)
+
+
+    //上下文报文用原语解码函数，应当报错
+    _test_Target.dataValue = "かString"
+    _check_arr = [0b0111_1101u8,0X0Fu8,0X04u8,
+    0X30u8,0X4Bu8,0X00u8,0X53u8,0X00u8,0X74u8,0X00u8,0X72u8
+    ,0X00u8,0X69u8,0X00u8,0X6Eu8,0X00u8,0X67u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_CharacterString>(_test_Target,_check_arr)
+
+
+    _test_Target.dataValue = "ÊString"
+    _test_Target.tagNumber = 66
+    _test_Target.encodeCharSet = BacnetCharSetChoice.UTF_8
+    //FD, 42, 09, 00, C3, 8A, 53, 74, 72, 69, 6E, 67,
+    _check_arr = [  0b1111_1101u8,0X42u8,0X09u8,0X00u8,0XC3u8,0X8Au8,0X53u8,0X74u8,0X72u8,0X69u8,0X6Eu8,0X67u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr,_context_decode)
+
+    _test_Target.dataValue = "ÊString"
+    _test_Target.tagNumber = 66
+    _test_Target.encodeCharSet = BacnetCharSetChoice.CodePage(1252)
+    //FD, 42, 0A, 01, 04, E4, CA, 53, 74, 72, 69, 6E, 67,
+    _check_arr = [  0b1111_1101u8,0X42u8,0X0Au8,0X01u8,0X04u8,0XE4u8,0XCAu8,0X53u8,0X74u8,0X72u8,0X69u8,0X6Eu8,0X67u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr,_context_decode)
+
+    _test_Target.dataValue = "ÊString"
+    _test_Target.tagNumber = 66
+    _test_Target.encodeCharSet = BacnetCharSetChoice.ISO_8859_1
+    //FD, 42, 08, 05, CA, 53, 74, 72, 69, 6E, 67,
+    _check_arr = [  0b1111_1101u8,0X42u8,0X08u8,0X05u8,
+    0XCAu8,0X53u8,0X74u8,0X72u8,0X69u8,0X6Eu8,0X67u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr,_context_decode)
+
+    //JISX0208
+    //因为JISX0208没有Ê，charset4cj库编码是抛出异常，自动换UTF_8解码，所以最后编出来的码是UTF_8编码
+    _test_Target.dataValue = "ÊString"
+    _test_Target.tagNumber = 66
+    _test_Target.encodeCharSet = BacnetCharSetChoice.JISX0208
+    //FD, 42, 09, 00, C3, 8A, 53, 74, 72, 69, 6E, 67,
+    _check_arr = [  0b1111_1101u8,0X42u8,0X09u8,0X00u8,
+    0XC3u8,0X8Au8,0X53u8,0X74u8,0X72u8,0X69u8,0X6Eu8,0X67u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr,_context_decode)
+
+    //JISX0208
+    //这个没异常，所以最后编出来的是ISO_2022_JP编码
+    _test_Target.dataValue = "かString"
+    _test_Target.tagNumber = 66
+    _test_Target.encodeCharSet = BacnetCharSetChoice.JISX0208
+    //FD, 42, 0F, 02, 1B, 24, 42, 24, 2B, 1B, 28, 42, 53, 74, 72, 69, 6E, 67,
+    _check_arr = [0b1111_1101u8,0X42u8,0X0Fu8,0X02u8,
+    0X1Bu8,0X24u8,0X42u8,0X24u8,0X2Bu8,0X1Bu8,0X28u8,0X42u8
+    ,0X53u8,0X74u8,0X72u8,0X69u8,0X6Eu8,0X67u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr,_context_decode)
+
+    //UTF_32
+    //可以看到和JISX0208编码有明显差异，当然这个不能说明JISX0208那个编码就是对的
+    _test_Target.dataValue = "かString"
+    _test_Target.tagNumber = 66
+    _test_Target.encodeCharSet = BacnetCharSetChoice.UTF_32
+    //FD, 42, 1D, 03, 00, 00, 30, 4B, 00, 00, 00, 53, 00, 00, 00, 74, 00, 00, 00, 72, 00, 00, 00, 69, 00, 00, 00, 6E, 00, 00, 00, 67,
+    _check_arr = [0b1111_1101u8,0X42u8,0X1Du8,0X03u8,
+    0X00u8,0X00u8,0X30u8,0X4Bu8,0X00u8,0X00u8,0X00u8,0X53u8,
+    0X00u8,0X00u8,0X00u8,0X74u8,0X00u8,0X00u8,0X00u8,0X72u8,
+    0X00u8,0X00u8,0X00u8,0X69u8,0X00u8,0X00u8,0X00u8,0X6Eu8,
+    0X00u8,0X00u8,0X00u8,0X67u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr,_context_decode)
+
+    //UTF_16
+    //可以看到和JISX0208编码有明显差异，当然这个不能说明JISX0208那个编码就是对的
+    _test_Target.dataValue = "かString"
+    _test_Target.tagNumber = 66
+    _test_Target.encodeCharSet = BacnetCharSetChoice.UTF_16
+    //FD, 42, 0F, 04, 30, 4B, 00, 53, 00, 74, 00, 72, 00, 69, 00, 6E, 00, 67,
+    _check_arr = [0b1111_1101u8,0X42u8,0X0Fu8,0X04u8,
+    0X30u8,0X4Bu8,0X00u8,0X53u8,
+    0X00u8,0X74u8,0X00u8,0X72u8,
+    0X00u8,0X69u8,0X00u8,0X6Eu8,
+    0X00u8,0X67u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_CharacterString,String>(_test_Target,_check_arr,_context_decode)
+
+
+    _check_arr = [0b1111_0101u8,0X42u8,0X0Fu8,0X04u8,
+    0X30u8,0X4Bu8,0X00u8,0X53u8,
+    0X00u8,0X74u8,0X00u8,0X72u8,
+    0X00u8,0X69u8,0X00u8,0X6Eu8,
+    0X00u8,0X67u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_CharacterString>(_test_Target,_check_arr)
+
+}    
