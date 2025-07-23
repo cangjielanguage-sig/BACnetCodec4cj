@@ -24,6 +24,7 @@ BACnet是楼宇自控、HVAC设备领域的重要ISO标准通讯协议，在楼�
    - OctetString
    - CharacterString
    - BitString
+   - Enumerated
 
 `CharacterString的字符集中，除UTF_8使用仓颉默认编解码外，其他字符集解码依赖charset4cj库，感谢charset4cj库各位作者大大的分享。`
 

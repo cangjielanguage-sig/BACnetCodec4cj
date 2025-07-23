@@ -18,7 +18,7 @@ public class BACnet_BitString
     }
 
     public init(){
-        this.tagNumber = 6
+        this.tagNumber = 8
         this.tagClass = BACnetTagClassChoice.applicationTag
         this._dataValue = ""
         this.applicationDatatype = BACnetApplicationDatatypesChoice.BitString        

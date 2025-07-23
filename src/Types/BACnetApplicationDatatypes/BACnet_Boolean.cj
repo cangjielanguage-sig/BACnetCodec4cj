@@ -94,11 +94,9 @@ public class BACnet_Boolean
     }
 
     public func encodingToPrimitiveData():Array<Byte>{
-        var _rtu:Array<Byte> = [0b0000_0000]
+        var _rtu:Array<Byte> = [0b0001_0000]
         if (this.dataValue == true) {
             _rtu[0] = 0b0001_0001
-        }else{
-            _rtu[0] = 0b0001_0000
         }
         return _rtu        
     }
