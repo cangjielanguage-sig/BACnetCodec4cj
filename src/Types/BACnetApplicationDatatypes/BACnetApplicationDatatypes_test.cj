@@ -689,4 +689,42 @@ func test_BACnet_CharacterString(){
     0X00u8,0X67u8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_CharacterString>(_test_Target,_check_arr)
 
-}    
+} 
+
+@Test
+func test_BACnet_BitString(){
+    var _test_Target = BACnet_BitString()
+    var _context_decode = BACnet_BitString()
+    var _check_arr:Array<Byte>
+
+    _test_Target.dataValue = "10101"
+    _check_arr = [0b1000_0010u8,
+                    0X03u8,0XA8u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_BitString,String>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = "001011010110101001011010110101"
+    _check_arr = [0b1000_0101u8,0X05u8,
+                    0X02u8,0X2Du8,0X6Au8,0X5Au8,0XD4u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_BitString,String>(_test_Target,_check_arr)
+
+    //上下文报文用原语解码函数，应当报错
+    _check_arr = [0b1000_1101u8,0X05u8,
+                    0X02u8,0X2Du8,0X6Au8,0X5Au8,0XD4u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_BitString>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = "10101"
+    _test_Target.tagNumber = 66
+    _check_arr = [0b1111_1010u8,0X42u8,
+                    0X03u8,0XA8u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_BitString,String>(_test_Target,_check_arr,_context_decode)
+
+    _test_Target.dataValue = "001011010110101001011010110101"
+    _test_Target.tagNumber = 66
+    _check_arr = [0b1111_1101u8,0X42u8,0X05u8,
+                    0X02u8,0X2Du8,0X6Au8,0X5Au8,0XD4u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_BitString,String>(_test_Target,_check_arr,_context_decode)
+
+    _check_arr = [0b1111_0101u8,0X42u8,0X05u8,
+                    0X02u8,0X2Du8,0X6Au8,0X5Au8,0XD4u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_BitString>(_test_Target,_check_arr)
+}
