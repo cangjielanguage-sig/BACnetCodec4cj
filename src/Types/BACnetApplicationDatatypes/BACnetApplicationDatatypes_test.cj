@@ -3,6 +3,7 @@ import std.unittest
 import BACnetCodec4cj.ByteBuf.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.InterFaces.*
+import std.time.*
 
 func test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings
 <T,V>
@@ -818,5 +819,50 @@ func test_BACnet_Enumerated(){
     //长度为0
     _check_arr = [0b0011_1000u8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_Enumerated>(_test_Target,_check_arr)
+}
+
+@Test
+func test_BACnet_Date(){
+
+    var _test_Target = BACnet_Date()
+    var _context_decode = BACnet_Date()
+    var _check_arr:Array<Byte>
+
+    _test_Target.dataValue = DateTime.of(year: 2025, month: 7, dayOfMonth: 25, hour: 0, minute: 0, second: 0, nanosecond: 0, timeZone: TimeZone.Local)
+    _check_arr = [0b1010_0100u8,
+                    0X7Du8,0X07u8,0X19u8,0X05u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_Date,DateTime>(_test_Target,_check_arr)
+
+    //上下文报文用原语解码函数，应当报错
+    _check_arr = [0b1010_1100u8,0X7Du8,0X07u8,0X19u8,0X05u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_Date>(_test_Target,_check_arr)
+
+    //数字位数超4位，应当报错
+    _check_arr = [0b1010_0101u8,0X7Du8,0X07u8,0X19u8,0X05u8,0X05u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_Date>(_test_Target,_check_arr)
+
+    //数字位数为0，应当报错
+    _check_arr = [0b1010_0000u8,0X7Du8,0X07u8,0X19u8,0X05u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_Date>(_test_Target,_check_arr)
+
+//<----------------------------------------->
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = DateTime.of(year: 2025, month: 7, dayOfMonth: 25, hour: 0, minute: 0, second: 0, nanosecond: 0, timeZone: TimeZone.Local)
+    _check_arr = [0b1111_1100u8,0X42u8,
+                    0X7Du8,0X07u8,0X19u8,0X05u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_Date,DateTime>(_test_Target,_check_arr,_context_decode)
+
+    //原语报文用上下文解码函数，应当报错
+    _check_arr = [0b1111_0100u8,0X42u8,
+                    0X7Du8,0X07u8,0X19u8,0X05u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_Date>(_test_Target,_check_arr)
+    //长度超过4
+    _check_arr = [0b1111_1101u8,0X42u8,
+                    0X7Du8,0X07u8,0X19u8,0X05u8,0X05u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_Date>(_test_Target,_check_arr)
+    //长度为0
+    _check_arr = [0b1111_1000u8,0X42u8,
+                    0X7Du8,0X07u8,0X19u8,0X05u8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_Date>(_test_Target,_check_arr)
 
 }
