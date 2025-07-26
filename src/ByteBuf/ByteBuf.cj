@@ -125,6 +125,17 @@ public class ByteBuf {
         return _rtu
     }
 
+    public func read_UInt64_WithLenth_FromBuff(arg_Lenth:Int64):UInt64{
+        if (arg_Lenth>8 || arg_Lenth<1) {
+            throw ByteBufErro("超出UInt64长度正常范围")
+        }
+        let _valueByte = read_FromBuff(arg_Lenth)
+        let _UInt64Byte:Array<Byte> = Array<Byte>(8,repeat:0)
+        _valueByte.copyTo(_UInt64Byte, 0, 8-arg_Lenth, arg_Lenth)
+        let _rtu = UInt64.readBigEndian(_UInt64Byte)
+        return _rtu
+    }
+
     public func read_Int32_FromBuff():Int32{
         let _end:Int64 = _cursor + 4
         if(_end > dataBuf.size){
@@ -150,6 +161,23 @@ public class ByteBuf {
         }
         _valueByte.copyTo(_Int32Byte, 0, 4-arg_Lenth, arg_Lenth)
         let _rtu = Int32.readBigEndian(_Int32Byte)
+        return _rtu
+    }
+
+    public func read_Int64_WithLenth_FromBuff(arg_Lenth:Int64):Int64{
+        if (arg_Lenth>8 || arg_Lenth<1) {
+            throw ByteBufErro("超出UInt32长度正常范围")
+        }
+        let _valueByte = read_FromBuff(arg_Lenth)
+        let _valueBitMask:UInt8 = _valueByte[0] >> 7
+        var _Int64Byte:Array<Byte>
+        if (_valueBitMask == 0) {
+            _Int64Byte = Array<Byte>(8,repeat:0X00u8)
+        }else{
+            _Int64Byte = Array<Byte>(8,repeat:0XFFu8)
+        }
+        _valueByte.copyTo(_Int64Byte, 0, 8-arg_Lenth, arg_Lenth)
+        let _rtu = Int64.readBigEndian(_Int64Byte)
         return _rtu
     }
 

@@ -4,6 +4,7 @@ import BACnetCodec4cj.ByteBuf.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.InterFaces.*
 import std.time.*
+import BACnetCodec4cj.Types.*
 
 func test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings
 <T,V>
@@ -168,30 +169,50 @@ func test_BACnet_UnsignedInteger(){
 
     _test_Target.dataValue = 255
     _check_arr = [0b0010_0001u8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr)
 
     _test_Target.dataValue = 256
     _check_arr = [0b0010_0010u8,0X01u8,0X00u8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr)
 
     _test_Target.dataValue = 65535
     _check_arr = [0b0010_0010u8,0XFFu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr)
 
     _test_Target.dataValue = 16777215
     _check_arr = [0b0010_0011u8,0XFFu8,0XFFu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr)
 
     _test_Target.dataValue = 4294967295
     _check_arr = [0b0010_0100u8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr)
+    
+    _test_Target.dataValue = 1099511627775
+    _check_arr = [0b0010_0101u8,0X05u8,
+                    0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = 281474976710655
+    _check_arr = [0b0010_0101u8,0X06u8,
+                    0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = 72057594037927935
+    _check_arr = [0b0010_0101u8,0X07u8,
+                    0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = 18446744073709551615
+    _check_arr = [0b0010_0101u8,0X08u8,
+                    0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr)
 
     //上下文报文用原语解码函数，应当报错
     _check_arr = [0b0010_1001u8,0XFFu8]
     test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_UnsignedInteger>(_test_Target,_check_arr)
 
-    //数字位数超4位，应当报错
-    _check_arr = [0b0010_0101u8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    //数字位数超8位，应当报错
+    _check_arr = [0b0010_0101u8,0X09u8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
     test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_UnsignedInteger>(_test_Target,_check_arr)
 
     //数字位数为0，应当报错
@@ -201,50 +222,74 @@ func test_BACnet_UnsignedInteger(){
     _test_Target.tagNumber = 9
     _test_Target.dataValue = 255
     _check_arr = [0b1001_1001u8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr,_context_decode)
   
     _test_Target.tagNumber = 66
     _test_Target.dataValue = 255
     _check_arr = [0b1111_1001u8,0X42u8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr,_context_decode)
  
 
     _test_Target.tagNumber = 3
     _test_Target.dataValue = 65535
     _check_arr = [0b0011_1010u8,0XFFu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr,_context_decode)
 
     _test_Target.tagNumber = 66
     _test_Target.dataValue = 65535
     _check_arr = [0b1111_1010u8,0X42u8,0XFFu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr,_context_decode)
  
     _test_Target.tagNumber = 3
     _test_Target.dataValue = 16777215
     _check_arr = [0b0011_1011u8,0XFFu8,0XFFu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr,_context_decode)
 
     _test_Target.tagNumber = 66
     _test_Target.dataValue = 16777215
     _check_arr = [0b1111_1011u8,0X42u8,0XFFu8,0XFFu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr,_context_decode)
 
 
     _test_Target.tagNumber = 3
     _test_Target.dataValue = 4294967295
     _check_arr = [0b0011_1100u8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr,_context_decode)
     
     _test_Target.tagNumber = 66
     _test_Target.dataValue = 4294967295
     _check_arr = [0b1111_1100u8,0X42u8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr,_context_decode)
+
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = 1099511627775
+    _check_arr = [0b1111_1101u8,0X42u8,0X05u8,
+                    0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr,_context_decode)
+
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = 281474976710655
+    _check_arr = [0b1111_1101u8,0X42u8,0X06u8,
+                    0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr,_context_decode)
+
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = 72057594037927935
+    _check_arr = [0b1111_1101u8,0X42u8,0X07u8,
+                    0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr,_context_decode)
+
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = 18446744073709551615
+    _check_arr = [0b1111_1101u8,0X42u8,0X08u8,
+                    0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_UnsignedInteger,UInt64>(_test_Target,_check_arr,_context_decode)
 
     //原语报文用上下文解码函数，应当报错
     _check_arr = [0b0011_0100u8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_UnsignedInteger>(_test_Target,_check_arr)
-    //长度超过4
-    _check_arr = [0b0011_1101u8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    //长度超过8
+    _check_arr = [0b1111_1101u8,0X42u8,0X09u8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_UnsignedInteger>(_test_Target,_check_arr)
     //长度为0
     _check_arr = [0b0011_1000u8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
@@ -261,42 +306,80 @@ func test_BACnet_SignedInteger(){
 
     _test_Target.dataValue = -128
     _check_arr = [0b0011_0001u8,0X80u8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
 
     _test_Target.dataValue = 127
     _check_arr = [0b0011_0001u8,0X7Fu8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
 
     _test_Target.dataValue = -32768
     _check_arr = [0b0011_0010u8,0X80u8,0X00u8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
 
     _test_Target.dataValue = 32767
     _check_arr = [0b0011_0010u8,0X7Fu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
 
     _test_Target.dataValue = -8388608
     _check_arr = [0b0011_0011u8,0X80u8,0X00u8,0X00u8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
 
     _test_Target.dataValue = 8388607
     _check_arr = [0b0011_0011u8,0X7Fu8,0XFFu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
 
     _test_Target.dataValue = -2147483648
     _check_arr = [0b0011_0100u8,0X80u8,0X00u8,0X00u8,0X00u8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
 
     _test_Target.dataValue = 2147483647
     _check_arr = [0b0011_0100u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = -549755813888
+    _check_arr = [0b0011_0101u8,0X05u8,0X80u8,0X00u8,0X00u8,0X00u8,0X00u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = 549755813887
+    _check_arr = [0b0011_0101u8,0X05u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = -140737488355328
+    _check_arr = [0b0011_0101u8,0X06u8,
+                    0X80u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = 140737488355327
+    _check_arr = [0b0011_0101u8,0X06u8,
+                    0X7Fu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = -36028797018963968
+    _check_arr = [0b0011_0101u8,0X07u8,
+                    0X80u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = 36028797018963967
+    _check_arr = [0b0011_0101u8,0X07u8,
+                    0X7Fu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = -9223372036854775808
+    _check_arr = [0b0011_0101u8,0X08u8,
+                    0X80u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8,0X00u8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
+
+    _test_Target.dataValue = 9223372036854775807
+    _check_arr = [0b0011_0101u8,0X08u8,
+                    0X7Fu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr)
 
     //上下文报文用原语解码函数，应当报错
     _check_arr = [0b0011_1100u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8]
     test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_SignedInteger>(_test_Target,_check_arr)
 
-    //数字位数超4位，应当报错
-    _check_arr = [0b0011_0101u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    //数字位数超8位，应当报错
+    _check_arr = [0b0011_0101u8,0X09u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
     test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_SignedInteger>(_test_Target,_check_arr)
 
     //数字位数为0，应当报错
@@ -307,76 +390,76 @@ func test_BACnet_SignedInteger(){
     _test_Target.tagNumber = 8
     _test_Target.dataValue = -128
     _check_arr = [0b1000_1001u8,0X80u8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr,_context_decode)
 
     _test_Target.tagNumber = 66
     _test_Target.dataValue = -128
     _check_arr = [0b1111_1001u8,0X42u8,0X80u8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr,_context_decode)
 
     _test_Target.tagNumber = 8
     _test_Target.dataValue = 127
     _check_arr = [0b1000_1001u8,0X7Fu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr,_context_decode)
 
     _test_Target.tagNumber = 66
     _test_Target.dataValue = 127
     _check_arr = [0b1111_1001u8,0X42u8,0X7Fu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr,_context_decode)
 
 
     _test_Target.tagNumber = 8
     _test_Target.dataValue = -32768
     _check_arr = [0b1000_1010u8,0X80u8,0X00u8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr,_context_decode)
 
     _test_Target.tagNumber = 66
     _test_Target.dataValue = -32768
     _check_arr = [0b1111_1010u8,0X42u8,0X80u8,0X00u8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr,_context_decode)
 
     _test_Target.tagNumber = 8
     _test_Target.dataValue = 32767
     _check_arr = [0b1000_1010u8,0X7Fu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr,_context_decode)
 
     _test_Target.tagNumber = 66
     _test_Target.dataValue = 32767
     _check_arr = [0b1111_1010u8,0X42u8,0X7Fu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr,_context_decode)
 
 
     _test_Target.tagNumber = 8
     _test_Target.dataValue = -8388608
     _check_arr = [0b1000_1011u8,0X80u8,0X00u8,0X00u8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr,_context_decode)
 
     _test_Target.tagNumber = 66
     _test_Target.dataValue = -8388608
     _check_arr = [0b1111_1011u8,0X42u8,0X80u8,0X00u8,0X00u8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr,_context_decode)
 
 
     _test_Target.tagNumber = 8
     _test_Target.dataValue = 8388607
     _check_arr = [0b1000_1011u8,0X7Fu8,0XFFu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr,_context_decode)
 
     _test_Target.tagNumber = 8
     _test_Target.dataValue = -2147483648
     _check_arr = [0b1000_1100u8,0X80u8,0X00u8,0X00u8,0X00u8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr,_context_decode)
 
     _test_Target.tagNumber = 8
     _test_Target.dataValue = 2147483647
     _check_arr = [0b1000_1100u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int32>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_SignedInteger,Int64>(_test_Target,_check_arr,_context_decode)
 
     //原语报文用上下文解码函数，应当报错
     _check_arr = [0b0011_0100u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_SignedInteger>(_test_Target,_check_arr)
-    //长度超过4
-    _check_arr = [0b0011_1101u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
+    //长度超过8
+    _check_arr = [0b0011_1101u8,0X09u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_SignedInteger>(_test_Target,_check_arr)
     //长度为0
     _check_arr = [0b0011_1000u8,0X7Fu8,0XFFu8,0XFFu8,0XFFu8,0XFFu8]
@@ -916,5 +999,53 @@ func test_BACnet_Time(){
     _check_arr = [0b1111_1000u8,0X42u8,
                     0X08u8,0X08u8,0X08u8,0X08u8,0X08u8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_Time>(_test_Target,_check_arr)
+
+}
+
+@Test
+func test_BACnet_ObjectIdentifier(){
+
+    var _test_Target = BACnet_ObjectIdentifier()
+    var _context_decode = BACnet_ObjectIdentifier()
+    var _check_arr:Array<Byte>
+    _test_Target.dataValue = BACnetObjectIdentifierStruct(BACnetObjectTypeChoice.analog_value, 666)
+    _check_arr = [0b1100_0100u8,
+                    0X00u8,0X80u8,0X02u8,0X9Au8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_ObjectIdentifier,BACnetObjectIdentifierStruct>(_test_Target,_check_arr)
+
+    //上下文报文用原语解码函数，应当报错
+    _check_arr = [0b1100_1100u8,
+                    0X00u8,0X80u8,0X02u8,0X9Au8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_ObjectIdentifier>(_test_Target,_check_arr)
+
+    //数字位数超4位，应当报错
+    _check_arr = [0b1100_0101u8,
+                    0X00u8,0X80u8,0X02u8,0X9Au8,0X9Au8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_ObjectIdentifier>(_test_Target,_check_arr)
+
+    //数字位数为0，应当报错
+    _check_arr = [0b1100_0000u8,
+                    0X00u8,0X80u8,0X02u8,0X9Au8]
+    test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_ObjectIdentifier>(_test_Target,_check_arr)
+
+//<----------------------------------------->
+    _test_Target.tagNumber = 66
+    _test_Target.dataValue = BACnetObjectIdentifierStruct(BACnetObjectTypeChoice.analog_value, 666)
+    _check_arr = [0b1111_1100u8,0X42u8,
+                    0X00u8,0X80u8,0X02u8,0X9Au8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_ObjectIdentifier,BACnetObjectIdentifierStruct>(_test_Target,_check_arr,_context_decode)
+
+    //原语报文用上下文解码函数，应当报错
+    _check_arr = [0b1111_0100u8,0X42u8,
+                    0X00u8,0X80u8,0X02u8,0X9Au8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_ObjectIdentifier>(_test_Target,_check_arr)
+    //长度超过4
+    _check_arr = [0b1111_1101u8,0X42u8,
+                    0X00u8,0X80u8,0X02u8,0X9Au8,0X9Au8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_ObjectIdentifier>(_test_Target,_check_arr)
+    //长度为0
+    _check_arr = [0b1111_1000u8,0X42u8,
+                    0X00u8,0X80u8,0X02u8,0X9Au8]
+    test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_ObjectIdentifier>(_test_Target,_check_arr)
 
 }

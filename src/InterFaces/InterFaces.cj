@@ -12,6 +12,23 @@ public interface IToUInt8{
     func toUInt8():UInt8
 }
 
+//从Uint8转换至相应类型
+public interface IFromUInt16<T>{
+    static func 从UInt16转换而来(标签:UInt16):T 
+    static func fromUInt16(tag:UInt16):T
+}
+
+//从相应类型转换至Uint8
+public interface IToUInt16{
+    func 转换到UInt16():UInt16
+    func toUInt16():UInt16
+}
+
+//从String转换为相应类型
+public interface IFromString<T>{
+    static func fromString(arg_str:String):T
+}
+
 //从ArrayByte解码
 public interface ICodecFromArrayByte<T>{
     static func decodingFromArrayByte(packet:ByteBuf):T    

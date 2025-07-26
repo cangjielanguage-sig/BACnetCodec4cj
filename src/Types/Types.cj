@@ -23,7 +23,12 @@ open public class APDU{
 }
 
 //BACnet 的PDU类型枚举
-public enum PDUTypeChoice <: IFromUInt8<PDUTypeChoice> & IToUInt8{
+public enum PDUTypeChoice 
+<: IFromUInt8<PDUTypeChoice> 
+& IToUInt8
+& ToString
+& IFromString<PDUTypeChoice>
+{
     |Confirmed_Request_Pdu    // [0] BACnet-Confirmed-Request-PDU
     |Unconfirmed_Request_Pdu  // [1] BACnet-Unconfirmed-Request-PDU
     |Simple_Ack_Pdu           // [2] BACnet-SimpleACK-PDU
@@ -84,6 +89,40 @@ public enum PDUTypeChoice <: IFromUInt8<PDUTypeChoice> & IToUInt8{
             case PDUTypeChoice.Error_Pdu               => 5  // [5] BACnet-Error-PDU
             case PDUTypeChoice.Reject_Pdu              => 6  // [6] BACnet-Reject-PDU
             case PDUTypeChoice.Abort_Pdu               => 7  // [7] BACnet-Abort-PDU
+        }
+    }
+
+    // ==================== toString 方法 ====================
+    public func toString(): String {
+        match (this) {
+            case PDUTypeChoice.Confirmed_Request_Pdu   => "confirmed_request_pdu"
+            case PDUTypeChoice.Unconfirmed_Request_Pdu => "unconfirmed_request_pdu"
+            case PDUTypeChoice.Simple_Ack_Pdu          => "simple_ack_pdu"
+            case PDUTypeChoice.Complex_Ack_Pdu         => "complex_ack_pdu"
+            case PDUTypeChoice.Segment_Ack_Pdu         => "segment_ack_pdu"
+            case PDUTypeChoice.Error_Pdu               => "error_pdu"
+            case PDUTypeChoice.Reject_Pdu              => "reject_pdu"
+            case PDUTypeChoice.Abort_Pdu               => "abort_pdu"
+        }
+    }
+
+    // ==================== fromString 方法 ====================
+    public static func fromString(arg_str: String): PDUTypeChoice {
+        // 统一转换为小写并替换连字符为下划线
+        let 标准化名称 = arg_str.toAsciiLower().replace("-", "_").trimAscii()
+        
+        match (标准化名称) {
+            case "confirmed_request_pdu"   => PDUTypeChoice.Confirmed_Request_Pdu
+            case "unconfirmed_request_pdu" => PDUTypeChoice.Unconfirmed_Request_Pdu
+            case "simple_ack_pdu"           => PDUTypeChoice.Simple_Ack_Pdu
+            case "complex_ack_pdu"          => PDUTypeChoice.Complex_Ack_Pdu
+            case "segment_ack_pdu"          => PDUTypeChoice.Segment_Ack_Pdu
+            case "error_pdu"                => PDUTypeChoice.Error_Pdu
+            case "reject_pdu"               => PDUTypeChoice.Reject_Pdu
+            case "abort_pdu"                => PDUTypeChoice.Abort_Pdu
+            
+            // 非法值抛出协议错误
+            case _ => throw BACnetEncodeErro("转换错误.输入字符串为无效PDU类型标签")
         }
     }
 }

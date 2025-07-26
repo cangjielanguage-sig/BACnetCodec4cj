@@ -4,13 +4,18 @@ import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
 import std.binary.*
 
+//BACnet 2022版里21.5 Application Types 第891页列出了具体的用户数据支持的类型
+//注意，UUInt类型在BACnet 2022版才开始支持，具体使用的地方不多
+//本库中支持到了64位整数，支持到了UInt64
+//实际使用时请主要使用UInt32，使用UInt64时请核对协议确保您要使用的属性确实需要使用UInt64
+
 public class BACnet_UnsignedInteger
 <: BACnetApplicationDatatype
 & ICodecBACnetApplicationData<BACnetApplicationDatatype>
-& IHaveDataValue<UInt32>
+& IHaveDataValue<UInt64>
 {
-    private var _dataValue:UInt32 = 0
-    public mut prop dataValue:UInt32{
+    private var _dataValue:UInt64 = 0
+    public mut prop dataValue:UInt64{
         get(){ return _dataValue}
         set(arg_Value){_dataValue = arg_Value}
     }
@@ -25,7 +30,7 @@ public class BACnet_UnsignedInteger
 
     public init(arg_tagNumber:UInt8,
     arg_tagClass:BACnetTagClassChoice,
-    arg_dataValue:UInt32)
+    arg_dataValue:UInt64)
     {
         this.tagNumber = arg_tagNumber
         this.tagClass = arg_tagClass
@@ -47,13 +52,14 @@ public class BACnet_UnsignedInteger
             _rtu.applicationDatatype = BACnetApplicationDatatypesChoice.UnsignedInteger
             _rtu.tagNumber = _tagNum
             _rtu.tagClass = BACnetTagClassChoice.applicationTag
-            var _len = UInt32(_appTag & 0b0000_0111)
-            _rtu.tagLength = _len
             
-            if(_len>=1 && _len<=4){
-                _rtu.dataValue = packet.read_UInt32_WithLenth_FromBuff(Int64(_len))
+            let _tagLen = readBACnetApplicationDataLength(_appTag,packet)
+            _rtu.tagLength = _tagLen
+            
+            if(_tagLen>=1 && _tagLen<=8){
+                _rtu.dataValue = packet.read_UInt64_WithLenth_FromBuff(Int64(_tagLen))
             }else{
-                throw  BACnetDecodeErro("解码错误:无法识别长度为${_len}的UnsignedInteger数据")
+                throw  BACnetDecodeErro("解码错误:无法识别长度为${_tagLen}的UnsignedInteger数据")
             }
             return _rtu
         }else{
@@ -71,16 +77,17 @@ public class BACnet_UnsignedInteger
         }
         this.tagClass = BACnetTagClassChoice.contextSpecificTag
 
-        var _len = UInt32(_appTag & 0b0000_0111)
-        if(_len<1 || _len>4){
-            throw  BACnetDecodeErro("解码错误:无法识别长度为${_len}的UnsignedInteger数据")
-        }
-
         let _tagNum = readContextSpecificTagNumber(_appTag, packet)
         this.tagNumber = _tagNum
 
-        this.tagLength = _len
-        this.dataValue = packet.read_UInt32_WithLenth_FromBuff(Int64(_len))
+        let _tagLen = readBACnetApplicationDataLength(_appTag,packet)
+        this.tagLength = _tagLen
+        
+        if(_tagLen>=1 && _tagLen<=8){
+            this.dataValue = packet.read_UInt64_WithLenth_FromBuff(Int64(_tagLen))
+        }else{
+            throw  BACnetDecodeErro("解码错误:无法识别长度为${_tagLen}的UnsignedInteger数据")
+        }
         
         this.applicationDatatype = BACnetApplicationDatatypesChoice.UnsignedInteger
 
@@ -89,6 +96,8 @@ public class BACnet_UnsignedInteger
 
     public func encodingToPrimitiveData():Array<Byte>{
         let _tagNum:UInt8 = 2 << 4
+        this.tagNumber = 2
+        var _rtu:Array<Byte>
         var _applicationTag = 0u8
         _applicationTag = _applicationTag | _tagNum
         _applicationTag = _applicationTag | 0b0000_0000
@@ -106,16 +115,32 @@ public class BACnet_UnsignedInteger
         }else if (dataValue>16777215 && dataValue<=4294967295) {
             //4字节数
             _len = 4
+        }else if (dataValue>4294967295 && dataValue<=1099511627775) {
+            //5字节数
+            _len = 5
+        }else if (dataValue>1099511627775 && dataValue<=281474976710655) {
+            //6字节数
+            _len = 6
+        }else if (dataValue>281474976710655 && dataValue<=72057594037927935) {
+            //7字节数
+            _len = 7
+        }else if (dataValue>72057594037927935 && dataValue<=18446744073709551615) {
+            //8字节数
+            _len = 8
         }
-
         this.tagLength = UInt32(_len)
-        _applicationTag = _applicationTag | _len
-        var _value_Array = Array<Byte>(4,repeat:0)
-        this.dataValue.writeBigEndian(_value_Array)
 
-        var _rtu:Array<Byte> = Array<Byte>(Int64(_len+1),repeat:0)
-        _rtu[0] = _applicationTag
-        _value_Array.copyTo(_rtu, Int64(4-_len), 1, Int64(_len))
+        var _data_len = Int64(this.tagLength)
+        var _taghead_buf = encodingToApplicationDataTagHead(this.tagNumber, this.tagLength,BACnetTagClassChoice.applicationTag)
+        let _rtu_len = _taghead_buf.size + Int64(_data_len)
+        _rtu = Array<Byte>(_rtu_len,repeat:0u8)
+        _taghead_buf.copyTo(_rtu, 0, 0, _taghead_buf.size)
+        let _data_index = _rtu_len - _data_len
+
+        var _value_Array = Array<Byte>(8,repeat:0)
+        let _copyIndexStart = _value_Array.size - _data_len
+        this.dataValue.writeBigEndian(_value_Array)
+        _value_Array.copyTo(_rtu, _copyIndexStart, _data_index, _data_len)
         return _rtu        
     }
 
@@ -134,8 +159,20 @@ public class BACnet_UnsignedInteger
         }else if (dataValue>16777215 && dataValue<=4294967295) {
             //4字节数
             _len = 4
+        }else if (dataValue>4294967295 && dataValue<=1099511627775) {
+            //5字节数
+            _len = 5
+        }else if (dataValue>1099511627775 && dataValue<=281474976710655) {
+            //6字节数
+            _len = 6
+        }else if (dataValue>281474976710655 && dataValue<=72057594037927935) {
+            //7字节数
+            _len = 7
+        }else if (dataValue>72057594037927935 && dataValue<=18446744073709551615) {
+            //8字节数
+            _len = 8
         }
-        //BACnet_SignedInteger的数据长度是随着值的大小不固定的,但不超过4字节
+        //BACnet_SignedInteger的数据长度是随着值的大小不固定的,但不超过8字节
         this.tagLength = UInt32(_len)
 
         var _data_len = Int64(this.tagLength)
@@ -145,7 +182,7 @@ public class BACnet_UnsignedInteger
         _taghead_buf.copyTo(_rtu, 0, 0, _taghead_buf.size)
         let _data_index = _rtu_len - _data_len
 
-        var _value_Array = Array<Byte>(4,repeat:0)
+        var _value_Array = Array<Byte>(8,repeat:0)
         let _copyIndexStart = _value_Array.size - _data_len
         this.dataValue.writeBigEndian(_value_Array)
         _value_Array.copyTo(_rtu, _copyIndexStart, _data_index, _data_len)
