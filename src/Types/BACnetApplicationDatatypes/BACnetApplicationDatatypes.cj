@@ -51,20 +51,20 @@ public open class BACnetApplicationDatatype
             case BACnetApplicationDatatypesChoice.Null                  => BACnet_Null.decodingPrimitiveDataFromArrayByte(packet)
             case BACnetApplicationDatatypesChoice.Boolean               => BACnet_Boolean.decodingPrimitiveDataFromArrayByte(packet)
             case BACnetApplicationDatatypesChoice.UnsignedInteger       => BACnet_UnsignedInteger.decodingPrimitiveDataFromArrayByte(packet)
-            // case BACnetApplicationDatatypesChoice.SignedInteger         => 3
-            // case BACnetApplicationDatatypesChoice.Real                  => 4
-            // case BACnetApplicationDatatypesChoice.Double                => 5
-            // case BACnetApplicationDatatypesChoice.OctetString           => 6
-            // case BACnetApplicationDatatypesChoice.CharacterString       => 7
-            // case BACnetApplicationDatatypesChoice.BitString             => 8
-            // case BACnetApplicationDatatypesChoice.Enumerated            => 9
-            // case BACnetApplicationDatatypesChoice.Date                  => 10
-            // case BACnetApplicationDatatypesChoice.Time                  => 11
-            // case BACnetApplicationDatatypesChoice.BACnetObjectIdentifier  => 12
-            // case BACnetApplicationDatatypesChoice.ReservedForASHRAE13   => 13
-            // case BACnetApplicationDatatypesChoice.ReservedForASHRAE14   => 14
-            // case BACnetApplicationDatatypesChoice.ReservedForASHRAE15   => 15
-            case _=>throw  BACnetDecodeErro("解码错误:无法识别的类型数据")
+            case BACnetApplicationDatatypesChoice.SignedInteger         => BACnet_SignedInteger.decodingPrimitiveDataFromArrayByte(packet)
+            case BACnetApplicationDatatypesChoice.Real                  => BACnet_Real.decodingPrimitiveDataFromArrayByte(packet)
+            case BACnetApplicationDatatypesChoice.Double                => BACnet_Double.decodingPrimitiveDataFromArrayByte(packet)
+            case BACnetApplicationDatatypesChoice.OctetString           => BACnet_OctetString.decodingPrimitiveDataFromArrayByte(packet)
+            case BACnetApplicationDatatypesChoice.CharacterString       => BACnet_CharacterString.decodingPrimitiveDataFromArrayByte(packet)
+            case BACnetApplicationDatatypesChoice.BitString             => BACnet_BitString.decodingPrimitiveDataFromArrayByte(packet)
+            case BACnetApplicationDatatypesChoice.Enumerated            => BACnet_Enumerated.decodingPrimitiveDataFromArrayByte(packet)
+            case BACnetApplicationDatatypesChoice.Date                  => BACnet_Date.decodingPrimitiveDataFromArrayByte(packet)
+            case BACnetApplicationDatatypesChoice.Time                  => BACnet_Time.decodingPrimitiveDataFromArrayByte(packet)
+            case BACnetApplicationDatatypesChoice.BACnetObjectIdentifier  => BACnet_ObjectIdentifier.decodingPrimitiveDataFromArrayByte(packet)
+            case BACnetApplicationDatatypesChoice.ReservedForASHRAE13   => throw  BACnetDecodeErro("解码错误:目前协议未定义的类型数据")
+            case BACnetApplicationDatatypesChoice.ReservedForASHRAE14   => throw  BACnetDecodeErro("解码错误:目前协议未定义的类型数据")
+            case BACnetApplicationDatatypesChoice.ReservedForASHRAE15   => throw  BACnetDecodeErro("解码错误:目前协议未定义的类型数据")
+            //case _=>throw  BACnetDecodeErro("解码错误:无法识别的类型数据")
         }
         return _rtu
 
@@ -114,7 +114,6 @@ public enum BACnetApplicationDatatypesChoice
             case 13  => BACnetApplicationDatatypesChoice.ReservedForASHRAE13
             case 14  => BACnetApplicationDatatypesChoice.ReservedForASHRAE14
             case 15  => BACnetApplicationDatatypesChoice.ReservedForASHRAE15
-            
             case _ => throw BACnetDecodeErro("协议错误.无效标签")
         }
     }
@@ -138,8 +137,7 @@ public enum BACnetApplicationDatatypesChoice
             case 12  => BACnetApplicationDatatypesChoice.BACnetObjectIdentifier
             case 13  => BACnetApplicationDatatypesChoice.ReservedForASHRAE13
             case 14  => BACnetApplicationDatatypesChoice.ReservedForASHRAE14
-            case 15  => BACnetApplicationDatatypesChoice.ReservedForASHRAE15
-            
+            case 15  => BACnetApplicationDatatypesChoice.ReservedForASHRAE15            
             case _ => throw BACnetDecodeErro("协议错误.无效标签")
         }
     }
