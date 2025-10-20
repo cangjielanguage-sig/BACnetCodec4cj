@@ -2,8 +2,6 @@ package BACnetCodec4cj.Types.BACnetApplicationDatatypes
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
-import std.binary.*
-import std.collection.*
 import std.convert.*
 
 public class BACnet_BitString
