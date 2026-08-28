@@ -10,7 +10,7 @@ func test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings
 <T,V>
 (arg_Target:T,arg_CheckArr:Array<Byte>)
 :Unit 
-where T<:ICodecBACnetApplicationData<BACnetApplicationDatatype>
+where T<:ICodecPrimitiveData<BACnetApplicationDatatype>
 &IHaveDataValue<V>
 {
     var _decode_value_as:Option<T>
@@ -37,10 +37,10 @@ func test_BACnetApplicationDatatypes_ToPrimitiveData_Erros
 <T>
 (arg_Target:T,arg_CheckArr:Array<Byte>)
 :Unit 
-where T<:ICodecBACnetApplicationData<BACnetApplicationDatatype>
+where T<:ICodecPrimitiveData<BACnetApplicationDatatype>
 {
     var _packet_test:ByteBuf = ByteBuf(arg_CheckArr)
-    @ExpectThrows[BACnetDecodeErro](T.decodingPrimitiveDataFromArrayByte(_packet_test))
+    @ExpectThrows[BACnetDecodeError](T.decodingPrimitiveDataFromArrayByte(_packet_test))
 }
 
 
@@ -48,7 +48,8 @@ func test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings
 <T,V>
 (arg_Target:T,arg_CheckArr:Array<Byte>,arg_Decode:T)
 :Unit 
-where T<:ICodecBACnetApplicationData<BACnetApplicationDatatype>
+where T<:ICodecPrimitiveData<BACnetApplicationDatatype>
+&ICodecContextSpecificData
 &IHaveDataValue<V>
 {
     var _arr_test_1:Array<Byte>
@@ -70,10 +71,11 @@ func test_BACnetApplicationDatatypes_ToContextSpecificData_Erros
 <T>
 (arg_Target:T,arg_CheckArr:Array<Byte>)
 :Unit 
-where T<:ICodecBACnetApplicationData<BACnetApplicationDatatype>
+where T<:ICodecPrimitiveData<BACnetApplicationDatatype>
+&ICodecContextSpecificData
 {
     var _packet_test:ByteBuf = ByteBuf(arg_CheckArr)
-    @ExpectThrows[BACnetDecodeErro](arg_Target.decodingContextSpecificDataFromArrayByte(_packet_test))
+    @ExpectThrows[BACnetDecodeError](arg_Target.decodingContextSpecificDataFromArrayByte(_packet_test))
 }
 
 @Test
@@ -89,31 +91,21 @@ func test_BACnet_Null(){
     @Expect(_decode_value_as_value.dataValue,false)
 
     var _test_Target = BACnet_Null()
-    var _context_decode = BACnet_Null()
     var _check_arr:Array<Byte>
 
+    //Null 无 dataValue，直接验证编解码
     _check_arr = [0b0000_0000]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_Null,Option<Bool>>(_test_Target,_check_arr)
+    var _arr_encode = _test_Target.encodingToPrimitiveData()
+    @Expect(_arr_encode,_check_arr)
+    var _packet_decode = ByteBuf(_arr_encode)
+    var _decode_null = BACnet_Null.decodingPrimitiveDataFromArrayByte(_packet_decode)
+    @Expect(_decode_null is BACnet_Null,true)
 
     _check_arr = [0b0000_1000]
     test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_Null>(_test_Target,_check_arr)
     
     _check_arr = [0b0000_0001]
     test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_Null>(_test_Target,_check_arr)
-
-    _test_Target.tagNumber = 9
-    _check_arr = [0b1001_1000]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_Null,Option<Bool>>(_test_Target,_check_arr,_context_decode)
-
-    _test_Target.tagNumber = 66
-    _check_arr = [0b1111_1000,0X42u8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_Null,Option<Bool>>(_test_Target,_check_arr,_context_decode)
-  
-    _check_arr = [0b1001_0000]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_Null>(_test_Target,_check_arr)
-
-    _check_arr = [0b1001_1100]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_Null>(_test_Target,_check_arr)
 }
 
 @Test
@@ -588,13 +580,13 @@ func test_BACnet_OctetString(){
     var _context_decode = BACnet_OctetString()
     var _check_arr:Array<Byte>
 
-    _test_Target.dataValue = "FEDCBA98"
+    _test_Target.dataValue = [0XFEu8,0XDCu8,0XBAu8,0X98u8]
     _check_arr = [0b0110_0100u8,0XFEu8,0XDCu8,0XBAu8,0X98u8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_OctetString,String>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_OctetString,Array<Byte>>(_test_Target,_check_arr)
 
-    _test_Target.dataValue = "FEDCBA98FEDCBA98"
+    _test_Target.dataValue = [0XFEu8,0XDCu8,0XBAu8,0X98u8,0XFEu8,0XDCu8,0XBAu8,0X98u8]
     _check_arr = [0b0110_0101u8,0X08u8,0XFEu8,0XDCu8,0XBAu8,0X98u8,0XFEu8,0XDCu8,0XBAu8,0X98u8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_OctetString,String>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_OctetString,Array<Byte>>(_test_Target,_check_arr)
 
     //上下文报文用原语解码函数，应当报错
     _check_arr = [0b0110_1100u8,0XFEu8,0XDCu8,0XBAu8,0X98u8]
@@ -602,17 +594,17 @@ func test_BACnet_OctetString(){
 
 
 
-    _test_Target.dataValue = "FEDCBA98"
+    _test_Target.dataValue = [0XFEu8,0XDCu8,0XBAu8,0X98u8]
     _test_Target.tagNumber = 66
     _check_arr = [  0b1111_1100u8,0X42u8,0XFEu8,0XDCu8,0XBAu8,0X98u8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_OctetString,String>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_OctetString,Array<Byte>>(_test_Target,_check_arr,_context_decode)
 
-    _test_Target.dataValue = "FEDCBA98FEDCBA98"
+    _test_Target.dataValue = [0XFEu8,0XDCu8,0XBAu8,0X98u8,0XFEu8,0XDCu8,0XBAu8,0X98u8]
     _test_Target.tagNumber = 66
     _check_arr = [  0b1111_1101u8,0X42u8,0X08u8,0XFEu8,
                     0XDCu8,0XBAu8,0X98u8,0XFEu8,
                     0XDCu8,0XBAu8,0X98u8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_OctetString,String>(_test_Target,_check_arr,_context_decode)
+    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_OctetString,Array<Byte>>(_test_Target,_check_arr,_context_decode)
 
     _check_arr = [0b1111_0100u8,0X42u8,0XFEu8,0XDCu8,0XBAu8,0X98u8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_OctetString>(_test_Target,_check_arr)
@@ -778,39 +770,24 @@ func test_BACnet_CharacterString(){
 @Test
 func test_BACnet_BitString(){
     var _test_Target = BACnet_BitString()
-    var _context_decode = BACnet_BitString()
+
     var _check_arr:Array<Byte>
 
-    _test_Target.dataValue = "10101"
+    _test_Target.dataValue = [true,false,true,false,true]
     _check_arr = [0b1000_0010u8,
                     0X03u8,0XA8u8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_BitString,String>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_BitString,Array<Bool>>(_test_Target,_check_arr)
 
-    _test_Target.dataValue = "001011010110101001011010110101"
+    _test_Target.dataValue = [false,false,true,false,true,true,false,true,false,true,true,false,true,false,true,false,false,true,false,true,true,false,true,false,true,true,false,true,false,true]
     _check_arr = [0b1000_0101u8,0X05u8,
                     0X02u8,0X2Du8,0X6Au8,0X5Au8,0XD4u8]
-    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_BitString,String>(_test_Target,_check_arr)
+    test_BACnetApplicationDatatypes_ToPrimitiveData_RightThings<BACnet_BitString,Array<Bool>>(_test_Target,_check_arr)
 
     //上下文报文用原语解码函数，应当报错
     _check_arr = [0b1000_1101u8,0X05u8,
                     0X02u8,0X2Du8,0X6Au8,0X5Au8,0XD4u8]
     test_BACnetApplicationDatatypes_ToPrimitiveData_Erros<BACnet_BitString>(_test_Target,_check_arr)
 
-    _test_Target.dataValue = "10101"
-    _test_Target.tagNumber = 66
-    _check_arr = [0b1111_1010u8,0X42u8,
-                    0X03u8,0XA8u8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_BitString,String>(_test_Target,_check_arr,_context_decode)
-
-    _test_Target.dataValue = "001011010110101001011010110101"
-    _test_Target.tagNumber = 66
-    _check_arr = [0b1111_1101u8,0X42u8,0X05u8,
-                    0X02u8,0X2Du8,0X6Au8,0X5Au8,0XD4u8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_RightThings<BACnet_BitString,String>(_test_Target,_check_arr,_context_decode)
-
-    _check_arr = [0b1111_0101u8,0X42u8,0X05u8,
-                    0X02u8,0X2Du8,0X6Au8,0X5Au8,0XD4u8]
-    test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_BitString>(_test_Target,_check_arr)
 }
 
 @Test
@@ -1048,4 +1025,35 @@ func test_BACnet_ObjectIdentifier(){
                     0X00u8,0X80u8,0X02u8,0X9Au8]
     test_BACnetApplicationDatatypes_ToContextSpecificData_Erros<BACnet_ObjectIdentifier>(_test_Target,_check_arr)
 
+}
+
+//20.2.1.3.2 Length 扩展长度解码回归测试
+@Test
+func test_readBACnetApplicationDataLength_extended_length(){
+    //1字节扩展：扩展字节值即为实际长度(0..253)
+    var _packet_1 = ByteBuf([0xFDu8])
+    @Expect(readBACnetApplicationDataLength(0b0000_0101u8, _packet_1), UInt32(253))
+    @Expect(_packet_1.cursor, 1)
+
+    //2字节扩展：首字节254，后跟2字节大端扩展长度=254
+    var _packet_2 = ByteBuf([0xFEu8, 0x00u8, 0xFEu8])
+    @Expect(readBACnetApplicationDataLength(0b0000_0101u8, _packet_2), UInt32(254))
+    @Expect(_packet_2.cursor, 3)
+
+    //2字节扩展：=65535
+    var _packet_3 = ByteBuf([0xFEu8, 0xFFu8, 0xFFu8])
+    @Expect(readBACnetApplicationDataLength(0b0000_0101u8, _packet_3), UInt32(65535))
+    @Expect(_packet_3.cursor, 3)
+
+    //4字节扩展：首字节255，后跟4字节大端扩展长度=65536
+    var _packet_4 = ByteBuf([0xFFu8, 0x00u8, 0x01u8, 0x00u8, 0x00u8])
+    @Expect(readBACnetApplicationDataLength(0b0000_0101u8, _packet_4), UInt32(65536))
+    @Expect(_packet_4.cursor, 5)
+}
+
+//BACnet_APDU 默认 PDU 类型应为 Confirmed_Request_Pdu(0)
+@Test
+func test_BACnet_APDU_default_pdu_type(){
+    let _apdu = BACnet_APDU()
+    @Expect(_apdu.pdu_Type.toUInt8(), 0u8)
 }

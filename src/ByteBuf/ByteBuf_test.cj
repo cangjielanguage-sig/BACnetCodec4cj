@@ -9,7 +9,7 @@ func test_read_UInt8_FromBuf(){
     let b_buf = ByteBuf(arr1, 1)
     var r_u8 = b_buf.read_UInt8_FromBuf()
     @Expect(r_u8,0x3e)
-    @ExpectThrows[ByteBufErro](b_buf.read_UInt8_FromBuf())
+    @ExpectThrows[ByteBufError](b_buf.read_UInt8_FromBuf())
 }
 @Test
 func test_read_Float32_FromBuf(){
@@ -17,6 +17,17 @@ func test_read_Float32_FromBuf(){
     let b_buf = ByteBuf(arr1, 4)
     var r_U32 = b_buf.read_Float32_FromBuff()
     @Expect(r_U32,33.3355)
-    @ExpectThrows[ByteBufErro](b_buf.read_Float32_FromBuff())
+    @ExpectThrows[ByteBufError](b_buf.read_Float32_FromBuff())
+}
+@Test
+func test_cursorMoveBackward(){
+    let b_buf = ByteBuf(Array<Byte>(8,repeat:0))
+    b_buf.cursor = 4
+    b_buf.cursorMoveBackward(2)
+    @Expect(b_buf.cursor, 2)
+
+    b_buf.cursor = 1
+    b_buf.cursorMoveBackward(5)
+    @Expect(b_buf.cursor, 0)
 }
 
