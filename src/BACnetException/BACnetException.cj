@@ -14,7 +14,7 @@ public open class BACnetError <: Exception {
 
 public open class BACnetDecodeError <: BACnetError {
     public init() {
-        super("Bacnet解码错误类.BACnetDecodeError")
+        super("BACnet解码错误类.BACnetDecodeError")
     }
     public init(message: String) {
         super(message)
@@ -26,7 +26,7 @@ public open class BACnetDecodeError <: BACnetError {
 
 public open class BACnetEncodeError <: BACnetError {
     public init() {
-        super("Bacnet编码错误类.BACnetEncodeError")
+        super("BACnet编码错误类.BACnetEncodeError")
     }
     public init(message: String) {
         super(message)
@@ -38,7 +38,7 @@ public open class BACnetEncodeError <: BACnetError {
 
 public open class BACnetParamError <: BACnetError {
     public init() {
-        super("Bacnet参数设置错误类.BACnetParamError")
+        super("BACnet参数设置错误类.BACnetParamError")
     }
     public init(message: String) {
         super(message)

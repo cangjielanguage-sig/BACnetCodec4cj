@@ -4,7 +4,7 @@ import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
 
-//Bacnet的空值
+//BACnet的空值
 public class BACnet_Null <: BACnetApplicationDatatype & ICodecPrimitiveData<BACnetApplicationDatatype> {
     public init() {
         tagNumber = 0

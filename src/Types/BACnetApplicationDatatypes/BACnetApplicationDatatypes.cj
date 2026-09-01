@@ -4,8 +4,6 @@ import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
 import std.binary.*
-import std.collection.enumerate
-import std.convert.*
 import std.collection.*
 
 //用户数据类型父类
@@ -281,8 +279,8 @@ public func encodingToApplicationDataTagHead(arg_tagNum: UInt8, arg_tagLength: U
         //额外1字节标记，值位0XFE
         _array_buf.add(0XFEu8)
         let _lenArray = Array<Byte>(2, repeat: 0)
-        let _lenth_U16 = UInt16(arg_tagLength)
-        _lenth_U16.writeBigEndian(_lenArray)
+        let _length_U16 = UInt16(arg_tagLength)
+        _length_U16.writeBigEndian(_lenArray)
         _array_buf.add(_lenArray[0])
         _array_buf.add(_lenArray[1])
     } else if (arg_tagLength >= 65536 && arg_tagLength <= 4294967295) {
@@ -292,13 +290,24 @@ public func encodingToApplicationDataTagHead(arg_tagNum: UInt8, arg_tagLength: U
         //额外1字节标记，值位0XFF
         _array_buf.add(0XFFu8)
         let _lenArray = Array<Byte>(4, repeat: 0)
-        let _lenth_U32 = arg_tagLength
-        _lenth_U32.writeBigEndian(_lenArray)
+        let _length_U32 = arg_tagLength
+        _length_U32.writeBigEndian(_lenArray)
         _array_buf.add(_lenArray[0])
         _array_buf.add(_lenArray[1])
         _array_buf.add(_lenArray[2])
         _array_buf.add(_lenArray[3])
     }
     _rtu = _array_buf.toArray()
+    return _rtu
+}
+
+//将 tag 头与数据值拼接为完整编码报文，供各数据类型编码复用
+public func encodeWithTagHead(arg_tagNumber: UInt8, arg_tagLength: UInt32, arg_tagClass: BACnetTagClassChoice,
+    arg_value: Array<Byte>): Array<Byte> {
+    let _tagHead = encodingToApplicationDataTagHead(arg_tagNumber, arg_tagLength, arg_tagClass)
+    let _rtu_len = _tagHead.size + arg_value.size
+    var _rtu: Array<Byte> = Array<Byte>(_rtu_len, repeat: 0)
+    _tagHead.copyTo(_rtu, 0, 0, _tagHead.size)
+    arg_value.copyTo(_rtu, 0, _tagHead.size, arg_value.size)
     return _rtu
 }

@@ -49,7 +49,7 @@ public class BACnet_Enumerated <: BACnetApplicationDatatype & ICodecPrimitiveDat
             _rtu.tagLength = _len
 
             if (_len >= 1 && _len <= 4) {
-                _rtu.dataValue = packet.read_UInt32_WithLenth_FromBuff(Int64(_len))
+                _rtu.dataValue = packet.read_UInt32_WithLength_FromBuff(Int64(_len))
             } else {
                 throw BACnetDecodeError("解码错误:无法识别长度为${_len}的UnsignedInteger数据")
             }
@@ -78,7 +78,7 @@ public class BACnet_Enumerated <: BACnetApplicationDatatype & ICodecPrimitiveDat
         this.tagNumber = _tagNum
 
         this.tagLength = _len
-        this.dataValue = packet.read_UInt32_WithLenth_FromBuff(Int64(_len))
+        this.dataValue = packet.read_UInt32_WithLength_FromBuff(Int64(_len))
 
         this.applicationDatatype = BACnetApplicationDatatypesChoice.Enumerated
 

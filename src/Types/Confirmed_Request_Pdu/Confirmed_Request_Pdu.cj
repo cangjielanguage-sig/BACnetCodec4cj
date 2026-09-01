@@ -1,8 +1,6 @@
 public package BACnetCodec4cj.Types.Confirmed_Request_Pdu
 
 import BACnetCodec4cj.Types.*
-import BACnetCodec4cj.InterFaces.*
-import BACnetCodec4cj.BACnetException.*
 
 /*      service-request 协议原文
 

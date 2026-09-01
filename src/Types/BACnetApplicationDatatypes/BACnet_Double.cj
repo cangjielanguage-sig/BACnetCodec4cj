@@ -47,13 +47,13 @@ public class BACnet_Double <: BACnetApplicationDatatype & ICodecPrimitiveData<BA
             _rtu.tagClass = BACnetTagClassChoice.applicationTag
             var _len = _appTag & 0b0000_0111
             if (_len != 0b0000_0101) {
-                throw BACnetDecodeError("解码错误:Bacnet_Double数据的Tag_lenth域必须是0b0000_0101")
+                throw BACnetDecodeError("解码错误:BACnet_Double数据的Tag_length域必须是0b0000_0101")
             }
             let _tagLen = UInt32(packet.read_UInt8_FromBuf());
             _rtu.tagLength = _tagLen
 
             if (_rtu.tagLength != 8) {
-                throw BACnetDecodeError("解码错误:无法识别长度为${_rtu.tagLength}的Bacnet_Double数据")
+                throw BACnetDecodeError("解码错误:无法识别长度为${_rtu.tagLength}的BACnet_Double数据")
             }
             _rtu.dataValue = packet.read_Float64_FromBuff()
             return _rtu
@@ -75,7 +75,7 @@ public class BACnet_Double <: BACnetApplicationDatatype & ICodecPrimitiveData<BA
 
         var _len = _appTag & 0b0000_0111
         if (_len != 0b0000_0101) {
-            throw BACnetDecodeError("解码错误:Bacnet_Double数据的Tag_lenth域必须是0b0000_0101")
+            throw BACnetDecodeError("解码错误:BACnet_Double数据的Tag_length域必须是0b0000_0101")
         }
 
         let _tagNum = readContextSpecificTagNumber(_appTag, packet)
@@ -85,7 +85,7 @@ public class BACnet_Double <: BACnetApplicationDatatype & ICodecPrimitiveData<BA
         this.tagLength = _tagLen
 
         if (this.tagLength != 8) {
-            throw BACnetDecodeError("解码错误:无法识别长度为${this.tagLength}的Bacnet_Double数据")
+            throw BACnetDecodeError("解码错误:无法识别长度为${this.tagLength}的BACnet_Double数据")
         }
         this.dataValue = packet.read_Float64_FromBuff()
 

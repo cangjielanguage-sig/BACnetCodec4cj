@@ -3,7 +3,7 @@
 charset4cj = { git = "https://gitcode.com/Cangjie-TPC/charset4cj.git",branch = "develop" }
 
 [package]
-  cjc-version = "1.0.0"
+  cjc-version = "1.1.3"
   compile-option = ""
   description = "使用仓颉语言制作的bacnet编解码库"
   link-option = ""
@@ -11,5 +11,6 @@ charset4cj = { git = "https://gitcode.com/Cangjie-TPC/charset4cj.git",branch = "
   output-type = "static"
   src-dir = ""
   target-dir = ""
+
   version = "0.1.0"
   package-configuration = {}

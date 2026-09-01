@@ -3,7 +3,6 @@ package BACnetCodec4cj.Types.BACnetApplicationDatatypes
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
-import std.binary.*
 
 public class BACnet_Boolean <: BACnetApplicationDatatype & ICodecPrimitiveData<BACnetApplicationDatatype> & ICodecContextSpecificData & IHaveDataValue<Bool> {
     private var _dataValue: Bool = false
@@ -87,7 +86,7 @@ public class BACnet_Boolean <: BACnetApplicationDatatype & ICodecPrimitiveData<B
             this.dataValue = true
         } else {
             throw BACnetDecodeError(
-                "解码错误:Bacnet_Boolean的值字节只能是0或1，当前得到的值字节值是${_value},这是个无法识别的Bool数据")
+                "解码错误:BACnet_Boolean的值字节只能是0或1，当前得到的值字节值是${_value},这是个无法识别的Bool数据")
         }
         this.applicationDatatype = BACnetApplicationDatatypesChoice.Boolean
         return

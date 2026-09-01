@@ -3,7 +3,6 @@ package BACnetCodec4cj.Types.BACnetApplicationDatatypes
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
-import std.binary.*
 import std.time.*
 
 public class BACnet_Date <: BACnetApplicationDatatype & ICodecPrimitiveData<BACnetApplicationDatatype> & ICodecContextSpecificData & IHaveDataValue<DateTime> {
@@ -52,7 +51,7 @@ public class BACnet_Date <: BACnetApplicationDatatype & ICodecPrimitiveData<BACn
             _rtu.tagLength = _len
 
             if (_len != 4) {
-                throw BACnetDecodeError("解码错误:无法识别长度为${_len}的Bacnet_Date数据")
+                throw BACnetDecodeError("解码错误:无法识别长度为${_len}的BACnet_Date数据")
             }
             let _dataArray = packet.read_FromBuff(4)
             let _year = 1900 + Int64(_dataArray[0])

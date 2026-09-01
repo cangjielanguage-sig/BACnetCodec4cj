@@ -3,7 +3,6 @@ package BACnetCodec4cj.Types.BACnetApplicationDatatypes
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
-import std.binary.*
 import std.time.*
 
 public class BACnet_Time <: BACnetApplicationDatatype & ICodecPrimitiveData<BACnetApplicationDatatype> & ICodecContextSpecificData & IHaveDataValue<DateTime> {

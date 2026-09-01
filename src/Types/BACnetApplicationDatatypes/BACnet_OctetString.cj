@@ -80,24 +80,12 @@ public class BACnet_OctetString <: BACnetApplicationDatatype & ICodecPrimitiveDa
         this.tagNumber = 6
         var _value_Array = this.dataValue
         this.tagLength = UInt32(_value_Array.size)
-        let _tagHead = encodingToApplicationDataTagHead(this.tagNumber, this.tagLength,
-            BACnetTagClassChoice.applicationTag)
-        let _rtu_len = _tagHead.size + _value_Array.size
-        var _rtu: Array<Byte> = Array<Byte>(_rtu_len, repeat: 0)
-        _tagHead.copyTo(_rtu, 0, 0, _tagHead.size)
-        _value_Array.copyTo(_rtu, 0, _tagHead.size, _value_Array.size)
-        return _rtu
+        return encodeWithTagHead(this.tagNumber, this.tagLength, BACnetTagClassChoice.applicationTag, _value_Array)
     }
 
     public func encodingToContextSpecificData(): Array<Byte> {
         var _value_Array = this.dataValue
         this.tagLength = UInt32(_value_Array.size)
-        let _tagHead = encodingToApplicationDataTagHead(this.tagNumber, this.tagLength,
-            BACnetTagClassChoice.contextSpecificTag)
-        let _rtu_len = _tagHead.size + _value_Array.size
-        var _rtu: Array<Byte> = Array<Byte>(_rtu_len, repeat: 0)
-        _tagHead.copyTo(_rtu, 0, 0, _tagHead.size)
-        _value_Array.copyTo(_rtu, 0, _tagHead.size, _value_Array.size)
-        return _rtu
+        return encodeWithTagHead(this.tagNumber, this.tagLength, BACnetTagClassChoice.contextSpecificTag, _value_Array)
     }
 }

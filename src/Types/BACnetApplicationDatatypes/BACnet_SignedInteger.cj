@@ -55,7 +55,7 @@ public class BACnet_SignedInteger <: BACnetApplicationDatatype & ICodecPrimitive
             _rtu.tagLength = _tagLen
 
             if (_tagLen >= 1 && _tagLen <= 8) {
-                _rtu.dataValue = packet.read_Int64_WithLenth_FromBuff(Int64(_tagLen))
+                _rtu.dataValue = packet.read_Int64_WithLength_FromBuff(Int64(_tagLen))
             } else {
                 throw BACnetDecodeError("解码错误:无法识别长度为${_tagLen}的SignedInteger数据")
             }
@@ -85,7 +85,7 @@ public class BACnet_SignedInteger <: BACnetApplicationDatatype & ICodecPrimitive
             throw BACnetDecodeError("解码错误:无法识别长度为${_tagLen}的SignedInteger数据")
         }
 
-        this.dataValue = packet.read_Int64_WithLenth_FromBuff(Int64(this.tagLength))
+        this.dataValue = packet.read_Int64_WithLength_FromBuff(Int64(this.tagLength))
 
         this.applicationDatatype = BACnetApplicationDatatypesChoice.SignedInteger
 

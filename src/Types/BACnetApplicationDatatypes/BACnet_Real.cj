@@ -49,7 +49,7 @@ public class BACnet_Real <: BACnetApplicationDatatype & ICodecPrimitiveData<BACn
             _rtu.tagLength = _len
 
             if (_len != 4) {
-                throw BACnetDecodeError("解码错误:无法识别长度为${_len}的Bacnet_Real数据")
+                throw BACnetDecodeError("解码错误:无法识别长度为${_len}的BACnet_Real数据")
             }
             _rtu.dataValue = packet.read_Float32_FromBuff()
             return _rtu

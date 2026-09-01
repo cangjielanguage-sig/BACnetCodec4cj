@@ -55,7 +55,7 @@ public class BACnet_UnsignedInteger <: BACnetApplicationDatatype & ICodecPrimiti
             _rtu.tagLength = _tagLen
 
             if (_tagLen >= 1 && _tagLen <= 8) {
-                _rtu.dataValue = packet.read_UInt64_WithLenth_FromBuff(Int64(_tagLen))
+                _rtu.dataValue = packet.read_UInt64_WithLength_FromBuff(Int64(_tagLen))
             } else {
                 throw BACnetDecodeError("解码错误:无法识别长度为${_tagLen}的UnsignedInteger数据")
             }
@@ -82,7 +82,7 @@ public class BACnet_UnsignedInteger <: BACnetApplicationDatatype & ICodecPrimiti
         this.tagLength = _tagLen
 
         if (_tagLen >= 1 && _tagLen <= 8) {
-            this.dataValue = packet.read_UInt64_WithLenth_FromBuff(Int64(_tagLen))
+            this.dataValue = packet.read_UInt64_WithLength_FromBuff(Int64(_tagLen))
         } else {
             throw BACnetDecodeError("解码错误:无法识别长度为${_tagLen}的UnsignedInteger数据")
         }
