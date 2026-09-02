@@ -4,7 +4,7 @@
 
 ---
 
-## [Unreleased] — 2026-09-01
+## [Unreleased] — 2026-09-02
 
 ### 摘要
 基于 `analysis_report.md` 路线图，完成 **P0（正确性修复）**、**P1（API 去噪）** 与 **P2（结构重构）** 的整改收尾。修复 3 处正确性缺陷，清理对外 API 中的中文与冗余命名，统一全库命名规范，并将 `OctetString`/`BitString` 的数据载体由字符串改为字节/位数组以对齐协议语义。同时纠正了测试目录约定（测试源必须位于 `src/` 下，而非 `tests/`），并修正 `cjpm.toml` 的 `cjc-version`。全部 18 个单元测试通过。
@@ -29,6 +29,9 @@
 #### Added
 - **根包公开门面**：`src/BACnetCodec4cj.cj` 集中 re-export 常用公开类型（异常类、ByteBuf、接口、基础类型、13 种应用数据类型、服务类型），调用者只需 `import BACnetCodec4cj.*`。
 - **CI 流水线**：新增 `.gitcode-ci.yml`，配置 cjfmt 格式检查、cjpm build 构建、cjpm test 单元测试三个 stage。
+
+#### Removed
+- **分析报告移出版本控制**：`analysis_report.md`（调用者视角分析报告）移出 git 仓库并改名归档为独立文档，不再纳入版本控制，对应删除体现在提交 `22_根据AI整改_P0_P1_P2全部完成` 中。
 
 ### 改动文件
 - `cjpm.toml`
