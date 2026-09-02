@@ -24,6 +24,11 @@
 - **命名统一**：`WithLenth`→`WithLength`、`arg_lenth`→`arg_length`、`Bacnet`→`BACnet`；文件 `Bacnet_BitString.cj` 改名为 `BACnet_BitString.cj`。
 - **公共工具抽取**：新增 `encodeWithTagHead` 辅助函数，复用至 `BACnet_OctetString`（其余类型因值处理逻辑异构，克制不抽象）。
 - **工程修正**：`cjpm.toml` 的 `cjc-version` 由 `1.0.0` 修正为 `1.1.3`，移除无效的 `test-dir` 配置。
+- **依赖锁定**：`charset4cj` 依赖由 `branch = "develop"` 锁定为 `tag = "v1.0.5"`（commit `ea5203fe`），保证第三方调用者可复现构建。
+
+#### Added
+- **根包公开门面**：`src/BACnetCodec4cj.cj` 集中 re-export 常用公开类型（异常类、ByteBuf、接口、基础类型、13 种应用数据类型、服务类型），调用者只需 `import BACnetCodec4cj.*`。
+- **CI 流水线**：新增 `.gitcode-ci.yml`，配置 cjfmt 格式检查、cjpm build 构建、cjpm test 单元测试三个 stage。
 
 ### 改动文件
 - `cjpm.toml`
@@ -39,6 +44,8 @@
 - `src/Types/Confirmed_Request_Pdu/Confirmed_Request_Pdu.cj`
 - `src/Types/ErrorProductions/ErrorProductions.cj`
 - `analysis_report.md`（新增第 14 节阶段成果报告）
+- `src/BACnetCodec4cj.cj`（公开门面 re-export）
+- `.gitcode-ci.yml`（新增）
 - `CHANGELOG.md`
 
 ---

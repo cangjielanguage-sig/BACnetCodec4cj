@@ -1,6 +1,6 @@
 [dependencies]
 
-charset4cj = { git = "https://gitcode.com/Cangjie-TPC/charset4cj.git",branch = "develop" }
+charset4cj = { git = "https://gitcode.com/Cangjie-TPC/charset4cj.git",tag = "v1.0.5" }
 
 [package]
   cjc-version = "1.1.3"
