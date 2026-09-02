@@ -4,7 +4,33 @@
 
 ---
 
-## [Unreleased] — 2026-09-02
+## 2026-09-02 — P3 工程化
+
+### 摘要
+完成 **P3（工程化/发布）**：锁定 `charset4cj` 依赖版本以保障可复现构建，补充根包公开门面统一对外入口，并引入 CI 流水线（cjfmt 格式检查、cjpm build 构建、cjpm test 单元测试）。同时将调用者视角分析报告 `analysis_report.md` 移出 git 仓库并改名归档。
+
+### 变更明细
+
+#### Added
+- **根包公开门面**：`src/BACnetCodec4cj.cj` 集中 re-export 常用公开类型（异常类、ByteBuf、接口、基础类型、13 种应用数据类型、服务类型），调用者只需 `import BACnetCodec4cj.*`。
+- **CI 流水线**：新增 `.gitcode-ci.yml`，配置 cjfmt 格式检查、cjpm build 构建、cjpm test 单元测试三个 stage。
+
+#### Changed
+- **依赖锁定**：`charset4cj` 依赖由 `branch = "develop"` 锁定为 `tag = "v1.0.5"`（commit `ea5203fe`），保证第三方调用者可复现构建。
+
+#### Removed
+- **分析报告移出版本控制**：`analysis_report.md`（调用者视角分析报告）移出 git 仓库并改名归档为独立文档，不再纳入版本控制。
+
+### 改动文件
+- `cjpm.toml`（依赖锁定）、`cjpm.lock`
+- `src/BACnetCodec4cj.cj`（公开门面 re-export）
+- `.gitcode-ci.yml`（新增）
+- `analysis_report.md`（移出版本控制）
+- `CHANGELOG.md`
+
+---
+
+## 2026-09-01 — P0/P1/P2 整改
 
 ### 摘要
 基于 `analysis_report.md` 路线图，完成 **P0（正确性修复）**、**P1（API 去噪）** 与 **P2（结构重构）** 的整改收尾。修复 3 处正确性缺陷，清理对外 API 中的中文与冗余命名，统一全库命名规范，并将 `OctetString`/`BitString` 的数据载体由字符串改为字节/位数组以对齐协议语义。同时纠正了测试目录约定（测试源必须位于 `src/` 下，而非 `tests/`），并修正 `cjpm.toml` 的 `cjc-version`。全部 18 个单元测试通过。
@@ -24,17 +50,9 @@
 - **命名统一**：`WithLenth`→`WithLength`、`arg_lenth`→`arg_length`、`Bacnet`→`BACnet`；文件 `Bacnet_BitString.cj` 改名为 `BACnet_BitString.cj`。
 - **公共工具抽取**：新增 `encodeWithTagHead` 辅助函数，复用至 `BACnet_OctetString`（其余类型因值处理逻辑异构，克制不抽象）。
 - **工程修正**：`cjpm.toml` 的 `cjc-version` 由 `1.0.0` 修正为 `1.1.3`，移除无效的 `test-dir` 配置。
-- **依赖锁定**：`charset4cj` 依赖由 `branch = "develop"` 锁定为 `tag = "v1.0.5"`（commit `ea5203fe`），保证第三方调用者可复现构建。
-
-#### Added
-- **根包公开门面**：`src/BACnetCodec4cj.cj` 集中 re-export 常用公开类型（异常类、ByteBuf、接口、基础类型、13 种应用数据类型、服务类型），调用者只需 `import BACnetCodec4cj.*`。
-- **CI 流水线**：新增 `.gitcode-ci.yml`，配置 cjfmt 格式检查、cjpm build 构建、cjpm test 单元测试三个 stage。
-
-#### Removed
-- **分析报告移出版本控制**：`analysis_report.md`（调用者视角分析报告）移出 git 仓库并改名归档为独立文档，不再纳入版本控制，对应删除体现在提交 `22_根据AI整改_P0_P1_P2全部完成` 中。
 
 ### 改动文件
-- `cjpm.toml`
+- `cjpm.toml`（cjc-version 修正）
 - `src/BACnetException/BACnetException.cj`
 - `src/ByteBuf/ByteBuf.cj`
 - `src/InterFaces/InterFaces.cj`
@@ -46,10 +64,7 @@
 - `src/Types/BACnetApplicationDatatypes/BACnetApplicationDatatypes_test.cj`
 - `src/Types/Confirmed_Request_Pdu/Confirmed_Request_Pdu.cj`
 - `src/Types/ErrorProductions/ErrorProductions.cj`
-- `analysis_report.md`（新增第 14 节阶段成果报告）
-- `src/BACnetCodec4cj.cj`（公开门面 re-export）
-- `.gitcode-ci.yml`（新增）
-- `CHANGELOG.md`
+- `analysis_report.md`（新增第 14 节阶段成果报告，后于次日移出版本控制）
 
 ---
 
