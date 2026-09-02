@@ -32,6 +32,14 @@ BACnet 是楼宇自控、HVAC 设备领域的重要 ISO 标准通讯协议，在
    - Time
    - ObjectIdentifier
 
+4. **字节缓冲类**
+   - 建立字节缓冲类（ByteBuf）。
+   - 建立测试用例。
+
+5. **错误处理**
+   - 建立 `BACnetError` 异常基类及 `BACnetDecodeError`、`BACnetEncodeError`、`BACnetParamError` 等子类。
+
+## 已知限制
    `BACnet 2022 版里 21.5 Application Types 第 891 页列出了具体的用户数据类型`
 
    `注意，UInt64 类型在 BACnet 2022 版才开始支持，具体使用的地方不多，本库中支持到了 64 位整数，支持到了 UInt64，实际使用时请主要使用 UInt32（0..4294967295）范围内的数字，使用 UInt64 时请核对协议确保您要使用的属性确实需要使用 UInt64`
@@ -51,14 +59,7 @@ BACnet 是楼宇自控、HVAC 设备领域的重要 ISO 标准通讯协议，在
    `另外，编码时默认 UTF_8 编码，如需指定字符集编码，则需指定 BACnet_CharacterString 的 encodeCharSet 属性，若指定的内码页在 charset4cj 库里没有则会自动使用 UTF_8 编码输出`
 
    `字符串编解码情况实在太复杂，很容易因为字符不在字符集内等等原因抛出异常，一不小心没处理就会导致解码中断，因为字符能正常取到长度，就算解码失败也不会影响后续其他编解码，所以字符串编解码尽量不抛出异常，调用 charset4cj 库时出现异常的场景都会使用 UTF_8 来作为缺省处理，若使用 UTF_8 处理仍然异常则会返回"String Decode ERROR 字符串解码异常"`
-
-4. **字节缓冲类**
-   - 建立字节缓冲类（ByteBuf）。
-   - 建立测试用例。
-
-5. **错误处理**
-   - 建立 `BACnetError` 异常基类及 `BACnetDecodeError`、`BACnetEncodeError`、`BACnetParamError` 等子类。
-
+   
 ## 使用说明
 
 ### 依赖
