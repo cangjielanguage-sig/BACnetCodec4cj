@@ -1,5 +1,6 @@
 package BACnetCodec4cj.Types.BACnetApplicationDatatypes
 
+import BACnetCodec4cj.Choice.*
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
@@ -116,3 +117,10 @@ public class BACnet_BitString <: BACnetApplicationDatatype & ICodecPrimitiveData
         return _rtu
     }
 }
+
+/*
+--ISO_16484_5_2022_Page_891
+--21.5 Application Types
+
+ -- BIT STRING [APPLICATION 8], equivalent to [UNIVERSAL 3]
+*/

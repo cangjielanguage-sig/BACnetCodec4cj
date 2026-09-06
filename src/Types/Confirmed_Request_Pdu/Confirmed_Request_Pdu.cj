@@ -1,6 +1,7 @@
 public package BACnetCodec4cj.Types.Confirmed_Request_Pdu
 
 import BACnetCodec4cj.Types.*
+import BACnetCodec4cj.Choice.*
 
 /*      service-request 协议原文
 
@@ -33,3 +34,23 @@ public class BACnet_Confirmed_Request_Pdu <: BACnet_APDU {
     public var service_request: UInt8 = 0u8 //[11] BACnet-Confirmed-Service-Request
 
 }
+
+/*
+--ISO_16484_5_2022_Page_866
+--21.1 APDU Definitions
+
+BACnet-Confirmed-Request-PDU ::= SEQUENCE {
+ pdu-type [0] Unsigned (0..15), -- 0 for this PDU type
+ segmented-message [1] BOOLEAN,
+ more-follows [2] BOOLEAN,
+ segmented-response-accepted [3] BOOLEAN,
+ reserved [4] Unsigned (0..3),    -- shall be set to zero
+ max-segments-accepted [5] Unsigned (0..7),    -- as per Clause 20.1.2.4
+ max-apdu-length-accepted [6] Unsigned (0..15),  -- as per Clause 20.1.2.5
+ invoke-id [7] Unsigned (0..255),
+ sequence-number [8] Unsigned (0..255) OPTIONAL, -- only if segmented message
+ proposed-window-size [9] Unsigned (1..127) OPTIONAL, -- only if segmented message
+ service-choice [10] BACnetConfirmedServiceChoice,
+ service-request [11] BACnet-Confirmed-Service-Request OPTIONAL -- Context-specific tags 0..11 are NOT used in header encoding
+ }
+*/

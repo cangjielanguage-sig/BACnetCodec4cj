@@ -1,4 +1,4 @@
-public package BACnetCodec4cj.Types.Confirmed_Request_Pdu
+public package BACnetCodec4cj.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
@@ -151,3 +151,62 @@ public enum ConfirmedServiceChoice <: IFromUInt8<ConfirmedServiceChoice> & IToUI
         }
     }
 }
+
+/*
+--ISO_16484_5_2022_Page_868
+--21.2 Confirmed Service Productions
+
+BACnetConfirmedServiceChoice ::= ENUMERATED { -- Alarm and Event Services
+ acknowledge-alarm (0),
+ confirmed-audit-notification (32),
+ confirmed-cov-notification (1),
+ confirmed-cov-notification-multiple (31),
+ confirmed-event-notification (2),
+ get-alarm-summary (3),
+ get-enrollment-summary (4),
+ get-event-information (29),
+ life-safety-operation (27),
+ subscribe-cov (5),
+ subscribe-cov-property (28),
+ subscribe-cov-property-multiple (30),
+ -- File Access Services
+ atomic-read-file (6),
+ atomic-write-file (7),
+ -- Object Access Services
+ add-list-element (8),
+ remove-list-element (9),
+ create-object (10),
+ delete-object (11),
+ read-property (12),
+ read-property-multiple (14),
+ read-range (26),
+ write-property (15),
+ write-property-multiple (16),
+ audit-log-query (33),
+ -- Remote Device Management Services
+ device-communication-control (17),
+ confirmed-private-transfer (18),
+ confirmed-text-message (19),
+ reinitialize-device (20),
+ -- Virtual Terminal Services
+ vt-open (21),
+ vt-close (22),
+ vt-data (23)
+ -- Removed Services
+ -- formerly: authenticate (24) removed in version 1 revision 11
+ -- formerly: request-key (25) removed in version 1 revision 11
+ -- formerly: read-property-conditional (13) removed in version 1 revision 12
+ -- Services added after 1995
+ -- read-range (26) see Object Access Services
+ -- life-safety-operation (27) see Alarm and Event Services
+ -- subscribe-cov-property (28) see Alarm and Event Services
+ -- get-event-information (29) see Alarm and Event Services
+ -- Services added after 2012
+ -- subscribe-cov-property-multiple (30) see Alarm and Event Services
+ -- confirmed-cov-notification-multiple (31) see Alarm and Event Services
+ -- Services added after 2016
+ -- confirmed-audit-notification (32)  see Alarm and Event Services
+ -- audit-log-query (33)  see Object Access Services
+ }
+-- Other services to be added as they are defined. All enumeration values in this production are reserved for definition by -- ASHRAE. Proprietary extensions are made by using the ConfirmedPrivateTransfer or UnconfirmedPrivateTransfer -- services. See Clause 23.
+*/

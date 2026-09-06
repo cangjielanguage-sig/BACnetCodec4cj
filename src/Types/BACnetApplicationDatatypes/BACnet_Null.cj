@@ -1,5 +1,6 @@
 package BACnetCodec4cj.Types.BACnetApplicationDatatypes
 
+import BACnetCodec4cj.Choice.*
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
@@ -45,3 +46,10 @@ public class BACnet_Null <: BACnetApplicationDatatype & ICodecPrimitiveData<BACn
         return [0b0000_0000]
     }
 }
+
+/*
+--ISO_16484_5_2022_Page_891
+--21.5 Application Types
+
+-- NULL [APPLICATION 0], equivalent to [UNIVERSAL 5]
+*/

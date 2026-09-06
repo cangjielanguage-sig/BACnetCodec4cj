@@ -4,6 +4,31 @@
 
 ---
 
+## [0.2.0] - 2026-09-05 — 枚举与 Choice 重构
+
+### 摘要
+完成枚举/Choice 的目录化重构与协议文档化：将分散在多个源码文件中的 9 个 Choice 枚举统一抽取到独立的 `src/Choice/` 包，新增完整的 `BACnetPropertyIdentifier` 属性标识符枚举（462 个），并为 20 个已有定义补齐 ISO 16484-5:2022 协议原文注释（含章节与页码）。版本号由 0.1.0 提升至 0.2.0。
+
+### 变更明细
+
+#### Added
+- **`BACnetPropertyIdentifier` 枚举**：新增至 `src/Enum/BACnetPropertyIdentifier.cj`（package `BACnetCodec4cj.Enum`），覆盖协议 21.6 定义的 462 个属性标识符（0-507 标准值 + 扩展通配），实现 `IFromUInt32`/`IToUInt32`/`ToString`/`IFromString`。
+- **`IFromUInt32` / `IToUInt32` 接口**：新增到 `src/InterFaces/InterFaces.cj`，支撑 UInt32 范围的枚举转换（属性标识符扩展值可达 4194303）。
+- **协议原文注释**：为 20 个定义文件追加 ISO 16484-5:2022 协议原文（块注释，含 `--ISO_16484_5_2022_Page_XXX` 页码与 `--21.X` 章节标注）。
+
+#### Changed
+- **Choice 枚举目录化重构**：将 9 个 Choice 枚举（`BACnet_PDUTypeChoice`、`BACnetObjectTypeChoice`、`BACnetApplicationDatatypesChoice`、`BACnetTagClassChoice`、`BACnetCharSetChoice`、`UnconfirmedServiceChoice`、`ConfirmedServiceChoice`、`ConfirmedServiceRequestChoice`、`ConfirmedServiceACKChoice`）统一抽取到 `src/Choice/`（package `BACnetCodec4cj.Choice`），各自独立成同名 `.cj` 文件。
+- **import 更新**：所有引用上述枚举的文件补充 `import BACnetCodec4cj.Choice.*`；根包公开门面补充 `public import ...Choice.*` 与 `...Enum.*`。
+
+### 改动文件
+- 新增 `src/Choice/`（9 个 Choice 枚举文件）
+- 新增 `src/Enum/BACnetPropertyIdentifier.cj`
+- 删除 `src/Types/BACnetObjectType.cj`、`src/Types/Confirmed_Request_Pdu/{ConfirmedServiceChoice,ConfirmedServiceRequestChoice,ConfirmedServiceACKChoice}.cj`
+- 修改 `src/InterFaces/InterFaces.cj`、`src/BACnetCodec4cj.cj`、`src/Types/Types.cj`、`src/Types/Confirmed_Request_Pdu/Confirmed_Request_Pdu.cj`、`src/Types/UnconfirmedService/UnconfirmedService.cj`、`src/Types/BACnetApplicationDatatypes/` 下数据类型文件
+- 修改 `cjpm.toml`（版本 0.1.0→0.2.0）
+
+---
+
 ## 2026-09-02 — P3 工程化
 
 ### 摘要

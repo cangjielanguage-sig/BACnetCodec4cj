@@ -1,5 +1,6 @@
 package BACnetCodec4cj.Types.BACnetApplicationDatatypes
 
+import BACnetCodec4cj.Choice.*
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
@@ -189,3 +190,18 @@ public class BACnet_UnsignedInteger <: BACnetApplicationDatatype & ICodecPrimiti
         return _rtu
     }
 }
+
+/*
+--ISO_16484_5_2022_Page_891
+--21.5 Application Types
+
+Unsigned ::= [APPLICATION 2] INTEGER (0..MAX)
+
+Unsigned8 ::= Unsigned (0..255)
+
+Unsigned16 ::= Unsigned (0..65535)
+
+Unsigned32 ::= Unsigned (0..4294967295)
+
+Unsigned64 ::= Unsigned (0.. 18446744073709551615) -- 0 .. 'the 64th power of two'-1
+*/

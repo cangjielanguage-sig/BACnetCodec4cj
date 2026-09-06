@@ -1,4 +1,4 @@
-public package BACnetCodec4cj.Types.Confirmed_Request_Pdu
+public package BACnetCodec4cj.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
@@ -152,3 +152,61 @@ public enum ConfirmedServiceRequestChoice <: IFromUInt8<ConfirmedServiceRequestC
         }
     }
 }
+
+/*
+--ISO_16484_5_2022_Page_869
+--21.2 Confirmed Service Productions
+
+BACnet-Confirmed-Service-Request ::= CHOICE { -- Alarm and Event Services
+ acknowledge-alarm [0] AcknowledgeAlarm-Request,
+ confirmed-cov-notification [1] ConfirmedCOVNotification-Request,
+ confirmed-cov-notification-multiple [31] ConfirmedCOVNotificationMultiple-Request,
+ confirmed-event-notification [2] ConfirmedEventNotification-Request,
+ -- get-alarm-summary conveys no parameters
+ get-enrollment-summary [4] GetEnrollmentSummary-Request,
+ get-event-information [29] GetEventInformation-Request,
+ life-safety-operation [27] LifeSafetyOperation-Request,
+ subscribe-cov [5] SubscribeCOV-Request,
+ subscribe-cov-property [28] SubscribeCOVProperty-Request,
+ subscribe-cov-property-multiple [30] SubscribeCOVPropertyMultiple-Request,
+ confirmed-audit-notification [32] ConfirmedAuditNotification-Request,
+ -- File Access Services
+ atomic-read-file [6] AtomicReadFile-Request,
+ atomic-write-file [7] AtomicWriteFile-Request,
+ -- Object Access Services
+ add-list-element [8] AddListElement-Request,
+ remove-list-element [9] RemoveListElement-Request,
+ create-object [10] CreateObject-Request,
+ delete-object [11] DeleteObject-Request,
+ read-property [12] ReadProperty-Request,
+ read-property-multiple [14] ReadPropertyMultiple-Request,
+ read-range [26] ReadRange-Request,
+ write-property  [15] WriteProperty-Request,
+ write-property-multiple [16] WritePropertyMultiple-Request,
+ audit-log-query [33] AuditLogQuery-Request,
+ -- Remote Device Management Services
+ device-communication-control [17] DeviceCommunicationControl-Request,
+ confirmed-private-transfer [18] ConfirmedPrivateTransfer-Request,
+ confirmed-text-message [19] ConfirmedTextMessage-Request,
+ reinitialize-device [20] ReinitializeDevice-Request,
+ -- Virtual Terminal Services
+ vt-open [21] VT-Open-Request,
+ vt-close [22] VT-Close-Request,
+ vt-data [23] VT-Data-Request
+ -- Removed Services
+ -- formerly: authenticate [24] removed in version 1 revision 11
+ -- formerly: request-key [25] removed in version 1 revision 11
+ -- formerly: read-property-conditional  [13] removed in version 1 revision 12
+ -- Services added after 1995
+ -- read-range [26] see Object Access Services
+ -- life-safety-operation [27] see Alarm and Event Services
+ -- subscribe-cov-property [28] see Alarm and Event Services
+ -- get-event-information [29] see Alarm and Event Services
+ -- Services added after 2012
+ -- subscribe-cov-property-multiple [30]  see Alarm and Event Services
+ -- confirmed-cov-notification-multiple [31]  see Alarm and Event Services
+ -- Services added after 2016
+ -- confirmed-audit-notifications [32]  see Alarm and Event Services
+ -- audit-log-query [33]  see Object Access Services
+ } -- Context-specific tags 0..33 are NOT used in the encoding. The tag number is transferred as the service-choice parameter -- in the BACnet-Confirmed-Request-PDU. -- -- Other services will be added as they are defined. All choice values in this production are reserved for definition by -- ASHRAE. Proprietary extensions are made by using the ConfirmedPrivateTransfer service. See Clause 23.
+*/

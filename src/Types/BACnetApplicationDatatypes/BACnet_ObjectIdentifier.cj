@@ -1,5 +1,6 @@
 package BACnetCodec4cj.Types.BACnetApplicationDatatypes
 
+import BACnetCodec4cj.Choice.*
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
@@ -176,3 +177,10 @@ public struct BACnetObjectIdentifierStruct <: Equal<BACnetObjectIdentifierStruct
         return "{type_choice:${type_choice.toString()},id:${id.toString()}}"
     }
 }
+
+/*
+--ISO_16484_5_2022_Page_891
+--21.5 Application Types
+
+BACnetObjectIdentifier ::= [APPLICATION 12] OCTET STRING (SIZE(4)) -- see Clause 20.2.14
+*/

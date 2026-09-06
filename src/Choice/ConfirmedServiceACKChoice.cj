@@ -1,4 +1,4 @@
-public package BACnetCodec4cj.Types.Confirmed_Request_Pdu
+public package BACnetCodec4cj.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
@@ -96,3 +96,33 @@ public enum ConfirmedServiceACKChoice <: IFromUInt8<ConfirmedServiceACKChoice> &
         }
     }
 }
+
+/*
+--ISO_16484_5_2022_Page_870
+--21.2 Confirmed Service Productions
+
+BACnet-Confirmed-Service-ACK  ::= CHOICE { -- This production represents the Result(+) parameters defined for each confirmed service that returns one or more -- parameters with 'Result(+).
+ -- Alarm and Event Services
+ get-alarm-summary [3] GetAlarmSummary-ACK,
+ get-enrollment-summary [4] GetEnrollmentSummary-ACK,
+ get-event-information [29] GetEventInformation-ACK,
+ -- File Access Services
+ atomic-read-file [6] AtomicReadFile-ACK,
+ atomic-write-file [7] AtomicWriteFile-ACK,
+ -- Object Access Services
+ create-object [10] CreateObject-ACK,
+ read-property [12] ReadProperty-ACK,
+ read-property-multiple [14] ReadPropertyMultiple-ACK,
+ read-range [26] ReadRange-ACK,
+ audit-log-query [33] AuditLogQuery-ACK,
+ -- Remote Device Management Services
+ confirmed-private-transfer [18] ConfirmedPrivateTransfer-ACK,
+ -- Virtual Terminal Services
+ vt-open [21] VT-Open-ACK,
+ vt-data [23] VT-Data-ACK
+ -- Removed Services
+ -- formerly: authenticate [24] removed in version 1 revision 11
+ -- formerly: read-property-conditional [13] removed in version 1 revision 12
+ -- Context-specific tags 3..33 are NOT used in the encoding. The tag number is transferred as the service-ack-choice -- parameter in the BACnet-ComplexACK-PDU. -- -- Other services to be added as they are defined. All choice values in this production are reserved for definition by -- ASHRAE. Proprietary extensions are made by using the ConfirmedPrivateTransfer service. -- See Clause 23.
+ }
+*/

@@ -1,5 +1,6 @@
 package BACnetCodec4cj.Types.BACnetApplicationDatatypes
 
+import BACnetCodec4cj.Choice.*
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
@@ -89,3 +90,10 @@ public class BACnet_OctetString <: BACnetApplicationDatatype & ICodecPrimitiveDa
         return encodeWithTagHead(this.tagNumber, this.tagLength, BACnetTagClassChoice.contextSpecificTag, _value_Array)
     }
 }
+
+/*
+--ISO_16484_5_2022_Page_891
+--21.5 Application Types
+
+ -- OCTET STRING [APPLICATION 6], equivalent to [UNIVERSAL 4]
+*/

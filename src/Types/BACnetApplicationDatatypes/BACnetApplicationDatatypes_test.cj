@@ -1,4 +1,5 @@
 package BACnetCodec4cj.Types.BACnetApplicationDatatypes
+import BACnetCodec4cj.Choice.*
 import std.unittest
 import BACnetCodec4cj.ByteBuf.*
 import BACnetCodec4cj.BACnetException.*

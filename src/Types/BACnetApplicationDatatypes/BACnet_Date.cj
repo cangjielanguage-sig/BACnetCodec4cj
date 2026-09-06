@@ -1,5 +1,6 @@
 package BACnetCodec4cj.Types.BACnetApplicationDatatypes
 
+import BACnetCodec4cj.Choice.*
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
@@ -139,3 +140,22 @@ public class BACnet_Date <: BACnetApplicationDatatype & ICodecPrimitiveData<BACn
         return _rtu
     }
 }
+
+/*
+--ISO_16484_5_2022_Page_891
+--21.5 Application Types
+
+Date ::= [APPLICATION 10] OCTET STRING (SIZE(4)) -- see Clause 20.2.12
+-- first octet year minus 1900,  X'FF' = unspecified
+-- second octet month  (1.. 14), 	1   = January
+--      				13 = odd months
+--      				14 = even months
+--      				X'FF' = unspecified
+-- third octet day of month  (1..34), 	32 = last day of month
+--      				33 = odd days of month
+--      				34 = even days of month
+--      				X'FF' = unspecified
+-- fourth octet day of week  (1..7) 	1 = Monday
+--      				7 = Sunday
+--      				X'FF' = unspecified
+*/

@@ -1,5 +1,6 @@
 package BACnetCodec4cj.Types.BACnetApplicationDatatypes
 
+import BACnetCodec4cj.Choice.*
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetException.*
 import BACnetCodec4cj.ByteBuf.*
@@ -141,3 +142,14 @@ public class BACnet_Time <: BACnetApplicationDatatype & ICodecPrimitiveData<BACn
         return _rtu
     }
 }
+
+/*
+--ISO_16484_5_2022_Page_891
+--21.5 Application Types
+
+Time ::= [APPLICATION 11] OCTET STRING (SIZE(4)) -- see Clause 20.2.13
+-- first octet hour  (0..23), X'FF' = unspecified
+-- second octet minute  (0..59), X'FF' = unspecified
+-- third octet second  (0..59), X'FF' = unspecified
+-- fourth octet hundredths (0..99) X'FF' = unspecified
+*/

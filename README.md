@@ -39,6 +39,20 @@ BACnet 是楼宇自控、HVAC 设备领域的重要 ISO 标准通讯协议，在
 5. **错误处理**
    - 建立 `BACnetError` 异常基类及 `BACnetDecodeError`、`BACnetEncodeError`、`BACnetParamError` 等子类。
 
+6. **枚举与 Choice**
+   - 建立 9 个 Choice 枚举（`BACnet_PDUTypeChoice`、`BACnetObjectTypeChoice`、`BACnetApplicationDatatypesChoice`、`BACnetTagClassChoice`、`BACnetCharSetChoice`、`ConfirmedServiceChoice`、`ConfirmedServiceRequestChoice`、`ConfirmedServiceACKChoice`、`UnconfirmedServiceChoice`）。
+   - 建立 `BACnetPropertyIdentifier` 属性标识符枚举（462 个属性，覆盖协议 21.6）。
+   - 各定义文件底部附有 ISO 16484-5:2022 协议原文注释（含章节与页码）。
+
+## 项目结构
+
+- `src/Choice/` —— Choice 枚举（PDU 类型、对象类型、服务类型、字符集等）
+- `src/Enum/` —— 非 Choice 枚举（如 `BACnetPropertyIdentifier`）
+- `src/Types/` —— 数据类型与父类（`BACnet_APDU`、`BACnetApplicationDatatypes` 及其 13 种数据类型、`Confirmed_Request_Pdu` 等）
+- `src/ByteBuf/` —— 字节缓冲类
+- `src/BACnetException/` —— 异常类
+- `src/InterFaces/` —— 接口定义
+
 ## 已知限制
    `BACnet 2022 版里 21.5 Application Types 第 891 页列出了具体的用户数据类型`
 

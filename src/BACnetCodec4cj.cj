@@ -11,8 +11,12 @@ public import BACnetCodec4cj.ByteBuf.*
 // 编解码接口
 public import BACnetCodec4cj.InterFaces.*
 
-// 基础类型与枚举（BACnet_PDUTypeChoice、BACnet_APDU、BACnetObjectTypeChoice 等）
+// 基础类型（BACnet_APDU 等）
 public import BACnetCodec4cj.Types.*
+
+// 枚举与 Choice（PDU 类型、对象类型、应用数据类型、属性标识符等）
+public import BACnetCodec4cj.Choice.*
+public import BACnetCodec4cj.Enum.*
 
 // 应用数据类型（13 种 BACnet 用户数据）
 public import BACnetCodec4cj.Types.BACnetApplicationDatatypes.*

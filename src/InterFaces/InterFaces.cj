@@ -22,6 +22,16 @@ public interface IToUInt16 {
     func toUInt16(): UInt16
 }
 
+//Convert UInt32 to the corresponding type
+public interface IFromUInt32<T> {
+    static func fromUInt32(tag: UInt32): T
+}
+
+//Convert the corresponding type to UInt32
+public interface IToUInt32 {
+    func toUInt32(): UInt32
+}
+
 //从String转换为相应类型
 public interface IFromString<T> {
     static func fromString(arg_str: String): T
