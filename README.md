@@ -37,7 +37,7 @@ BACnet 是楼宇自控、HVAC 设备领域的重要 ISO 标准通讯协议，在
    - 建立测试用例。
 
 5. **错误处理**
-   - 建立 `BACnetError` 异常基类及 `BACnetDecodeError`、`BACnetEncodeError`、`BACnetParamError` 等子类。
+   - 建立 `BACnetError` 异常基类及 `DecodeException`、`EncodeException`、`BACnetParamError` 等子类。
 
 6. **枚举与 Choice**
    - 建立 9 个 Choice 枚举（`BACnet_PDUTypeChoice`、`BACnetObjectTypeChoice`、`BACnetApplicationDatatypesChoice`、`BACnetTagClassChoice`、`BACnetCharSetChoice`、`ConfirmedServiceChoice`、`ConfirmedServiceRequestChoice`、`ConfirmedServiceACKChoice`、`UnconfirmedServiceChoice`）。

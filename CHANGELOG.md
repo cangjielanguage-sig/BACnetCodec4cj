@@ -4,6 +4,78 @@
 
 ---
 
+## [0.3.0] - 2026-09-09 — ASN.1 CHOICE 全量生成与命名规范化
+### 注意
+本版本Choice为AI根据协议源文件按照固定格式生成，实际有大量Choice是值的概念，后续版本会逐一修正，本版本只做文件结构示意，无法实用。
+本版本对文件结构进行了大幅度的调整，将BACnet相关定义集中到BACnet包中，方便管理。
+
+### 吐槽
+1.BACnet协议本身：因为之前做简化版本解码时留下的错误印象，以为BACnet协议里标的Choice都是像BACnet-Confirmed-Service-ACK  ::= CHOICE { 
+ get-alarm-summary [3] GetAlarmSummary-ACK,
+ ...
+}
+这种的，就是一个flag,实际是enum的概念和作用。
+但是实际情况不是这样，类似这种的 choice 只占了协议的很小一部分。
+协议中大量的Choice都是值的概念，Choice代表这地方的值的类型不固定，是它定义下面
+的多个类型中间的一种，比如
+BACnet-Property-States ::= CHOICE {
+    boolean [1] BOOLEAN,
+    unsigned-integer [2] UNSIGNED-INTEGER,
+    ...,
+    error [23] BACnet-Error,
+    ...
+}
+也就是说，这东西需要具体用不同类型的编解码，而不是简单的应用一个整数来对应。
+因为本次大改了文件结构，以后就打算用这个文件结构思路来扩展后续工作，
+当前这个版本还是花了近亿token才得到的版本，所以先提交一个包含错误概念的版本，
+然后后续会逐一核对choice下的所有类型并修正。
+
+还有，这协议的choice定义，很多都是没有按照ASN.1的格式来定义的，类似刚才那两个例子中，
+BACnet-Confirmed-Service-ACK  ::= CHOICE { 
+ get-alarm-summary [3] GetAlarmSummary-ACK,
+ ...
+}里的[3]代表如果值是3则代表后续包是GetAlarmSummary-ACK。
+
+BACnet-Property-States ::= CHOICE {
+    boolean [1] BOOLEAN,
+    unsigned-integer [2] UNSIGNED-INTEGER,
+    ...,
+    error [23] BACnet-Error,
+    ...
+}里的[2]却代表这个值使用上下文标记2，如果在这个choice解码时遇到上下文标记2那么就要用unsigned-integer的编解码方式来解码。
+
+也就是说，协议里很多choice的定义，都是没有按照ASN.1的格式来定义的，
+而是直接把ASN.1的tag和value混在一起定义了，
+这导致了协议的choice定义非常混乱。
+
+2.每天1000万的token，实际上只够严肃认真的使用AI运行几个问题而已，AI连续运行1个小时左右
+1000万token就会耗尽。慢慢来吧，没赞助的话大概就这样了。
+
+### 摘要
+依据 ISO 16484-5:2022 协议第 21 章（FORMAL DESCRIPTION OF APPLICATION PROTOCOL DATA UNITS）原文，全量生成 31 个 ASN.1 CHOICE 类型定义的 Cangjie 枚举代码，并对 Choice/Enum 目录进行命名规范化重构（去 `BACnet`/`Choice` 字样、`-`→`_`、字段 snake_case）。同步裁剪协议原文未声明的 `reserved()`/`remove()` 兼容值，为所有 CHOICE 实现 `IFromUInt8`/`IToUInt8`/`ToString`/`IFromString` 四接口。版本号由 0.2.0 提升至 0.3.0。
+
+### 变更明细
+
+#### Added
+- **31 个 ASN.1 CHOICE 枚举**：新增至 `src/BACnet/Choice/`（package `BACnetCodec4cj.BACnet.Choice`），覆盖协议第 21 章全部 `::= CHOICE` 定义。每个枚举含原文注释（`[N]` tag、类型、协议行号），实现 `IFromUInt8`/`IToUInt8`/`ToString`/`IFromString`。
+- **`BACnet_PDU_Type_Choice`**：PDU 类型 CHOICE，特殊命名保留 `BACnet_`/`_Choice` 前后缀（区别于其余 30 个去前缀命名）。
+
+#### Changed
+- **命名规范化**：`src/BACnet/Choice/` 下 37 个 `.cj` 文件类名与文件名去掉 `BACnet`/`Choice` 字样，连接符 `-` 一律替换为 `_`，枚举成员字段名全小写 snake_case。
+- **6 个非 CHOICE 枚举改名**：`ConfirmedService`、`UnconfirmedService`、`ObjectType`、`CharSet`、`ApplicationDatatypes`、`TagClass` 同步去 `BACnet`/`Choice` 命名。
+- **`PDU.cj` → `BACnet_PDU_Type_Choice.cj`**：文件与类名同步更新，`Types.cj` 中引用同步修正。
+- **reserved/remove 裁剪**：依据协议原文注释，24 个 CHOICE 去除未声明的 `reserved()`/`remove()` 兼容值及对应转换分支；7 个保留 `reserved()`（`Confirmed_Service_Request`/`Confirmed_Service_ACK`/`Unconfirmed_Service_Request`/`Error`/`EventParameter`/`NotificationParameters`/`PropertyStates`）；7 个保留 `remove()`（上述除 `Unconfirmed_Service_Request` 外加 `TimeStamp`）。
+- **引用更新**：16 个引用文件（含 `Types.cj`、`ApplicationDatatypes/` 下 13 个数据类型、`Confirmed_Request_Pdu.cj` 等）同步更新 import 与类型引用。
+- **版本号**：`cjpm.toml` 版本 0.2.0→0.3.0。
+
+### 改动文件
+- 新增 `src/BACnet/Choice/` 下 31 个 CHOICE 枚举文件
+- 改名 `src/BACnet/Choice/` 下 6 个非 CHOICE 枚举文件 + `PDU.cj`→`BACnet_PDU_Type_Choice.cj`
+- 修改 `src/BACnet/Types/Types.cj`、`src/BACnet/Types/ApplicationDatatypes/`（13 个）、`src/BACnet/Types/Confirmed_Request_Pdu/Confirmed_Request_Pdu.cj` 等共 16 个引用文件
+- 修改 `cjpm.toml`（版本 0.2.0→0.3.0）
+
+---
+
 ## [0.2.0] - 2026-09-05 — 枚举与 Choice 重构
 
 ### 摘要
@@ -18,7 +90,7 @@
 
 #### Changed
 - **Choice 枚举目录化重构**：将 9 个 Choice 枚举（`BACnet_PDUTypeChoice`、`BACnetObjectTypeChoice`、`BACnetApplicationDatatypesChoice`、`BACnetTagClassChoice`、`BACnetCharSetChoice`、`UnconfirmedServiceChoice`、`ConfirmedServiceChoice`、`ConfirmedServiceRequestChoice`、`ConfirmedServiceACKChoice`）统一抽取到 `src/Choice/`（package `BACnetCodec4cj.Choice`），各自独立成同名 `.cj` 文件。
-- **import 更新**：所有引用上述枚举的文件补充 `import BACnetCodec4cj.Choice.*`；根包公开门面补充 `public import ...Choice.*` 与 `...Enum.*`。
+- **import 更新**：所有引用上述枚举的文件补充 `import BACnetCodec4cj.BACnet.Choice.*`；根包公开门面补充 `public import ...Choice.*` 与 `...Enum.*`。
 
 ### 改动文件
 - 新增 `src/Choice/`（9 个 Choice 枚举文件）
@@ -69,7 +141,7 @@
 
 #### Changed
 - **API 去噪**：删除接口与枚举中的中文方法名（如 `从UInt8转换而来`）与冗余方法 `toUint8this`；移除调试函数 `printArrayAsFormat`。
-- **异常体系规范化**：异常类统一为 `*Error`/`Param` 命名，建立公共基类 `BACnetError`，子类 `BACnetDecodeError`/`BACnetEncodeError`/`BACnetParamError` 等继承自它。
+- **异常体系规范化**：异常类统一为 `*Error`/`Param` 命名，建立公共基类 `BACnetError`，子类 `DecodeException`/`EncodeException`/`BACnetParamError` 等继承自它。
 - **接口拆分**：将 `ICodecBACnetApplicationData` 拆分为 `ICodecPrimitiveData<T>`（原语数据）与 `ICodecContextSpecificData`（上下文数据），职责更单一。
 - **数据语义化**：`OctetString.dataValue` 由 `String` 改为 `Array<Byte>`；`BitString.dataValue` 由 `String` 改为 `Array<Bool>`；`Null` 移除无意义的 `Option<Bool>` 型 `dataValue`。
 - **命名统一**：`WithLenth`→`WithLength`、`arg_lenth`→`arg_length`、`Bacnet`→`BACnet`；文件 `Bacnet_BitString.cj` 改名为 `BACnet_BitString.cj`。

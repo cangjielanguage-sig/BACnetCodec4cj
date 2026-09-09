@@ -3,25 +3,12 @@ public package BACnetCodec4cj
 // 公开门面：集中 re-export 常用公开类型，调用者可直接 import BACnetCodec4cj.*
 
 // 异常类
-public import BACnetCodec4cj.BACnetException.*
+public import BACnetCodec4cj.BACnetCodecException.*
 
-// 字节缓冲类
-public import BACnetCodec4cj.ByteBuf.*
-
+// 辅助工具类
+public import BACnetCodec4cj.Utility.*
 // 编解码接口
 public import BACnetCodec4cj.InterFaces.*
 
-// 基础类型（BACnet_APDU 等）
-public import BACnetCodec4cj.Types.*
-
-// 枚举与 Choice（PDU 类型、对象类型、应用数据类型、属性标识符等）
-public import BACnetCodec4cj.Choice.*
-public import BACnetCodec4cj.Enum.*
-
-// 应用数据类型（13 种 BACnet 用户数据）
-public import BACnetCodec4cj.Types.BACnetApplicationDatatypes.*
-
-// 服务相关类型
-public import BACnetCodec4cj.Types.UnconfirmedService.*
-public import BACnetCodec4cj.Types.Confirmed_Request_Pdu.*
-public import BACnetCodec4cj.Types.ErrorProductions.*
+// 协议相关
+public import BACnetCodec4cj.BACnet.*
