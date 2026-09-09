@@ -6,18 +6,15 @@ BACnet 是楼宇自控、HVAC 设备领域的重要 ISO 标准通讯协议，在
 本项目仅供参考，不作为正式生产环境使用，使用时请自行核对协议确保正确性。
 本项目使用 AI 辅助开发，使用时请自行核对 AI 生成内容确保正确性。
 
-目前仅 `BACnetApplicationDatatypes` 部分的 BACnet 用户数据可实现实际编解码操作，其余部分仍在制作当中。
+目前 `BACnetApplicationDatatypes`（13 种 BACnet 用户数据类型）的编解码已可用，`BACnet ASN.1 CHOICE`（31 个）与服务类型枚举已全量建立，其余 PDU 编解码仍在制作当中。
 
 ## 当前进展
 
-1. **ConfirmedService**
-   - 建立了多个枚举类。
+1. **ConfirmedService / UnConfirmedService**
+   - 建立了 Confirm 与 Unconfirmed 服务类型枚举。
 
-2. **UnConfirmedService**
-   - 建立了多个枚举类。
-
-3. **BACnet 用户数据（BACnetApplicationDatatypes）（已全部完成）**
-   已实现以下格式的编解码函数（已可用），并建立测试用例：
+2. **BACnet 用户数据（BACnetApplicationDatatypes）（已全部完成）**
+   已实现以下 13 种格式的编解码函数（已可用），并建立测试用例：
    - Null
    - Boolean
    - UnsignedInteger
@@ -32,26 +29,30 @@ BACnet 是楼宇自控、HVAC 设备领域的重要 ISO 标准通讯协议，在
    - Time
    - ObjectIdentifier
 
-4. **字节缓冲类**
-   - 建立字节缓冲类（ByteBuf）。
+3. **字节缓冲类（ByteBuf）**
+   - 建立字节缓冲类，支撑各类编解码操作。
    - 建立测试用例。
 
-5. **错误处理**
-   - 建立 `BACnetError` 异常基类及 `DecodeException`、`EncodeException`、`BACnetParamError` 等子类。
+4. **异常处理（BACnetCodecException）**
+   - 建立异常基类及子类：`DecodeException`、`EncodeException`、`BACnetParamException`、`ByteBuffException` 等，分层组织于 `src/BACnetCodecException/` 下各子包。
 
-6. **枚举与 Choice**
-   - 建立 9 个 Choice 枚举（`BACnet_PDUTypeChoice`、`BACnetObjectTypeChoice`、`BACnetApplicationDatatypesChoice`、`BACnetTagClassChoice`、`BACnetCharSetChoice`、`ConfirmedServiceChoice`、`ConfirmedServiceRequestChoice`、`ConfirmedServiceACKChoice`、`UnconfirmedServiceChoice`）。
+5. **枚举与 Choice**
+   - 依据 ISO 16484-5:2022 协议第 21 章（FORMAL DESCRIPTION OF APDU）原文，全量建立 **31 个 ASN.1 CHOICE** 枚举（含 `BACnet_PDUTypeChoice` 等），并完成命名规范化（去掉 `BACnet`/`Choice` 字样的冗余前缀、连接符 `-` 统一替换为 `_`、成员名为 snake_case）。
+   - 依据协议原文实现对 `reserved(x)` / `remove(x)`（或 `non_standardized` 等）兼容值的保留与裁剪。
    - 建立 `BACnetPropertyIdentifier` 属性标识符枚举（462 个属性，覆盖协议 21.6）。
    - 各定义文件底部附有 ISO 16484-5:2022 协议原文注释（含章节与页码）。
 
 ## 项目结构
 
-- `src/Choice/` —— Choice 枚举（PDU 类型、对象类型、服务类型、字符集等）
-- `src/Enum/` —— 非 Choice 枚举（如 `BACnetPropertyIdentifier`）
-- `src/Types/` —— 数据类型与父类（`BACnet_APDU`、`BACnetApplicationDatatypes` 及其 13 种数据类型、`Confirmed_Request_Pdu` 等）
-- `src/ByteBuf/` —— 字节缓冲类
-- `src/BACnetException/` —— 异常类
-- `src/InterFaces/` —— 接口定义
+- `src/BACnetCodec4cj.cj` —— 根包公开门面，调用者只需 `import BACnetCodec4cj.*`
+- `src/BACnet/` —— 协议相关定义
+  - `BACnet.cj` —— BACnet 包门面（re-export Choice/Enum/Types）
+  - `Choice/` —— ASN.1 CHOICE 及其它枚举（31 个 CHOICE + 6 个非 CHOICE 枚举，共 37 个）
+  - `Enum/` —— 非 Choice 枚举（如 `BACnetPropertyIdentifier`）
+  - `Types/` —— 数据类型与 PDU（`BACnet_APDU`、`BACnetApplicationDatatypes` 及其 13 种数据类型、`Confirmed_Request_Pdu`、`UnconfirmedService` 等）
+- `src/BACnetCodecException/` —— 异常类（BaseException / DecodeException / EncodeException / BACnetParamException / UtilityException 等子包）
+- `src/InterFaces/` —— 编解码接口定义（`IFromUInt8`、`IToUInt8`、`IFromString`、`ICodecPrimitiveData` 等）
+- `src/Utility/` —— 辅助工具类（含 `ByteBuf/` 字节缓冲类）
 
 ## 已知限制
    `BACnet 2022 版里 21.5 Application Types 第 891 页列出了具体的用户数据类型`
@@ -64,22 +65,22 @@ BACnet 是楼宇自控、HVAC 设备领域的重要 ISO 标准通讯协议，在
 
    `目前 CharacterString 的 X'01' IBM/Microsoft DBCS code page xxx 的字符集是不全的，处理方法是在 charset4cj 里查找名为 cpxxx 的内码字符集，找不到时就以默认 UTF_8 做编解码。`
 
-   `所以一般不建议使用 BACnetCharSetChoice.CodePage(UInt16)，正确性我无法保证`
+   `所以一般不建议使用 CharSet.CodePage(UInt16)，正确性我无法保证`
 
    `另外，JISX0208 在 charset4cj 没找到，用的是 ISO_2022_JP 编码，不知道是不是一回事儿，没法儿验证。`
 
-   `所以一般不建议使用 BACnetCharSetChoice.JISX0208，正确性我无法保证`
+   `所以一般不建议使用 CharSet.JISX0208，正确性我无法保证`
 
    `另外，编码时默认 UTF_8 编码，如需指定字符集编码，则需指定 BACnet_CharacterString 的 encodeCharSet 属性，若指定的内码页在 charset4cj 库里没有则会自动使用 UTF_8 编码输出`
 
    `字符串编解码情况实在太复杂，很容易因为字符不在字符集内等等原因抛出异常，一不小心没处理就会导致解码中断，因为字符能正常取到长度，就算解码失败也不会影响后续其他编解码，所以字符串编解码尽量不抛出异常，调用 charset4cj 库时出现异常的场景都会使用 UTF_8 来作为缺省处理，若使用 UTF_8 处理仍然异常则会返回"String Decode ERROR 字符串解码异常"`
-   
+
 ## 使用说明
 
 ### 依赖
 
 - 仓颉工具链 1.1.3（cjnative）
-- [charset4cj](https://gitcode.com/Cangjie-TPC/charset4cj.git)（develop 分支）
+- [charset4cj](https://gitcode.com/Cangjie-TPC/charset4cj.git)（tag `v1.0.5`）
 
 ### 构建
 
