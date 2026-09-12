@@ -4,20 +4,57 @@
 
 ---
 
+## [0.4.0] - 2026-09-12 — ENUMERATED 全量生成与 Choice/Enum 后缀规范化
+
+### 摘要
+依据 ISO 16484-5:2022 协议第 21 章原文，全量生成 73 个 ASN.1 ENUMERATED 枚举至 `src/BACnet/Enum/`（去 `BACnet`/`Choice` 前缀、成员 snake_case、统一 `IFromUInt32`/`IToUInt32`/`ToString`/`IFromString` 接口，按协议边界保留 `reserved`/`non_standardized`，`formerly` 删除项给出兼容值，仓颉关键字用反引号转义，注释块完整包含 `}` 之后的所有 `--` 原文）。同时为 `src/BACnet/Choice/` 与 `src/BACnet/Enum/` 下所有文件/类名统一追加 `_Choice`/`_Enum` 后缀，并修复 Types 包重构遗留的循环依赖。版本号由 0.3.0 提升至 0.4.0。
+
+### 变更明细
+
+#### Added
+- **73 个 ASN.1 ENUMERATED 枚举**：新增至 `src/BACnet/Enum/`（package `BACnetCodec4cj.BACnet.Enum`），覆盖协议第 21 章全部 `::= ENUMERATED` 定义（`AbortReason`、`EngineeringUnits`、`ObjectType`、`PropertyIdentifier`、`ConfirmedService`、`UnconfirmedService` 等）。统一实现 `IFromUInt32`/`IToUInt32`/`ToString`/`IFromString`，并在文件底部附完整协议原文注释（Page 标记 + 章节标题 + 定义块 + `}` 后所有 `--` 注释）。
+
+#### Changed
+- **命名规范化**：`src/BACnet/Enum/` 下类名/文件名去掉 `BACnet`/`Choice` 字样，连接符 `-`→`_`，成员全小写 snake_case（如 `who-Am-I`→`who_am_i`）。
+- **reserved/non_standardized 边界**：按协议注释解析边界（如 `AbortReason` `x<=63` reserved、`64..255` non_standardized；`ObjectType` `<=127`/`128..1023`；`PropertyIdentifier` `<=511`/`512..4194303`）。
+- **removed 兼容值**：`formerly` 标注的已删除服务/成员保留旧值（`ConfirmedService` 的 `authenticate(24)`/`request-key(25)`/`read-property-conditional(13)`、`NetworkType` 的 `non-bacnet(8)`、`PropertyIdentifier` 的 8 个 removed 属性）。
+- **关键字反引号转义**：`IPMode.foreign`、`LiftCarDoorCommand.open` 用反引号转义（均为仓颉关键字）。
+- **Choice 追加 `_Choice`**：`src/BACnet/Choice/` 下 32 个文件/类名末尾追加 `_Choice`（`BACnet_PDU_Type_Choice` 已含后缀故跳过），同步更新引用。
+- **Enum 追加 `_Enum`**：`src/BACnet/Enum/` 下 73 个文件/类名末尾追加 `_Enum`，同步更新引用。
+- **迁移**：`ObjectType`、`UnconfirmedService` 由 Choice 目录迁移至 Enum 目录；`BACnetPropertyIdentifier` 改名 `PropertyIdentifier`。
+- **版本号**：`cjpm.toml` 版本 0.3.0→0.4.0。
+
+#### Fixed
+- **循环依赖**：修复 `Types` 包与子包 `APDU_Definitions`、`ApplicationTypes` 相互 import 导致的 cyclic dependency。移除子包中冗余的 `import Types.*`（`Confirmed_Request_Pdu.cj`、`BACnet_ObjectIdentifier.cj`），测试文件改为直接 `import ...APDU_Definitions.*`。
+
+### 改动文件
+- 新增 `src/BACnet/Enum/` 下 73 个枚举文件
+- 改名 `src/BACnet/Choice/` 下 32 个文件（追加 `_Choice`）
+- 改名 `src/BACnet/Enum/` 下 73 个文件（追加 `_Enum`）
+- 删除 `src/BACnet/Choice/ObjectType.cj`、`src/BACnet/Choice/UnconfirmedService.cj`、`src/BACnet/Enum/BACnetPropertyIdentifier.cj`（迁移/改名至 Enum）
+- 修改引用文件 `src/BACnet/Types/APDU_Definitions/Confirmed_Request_Pdu.cj`、`src/BACnet/Types/ApplicationTypes/BACnet_ObjectIdentifier.cj`、`src/BACnet/Types/ApplicationTypes/BACnetApplicationDatatypes_test.cj` 等
+- 修改 `cjpm.toml`（版本 0.3.0→0.4.0）
+
+---
+
 ## [0.3.0] - 2026-09-09 — ASN.1 CHOICE 全量生成与命名规范化
 ### 注意
 本版本Choice为AI根据协议源文件按照固定格式生成，实际有大量Choice是值的概念，后续版本会逐一修正，本版本只做文件结构示意，无法实用。
 本版本对文件结构进行了大幅度的调整，将BACnet相关定义集中到BACnet包中，方便管理。
 
 ### 吐槽
-1.BACnet协议本身：因为之前做简化版本解码时留下的错误印象，以为BACnet协议里标的Choice都是像BACnet-Confirmed-Service-ACK  ::= CHOICE { 
+1.BACnet协议本身：因为之前做简化版本解码时留下的错误印象，以为BACnet协议里标的Choice都是像
+```
+BACnet-Confirmed-Service-ACK  ::= CHOICE { 
  get-alarm-summary [3] GetAlarmSummary-ACK,
  ...
 }
+```
 这种的，就是一个flag,实际是enum的概念和作用。
 但是实际情况不是这样，类似这种的 choice 只占了协议的很小一部分。
 协议中大量的Choice都是值的概念，Choice代表这地方的值的类型不固定，是它定义下面
 的多个类型中间的一种，比如
+```
 BACnet-Property-States ::= CHOICE {
     boolean [1] BOOLEAN,
     unsigned-integer [2] UNSIGNED-INTEGER,
@@ -25,24 +62,32 @@ BACnet-Property-States ::= CHOICE {
     error [23] BACnet-Error,
     ...
 }
+```
 也就是说，这东西需要具体用不同类型的编解码，而不是简单的应用一个整数来对应。
 因为本次大改了文件结构，以后就打算用这个文件结构思路来扩展后续工作，
 当前这个版本还是花了近亿token才得到的版本，所以先提交一个包含错误概念的版本，
 然后后续会逐一核对choice下的所有类型并修正。
 
 还有，这协议的choice定义，很多都是没有按照ASN.1的格式来定义的，类似刚才那两个例子中，
+```
 BACnet-Confirmed-Service-ACK  ::= CHOICE { 
  get-alarm-summary [3] GetAlarmSummary-ACK,
  ...
-}里的[3]代表如果值是3则代表后续包是GetAlarmSummary-ACK。
+}
+```
+里的[3]代表如果值是3则代表后续包是GetAlarmSummary-ACK。
 
+而在
+```
 BACnet-Property-States ::= CHOICE {
     boolean [1] BOOLEAN,
     unsigned-integer [2] UNSIGNED-INTEGER,
     ...,
     error [23] BACnet-Error,
     ...
-}里的[2]却代表这个值使用上下文标记2，如果在这个choice解码时遇到上下文标记2那么就要用unsigned-integer的编解码方式来解码。
+}
+```
+里的[2]却代表这个值使用上下文标记2，如果在这个choice解码时遇到上下文标记2那么就要用unsigned-integer的编解码方式来解码。
 
 也就是说，协议里很多choice的定义，都是没有按照ASN.1的格式来定义的，
 而是直接把ASN.1的tag和value混在一起定义了，
@@ -110,7 +155,7 @@ BACnet-Property-States ::= CHOICE {
 
 #### Added
 - **根包公开门面**：`src/BACnetCodec4cj.cj` 集中 re-export 常用公开类型（异常类、ByteBuf、接口、基础类型、13 种应用数据类型、服务类型），调用者只需 `import BACnetCodec4cj.*`。
-- **CI 流水线**：新增 `.gitcode-ci.yml`，配置 cjfmt 格式检查、cjpm build 构建、cjpm test 单元测试三个 stage。
+- **CI 流水线**：新增 `.gitcode-ci.yml`，配置 cjfmt 格式检查、cjpm build 构建、cjpm test 单元测试三个 stage。(目前不能实际用，因为AI不懂gircode上的CI怎么配，我不懂CI)
 
 #### Changed
 - **依赖锁定**：`charset4cj` 依赖由 `branch = "develop"` 锁定为 `tag = "v1.0.5"`（commit `ea5203fe`），保证第三方调用者可复现构建。

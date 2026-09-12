@@ -6,7 +6,7 @@ BACnet 是楼宇自控、HVAC 设备领域的重要 ISO 标准通讯协议，在
 本项目仅供参考，不作为正式生产环境使用，使用时请自行核对协议确保正确性。
 本项目使用 AI 辅助开发，使用时请自行核对 AI 生成内容确保正确性。
 
-目前 `BACnetApplicationDatatypes`（13 种 BACnet 用户数据类型）的编解码已可用，`BACnet ASN.1 CHOICE`（31 个）与服务类型枚举已全量建立，其余 PDU 编解码仍在制作当中。
+目前 `BACnetApplicationDatatypes`（13 种 BACnet 用户数据类型）的编解码已可用；`BACnet ASN.1 CHOICE`（31 个）与 `ENUMERATED`（73 个）枚举已全量建立（分别位于 `src/BACnet/Choice/` 与 `src/BACnet/Enum/`，命名统一追加 `_Choice`/`_Enum` 后缀）；其余 PDU 编解码仍在制作当中。
 
 ## 当前进展
 
@@ -37,21 +37,26 @@ BACnet 是楼宇自控、HVAC 设备领域的重要 ISO 标准通讯协议，在
    - 建立异常基类及子类：`DecodeException`、`EncodeException`、`BACnetParamException`、`ByteBuffException` 等，分层组织于 `src/BACnetCodecException/` 下各子包。
 
 5. **枚举与 Choice**
-   - 依据 ISO 16484-5:2022 协议第 21 章（FORMAL DESCRIPTION OF APDU）原文，全量建立 **31 个 ASN.1 CHOICE** 枚举（含 `BACnet_PDUTypeChoice` 等），并完成命名规范化（去掉 `BACnet`/`Choice` 字样的冗余前缀、连接符 `-` 统一替换为 `_`、成员名为 snake_case）。
-   - 依据协议原文实现对 `reserved(x)` / `remove(x)`（或 `non_standardized` 等）兼容值的保留与裁剪。
-   - 建立 `BACnetPropertyIdentifier` 属性标识符枚举（462 个属性，覆盖协议 21.6）。
-   - 各定义文件底部附有 ISO 16484-5:2022 协议原文注释（含章节与页码）。
+   - 依据 ISO 16484-5:2022 协议第 21 章（FORMAL DESCRIPTION OF APPLICATION PROTOCOL DATA UNITS）原文，全量建立 **31 个 ASN.1 CHOICE**（`src/BACnet/Choice/`，类名末尾 `_Choice`）与 **73 个 ASN.1 ENUMERATED** 枚举（`src/BACnet/Enum/`，类名末尾 `_Enum`）。
+   - 命名规范化：去掉 `BACnet`/`Choice` 冗余前缀、连接符 `-` 统一替换为 `_`、成员名 snake_case。
+   - 依据协议原文保留 `reserved(x)` / `non_standardized(x)` 边界（如 `AbortReason` `<=63` reserved、`64..255` non_standardized；`ObjectType` `<=127`/`128..1023`；`PropertyIdentifier` `<=511`/`512..4194303`），`formerly` 标注的已删除服务/成员保留旧值作兼容（如 `ConfirmedService` 的 `authenticate(24)` 等）。
+   - 覆盖 `PropertyIdentifier` 属性标识符（462 个属性）、`EngineeringUnits` 工程单位（267 个）、`ObjectType` 对象类型等。
+   - 各定义文件底部附完整 ISO 16484-5:2022 协议原文注释（Page 标记 + 章节标题 + 定义块 + `}` 后所有 `--` 注释）。
 
 ## 项目结构
 
 - `src/BACnetCodec4cj.cj` —— 根包公开门面，调用者只需 `import BACnetCodec4cj.*`
 - `src/BACnet/` —— 协议相关定义
   - `BACnet.cj` —— BACnet 包门面（re-export Choice/Enum/Types）
-  - `Choice/` —— ASN.1 CHOICE 及其它枚举（31 个 CHOICE + 6 个非 CHOICE 枚举，共 37 个）
-  - `Enum/` —— 非 Choice 枚举（如 `BACnetPropertyIdentifier`）
-  - `Types/` —— 数据类型与 PDU（`BACnet_APDU`、`BACnetApplicationDatatypes` 及其 13 种数据类型、`Confirmed_Request_Pdu`、`UnconfirmedService` 等）
+  - `Choice/` —— ASN.1 CHOICE 及编码层枚举（31 个 CHOICE + `CharSet_Choice`/`TagClass_Choice`，共 33 个，类名末尾统一追加 `_Choice`；`BACnet_PDU_Type_Choice` 为 PDU 类型特殊命名）
+  - `Enum/` —— ASN.1 ENUMERATED 枚举（73 个，类名末尾统一追加 `_Enum`，如 `AbortReason_Enum`、`ObjectType_Enum`、`PropertyIdentifier_Enum`、`ConfirmedService_Enum`）
+  - `Types/` —— 数据类型与 PDU
+    - `APDU_Definitions/` —— `BACnet_APDU`、`Confirmed_Request_Pdu`
+    - `ApplicationTypes/` —— `ApplicationTags`（应用 tag 编号）、`BACnetApplicationDatatypes` 及 13 种数据类型
+    - `Confirmed_Service_Productions/` —— 已确认服务请求/ACK（制作中）
+    - `UnconfirmedService/` —— 未确认服务
 - `src/BACnetCodecException/` —— 异常类（BaseException / DecodeException / EncodeException / BACnetParamException / UtilityException 等子包）
-- `src/InterFaces/` —— 编解码接口定义（`IFromUInt8`、`IToUInt8`、`IFromString`、`ICodecPrimitiveData` 等）
+- `src/InterFaces/` —— 编解码接口定义（`IFromUInt8`、`IToUInt8`、`IFromUInt32`、`IToUInt32`、`IFromString`、`ICodecPrimitiveData` 等）
 - `src/Utility/` —— 辅助工具类（含 `ByteBuf/` 字节缓冲类）
 
 ## 已知限制
@@ -65,11 +70,11 @@ BACnet 是楼宇自控、HVAC 设备领域的重要 ISO 标准通讯协议，在
 
    `目前 CharacterString 的 X'01' IBM/Microsoft DBCS code page xxx 的字符集是不全的，处理方法是在 charset4cj 里查找名为 cpxxx 的内码字符集，找不到时就以默认 UTF_8 做编解码。`
 
-   `所以一般不建议使用 CharSet.CodePage(UInt16)，正确性我无法保证`
+   `所以一般不建议使用 CharSet_Choice.CodePage(UInt16)，正确性我无法保证`
 
    `另外，JISX0208 在 charset4cj 没找到，用的是 ISO_2022_JP 编码，不知道是不是一回事儿，没法儿验证。`
 
-   `所以一般不建议使用 CharSet.JISX0208，正确性我无法保证`
+   `所以一般不建议使用 CharSet_Choice.JISX0208，正确性我无法保证`
 
    `另外，编码时默认 UTF_8 编码，如需指定字符集编码，则需指定 BACnet_CharacterString 的 encodeCharSet 属性，若指定的内码页在 charset4cj 库里没有则会自动使用 UTF_8 编码输出`
 
