@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum DoorValue_Enum <: IFromUInt32<DoorValue_Enum> & IToUInt32 & ToString & IFromString<DoorValue_Enum> {
     | lock // (0)

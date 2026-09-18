@@ -2,7 +2,7 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
+
 
 
 public enum AtomicWriteFile_ACK_Choice <: IFromUInt8<AtomicWriteFile_ACK_Choice> & IToUInt8 & ToString & IFromString<AtomicWriteFile_ACK_Choice> {

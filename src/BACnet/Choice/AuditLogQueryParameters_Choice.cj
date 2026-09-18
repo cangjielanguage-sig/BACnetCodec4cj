@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 //复合值
 

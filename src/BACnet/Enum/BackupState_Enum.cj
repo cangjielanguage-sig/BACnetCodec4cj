@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum BackupState_Enum <: IFromUInt32<BackupState_Enum> & IToUInt32 & ToString & IFromString<BackupState_Enum> {
     | idle // (0)

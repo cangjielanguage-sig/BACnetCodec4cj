@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum SuccessFilter_Enum <: IFromUInt32<SuccessFilter_Enum> & IToUInt32 & ToString & IFromString<SuccessFilter_Enum> {
     | all // (0)

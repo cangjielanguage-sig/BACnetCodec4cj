@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum LightingInProgress_Enum <: IFromUInt32<LightingInProgress_Enum> & IToUInt32 & ToString & IFromString<LightingInProgress_Enum> {
     | idle // (0)

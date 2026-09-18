@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum UnconfirmedService_Enum <: IFromUInt32<UnconfirmedService_Enum> & IToUInt32 & ToString & IFromString<UnconfirmedService_Enum> {
     | i_am // (0)

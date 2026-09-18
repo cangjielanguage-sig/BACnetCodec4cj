@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum FaultParameter_Choice <: IFromUInt8<FaultParameter_Choice> & IToUInt8 & ToString & IFromString<FaultParameter_Choice> {
     | none // none  [0] NULL,

@@ -1,0 +1,8 @@
+package BACnetCodec4cj.BACnet.Types.Confirmed_Service_Productions
+
+public import BACnetCodec4cj.BACnet.Types.Confirmed_Service_Productions.Confirmed_Service_Request.*
+public import BACnetCodec4cj.BACnet.Types.Confirmed_Service_Productions.Confirmed_File_Access_Services.*
+public import BACnetCodec4cj.BACnet.Types.Confirmed_Service_Productions.Confirmed_Object_Access_Services.*
+public import BACnetCodec4cj.BACnet.Types.Confirmed_Service_Productions.Confirmed_Alarm_and_Event_Services.*
+public import BACnetCodec4cj.BACnet.Types.Confirmed_Service_Productions.Confirmed_Virtual_Terminal_Services.*
+public import BACnetCodec4cj.BACnet.Types.Confirmed_Service_Productions.Confirmed_Remote_Device_Management_Services.*

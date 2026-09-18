@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum ChannelValue_Choice <: IFromUInt8<ChannelValue_Choice> & IToUInt8 & ToString & IFromString<ChannelValue_Choice> {
     | null // null NULL,

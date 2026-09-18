@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum ObjectSelector_Choice <: IFromUInt8<ObjectSelector_Choice> & IToUInt8 & ToString & IFromString<ObjectSelector_Choice> {
     | none // none NULL,

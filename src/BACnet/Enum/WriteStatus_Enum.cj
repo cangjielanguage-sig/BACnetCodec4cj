@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum WriteStatus_Enum <: IFromUInt32<WriteStatus_Enum> & IToUInt32 & ToString & IFromString<WriteStatus_Enum> {
     | idle // (0)

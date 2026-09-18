@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum FileAccessMethod_Enum <: IFromUInt32<FileAccessMethod_Enum> & IToUInt32 & ToString & IFromString<FileAccessMethod_Enum> {
     | record_access // (0)

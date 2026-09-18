@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum LiftGroupMode_Enum <: IFromUInt32<LiftGroupMode_Enum> & IToUInt32 & ToString & IFromString<LiftGroupMode_Enum> {
     | unknown // (0)

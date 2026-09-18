@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum NotifyType_Enum <: IFromUInt32<NotifyType_Enum> & IToUInt32 & ToString & IFromString<NotifyType_Enum> {
     | alarm // (0)

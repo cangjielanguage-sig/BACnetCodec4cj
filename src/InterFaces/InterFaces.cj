@@ -1,6 +1,6 @@
 package BACnetCodec4cj.InterFaces
 
-import BACnetCodec4cj.Utility.*
+import BACnetCodec4cj.Utility.ByteBuf.*
 
 //Convert UInt8 to the corresponding type
 public interface IFromUInt8<T> {

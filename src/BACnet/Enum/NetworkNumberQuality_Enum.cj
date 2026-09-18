@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum NetworkNumberQuality_Enum <: IFromUInt32<NetworkNumberQuality_Enum> & IToUInt32 & ToString & IFromString<NetworkNumberQuality_Enum> {
     | unknown // (0)

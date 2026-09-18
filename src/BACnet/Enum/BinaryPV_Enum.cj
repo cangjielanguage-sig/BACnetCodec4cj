@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum BinaryPV_Enum <: IFromUInt32<BinaryPV_Enum> & IToUInt32 & ToString & IFromString<BinaryPV_Enum> {
     | inactive // (0)

@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum Recipient_Choice <: IFromUInt8<Recipient_Choice> & IToUInt8 & ToString & IFromString<Recipient_Choice> {
     | device // device [0] BACnetObjectIdentifier,

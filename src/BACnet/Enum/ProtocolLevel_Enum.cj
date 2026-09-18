@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum ProtocolLevel_Enum <: IFromUInt32<ProtocolLevel_Enum> & IToUInt32 & ToString & IFromString<ProtocolLevel_Enum> {
     | physical // (0)

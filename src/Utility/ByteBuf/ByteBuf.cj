@@ -3,6 +3,7 @@ package BACnetCodec4cj.Utility.ByteBuf
 import std.binary.*
 import BACnetCodec4cj.BACnetCodecException.*
 
+
 public class ByteBuf {
     private var dataBuf: Array<Byte>
     private var _cursor: Int64 = 0

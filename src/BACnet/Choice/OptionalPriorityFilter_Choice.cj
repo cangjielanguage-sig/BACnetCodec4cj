@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum OptionalPriorityFilter_Choice <: IFromUInt8<OptionalPriorityFilter_Choice> & IToUInt8 & ToString & IFromString<OptionalPriorityFilter_Choice> {
     | default // default NULL,

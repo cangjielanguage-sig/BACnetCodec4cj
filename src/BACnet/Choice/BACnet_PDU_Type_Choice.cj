@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum BACnet_PDU_Type_Choice <: IFromUInt8<BACnet_PDU_Type_Choice> & IToUInt8 & ToString & IFromString<BACnet_PDU_Type_Choice> {
     | confirmed_request_pdu // confirmed-request-pdu [0] BACnet-Confirmed-Request-BACnet_PDU_Type_Choice,

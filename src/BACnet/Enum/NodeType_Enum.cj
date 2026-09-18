@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum NodeType_Enum <: IFromUInt32<NodeType_Enum> & IToUInt32 & ToString & IFromString<NodeType_Enum> {
     | unknown // (0)

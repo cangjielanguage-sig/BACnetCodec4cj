@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum ClientCOV_Choice <: IFromUInt8<ClientCOV_Choice> & IToUInt8 & ToString & IFromString<ClientCOV_Choice> {
     | default_increment // default-increment NULL

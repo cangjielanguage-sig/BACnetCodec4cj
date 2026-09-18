@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum SubscribeCOVPropertyMultiple_Error_Choice <: IFromUInt8<SubscribeCOVPropertyMultiple_Error_Choice> & IToUInt8 & ToString & IFromString<SubscribeCOVPropertyMultiple_Error_Choice> {
     | error_type // error-type [0] Error,

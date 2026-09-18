@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum ShedState_Enum <: IFromUInt32<ShedState_Enum> & IToUInt32 & ToString & IFromString<ShedState_Enum> {
     | shed_inactive // (0)

@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum AuthenticationStatus_Enum <: IFromUInt32<AuthenticationStatus_Enum> & IToUInt32 & ToString & IFromString<AuthenticationStatus_Enum> {
     | not_ready // (0)

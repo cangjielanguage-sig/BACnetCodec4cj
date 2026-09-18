@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum TimerStateChangeValue_Choice <: IFromUInt8<TimerStateChangeValue_Choice> & IToUInt8 & ToString & IFromString<TimerStateChangeValue_Choice> {
     | null // null NULL,

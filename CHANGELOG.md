@@ -4,6 +4,40 @@
 
 ---
 
+## [0.5.0] - 2026-09-18 — SEQUENCE 全量生成骨架与 unused import 清理
+
+### 摘要
+依据 ISO 16484-5:2022 协议第 21 章原文，全量提取 126 个 `::= SEQUENCE` 定义，在 `src/BACnet/Types/` 下按章节名建立文件夹，将相应章节的 SEQUENCE 分别放入，每个类型一个 `.cj` 文件；文件内先只放类骨架（`private var` 字段 + `public mut prop` 访问器 + 默认/带参 init，不写枚举与字符转换函数），并附完整协议原文注释。同时修复 `Error_Productions ↔ Base_Types` 协议固有循环依赖，去除全部 unused import。版本号由 0.4.0 提升至 0.5.0。
+
+### 变更明细
+
+#### Added
+- **126 个 ASN.1 SEQUENCE 类骨架**：新增至 `src/BACnet/Types/` 下按章节划分的目录中：
+  - `APDU_Definitions/`（21.1，8 个 PDU）
+  - `Confirmed_Service_Productions/` 下 5 个子章节目录（21.2.1~21.2.5，共 37 个）
+  - `Unconfirmed_Service_Productions/` 下 3 个子章节目录（21.3.1~21.3.3，共 13 个）
+  - `Error_Productions/`（21.4，6 个）
+  - `Base_Types/`（21.6，约 62 个）
+
+#### Changed
+- **命名**：类名/文件名去掉 `BACnet` 前缀、连接符 `-`→`_`、字段 snake_case；`BACnetXxx` 且去前缀后为 std 冲突词（如 `DateTime`）者保留 `BACnet` 前缀。Types 目录不追加 `_Choice`/`_Enum` 后缀。
+- **PDU 继承**：21.1 的 PDU 类统一 `<: BACnet_APDU`。
+- **字段类型映射**：`BACnet` 前缀类型优先映射 Choice/Enum（`_Choice`/`_Enum`），裸名优先映射 SEQUENCE 类；`Date`/`Time` 映射 `BACnet_Date`/`BACnet_Time`（而非 std `DateTime`）；Enum/Choice 字段默认值用 `fromUInt32(0)`/`fromUInt8(0)`；`NULL`→`UInt8`；复杂 CHOICE/SEQUENCE 内联不展开（占位 `UInt8`）。
+- **按需 import**：生成文件的 import 改为根据字段实际引用按需追加，不再无条件导入 Choice/Enum/std.time/ApplicationTypes。
+
+#### Fixed
+- **循环依赖**：`Error_Productions ↔ Base_Types` 为协议固有交叉引用，通过将 `Base_Types` 作为叶子包（其跨包引用字段降级为 `UInt8`）打破。
+- **unused import 清理**：去除 `Choice/`、`Enum/` 下 52 个文件中未使用的 `import std.convert.*`；异常类 `getClassName` 去除子类冗余 `open`（保留父类 `open override`）。
+
+### 改动文件
+- 新增 `src/BACnet/Types/` 下 126 个 SEQUENCE 类文件（分布于 `APDU_Definitions/`、`Confirmed_Service_Productions/*/`、`Unconfirmed_Service_Productions/*/`、`Error_Productions/`、`Base_Types/`）
+- 修改 `src/BACnet/Types/APDU_Definitions/Confirmed_Request_Pdu.cj`（恢复 `<: BACnet_APDU` 继承）
+- 修改 `src/BACnet/Choice/`、`src/BACnet/Enum/` 下 52 个文件（去未使用 `std.convert.*`）
+- 修改 `src/BACnetCodecException/` 下异常类（去除子类冗余 `open`）
+- 修改 `cjpm.toml`（版本 0.4.0→0.5.0）
+
+---
+
 ## [0.4.0] - 2026-09-12 — ENUMERATED 全量生成与 Choice/Enum 后缀规范化
 
 ### 摘要

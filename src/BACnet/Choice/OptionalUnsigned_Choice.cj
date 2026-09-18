@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum OptionalUnsigned_Choice <: IFromUInt8<OptionalUnsigned_Choice> & IToUInt8 & ToString & IFromString<OptionalUnsigned_Choice> {
     | null // null NULL,

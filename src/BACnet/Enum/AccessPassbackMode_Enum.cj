@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Enum
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum AccessPassbackMode_Enum <: IFromUInt32<AccessPassbackMode_Enum> & IToUInt32 & ToString & IFromString<AccessPassbackMode_Enum> {
     | passback_off // (0)

@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum LogData_Choice <: IFromUInt8<LogData_Choice> & IToUInt8 & ToString & IFromString<LogData_Choice> {
     | log_status // log-status [0] BACnetLogStatus,

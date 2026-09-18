@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum Scale_Choice <: IFromUInt8<Scale_Choice> & IToUInt8 & ToString & IFromString<Scale_Choice> {
     | float_scale // float-scale [0] REAL,

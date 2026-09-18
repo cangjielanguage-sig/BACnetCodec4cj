@@ -2,7 +2,6 @@ public package BACnetCodec4cj.BACnet.Choice
 
 import BACnetCodec4cj.InterFaces.*
 import BACnetCodec4cj.BACnetCodecException.*
-import std.convert.*
 
 public enum ProcessIdSelection_Choice <: IFromUInt8<ProcessIdSelection_Choice> & IToUInt8 & ToString & IFromString<ProcessIdSelection_Choice> {
     | null_value // null-value NULL
