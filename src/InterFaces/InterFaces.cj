@@ -40,6 +40,8 @@ public interface IFromString<T> {
 //从ArrayByte解码
 public interface ICodecFromArrayByte<T> {
     static func decodingFromArrayByte(packet: ByteBuf): T
+    //将对象编码为字节数组
+    func encodingToBytes(): Array<Byte>
 }
 
 //使用原语类型方式编解码BACnet用户数据

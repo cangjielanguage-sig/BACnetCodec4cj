@@ -53,11 +53,11 @@ BACnet 是楼宇自控、HVAC 设备领域的重要 ISO 标准通讯协议，在
 - `src/BACnetCodec4cj.cj` —— 根包公开门面，调用者只需 `import BACnetCodec4cj.*`
 - `src/BACnet/` —— 协议相关定义
   - `BACnet.cj` —— BACnet 包门面（re-export Choice/Enum/Types）
-  - `Choice/` —— ASN.1 CHOICE 及编码层枚举（31 个 CHOICE + `CharSet_Choice`/`TagClass_Choice`，共 33 个，类名末尾统一追加 `_Choice`；`BACnet_PDU_Type_Choice` 为 PDU 类型特殊命名）
+  - `Choice/` —— ASN.1 CHOICE 及编码层枚举（31 个 CHOICE + `CharSet_Choice`/`BACnet_TagClass_Enum`，共 33 个，类名末尾统一追加 `_Choice`；`BACnet_PDU_Type_Choice` 为 PDU 类型特殊命名）
   - `Enum/` —— ASN.1 ENUMERATED 枚举（73 个，类名末尾统一追加 `_Enum`，如 `AbortReason_Enum`、`ObjectType_Enum`、`PropertyIdentifier_Enum`、`ConfirmedService_Enum`）
   - `Types/` —— 数据类型与 PDU
     - `APDU_Definitions/` —— APDU 定义（`BACnet_APDU` 及其 8 个 PDU 子类，如 `Confirmed_Request_Pdu`）
-    - `ApplicationTypes/` —— `ApplicationTags`（应用 tag 编号）、`BACnetApplicationDatatypes` 及 13 种数据类型
+    - `ApplicationTypes/` —— `BACnet_ApplicationDataTypes_Enum`（应用 tag 编号）、`BACnetApplicationDatatypes` 及 13 种数据类型
     - `Confirmed_Service_Productions/` —— 已确认服务（5 个子章节目录：Alarm_and_Event / File_Access / Object_Access / Remote_Device_Management / Virtual_Terminal 等 Services）
     - `Unconfirmed_Service_Productions/` —— 未确认服务（3 个子章节目录：Alarm_and_Event / Object_Access / Remote_Device_Management Services）
     - `Error_Productions/` —— 错误结构

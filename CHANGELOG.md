@@ -169,7 +169,7 @@ BACnet-Property-States ::= CHOICE {
 
 #### Changed
 - **Choice 枚举目录化重构**：将 9 个 Choice 枚举（`BACnet_PDUTypeChoice`、`BACnetObjectTypeChoice`、`BACnetApplicationDatatypesChoice`、`BACnetTagClassChoice`、`BACnetCharSetChoice`、`UnconfirmedServiceChoice`、`ConfirmedServiceChoice`、`ConfirmedServiceRequestChoice`、`ConfirmedServiceACKChoice`）统一抽取到 `src/Choice/`（package `BACnetCodec4cj.Choice`），各自独立成同名 `.cj` 文件。
-- **import 更新**：所有引用上述枚举的文件补充 `import BACnetCodec4cj.BACnet.Choice.*`；根包公开门面补充 `public import ...Choice.*` 与 `...Enum.*`。
+- **import 更新**：所有引用上述枚举的文件补充 ``；根包公开门面补充 `public import ...Choice.*` 与 `...Enum.*`。
 
 ### 改动文件
 - 新增 `src/Choice/`（9 个 Choice 枚举文件）
@@ -351,7 +351,7 @@ BACnet-Property-States ::= CHOICE {
 ## 2025-07-21 — 拆分数据类型文件并添加 OctetString
 
 ### 摘要
-将庞大的 `BACnetApplicationDatatypes.cj` 按数据类型拆分为独立文件，补全 ApplicationTag 的 TagNumber 域读取与数据长度（Length）读取逻辑，并新增 `BACnet_OctetString`（字节串）类型。拆分后各类型文件独立维护，可读性显著提升。
+将庞大的 `BACnetApplicationDatatypes.cj` 按数据类型拆分为独立文件，补全 application_tag 的 TagNumber 域读取与数据长度（Length）读取逻辑，并新增 `BACnet_OctetString`（字节串）类型。拆分后各类型文件独立维护，可读性显著提升。
 
 ### 改动文件
 - `src/Types/BACnetApplicationDatatypes/BACnetApplicationDatatypes.cj`
