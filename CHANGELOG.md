@@ -2,6 +2,18 @@
 
 本项目所有重要变更均记录于此。条目依据 git 提交历史（`git log`）整理，格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与语义化版本。每个变更章节包含「摘要」（背景、改动内容与影响）与「改动文件」清单。
 
+## [0.5.1] 30_2026-10-01_BACnetApplicationDatatype的BSTRACT-SYNTAX.&Type（即ANY）的处理
+
+### 摘要
+ - Cjc版本升级为STS最新版1.2.0
+ - BACnetApplicationDatatype的BSTRACT-SYNTAX.&Type（即ANY）的处理函数完成。
+ - InterFaces更改，所有解码函数都改为静态函数。
+ - ICodecPrimitiveData意义范围扩大化，BACnet标准中,PrimitiveData原本是用于原始数据类型的术语，但是我这里扩大化了,也把Constructed Data的本体（即不包含OpenTag/CloseTag对的数据本体）的编解码，也归入了PrimitiveData的范畴
+ - 各个BACnet原始类型均对InterFaces的改动进行了适配
+ - 即将开始其他构造类数据的编解码开始制作 
+ - 版本号由 0.5.0 提升至 0.5.1。
+---
+
 ---
 ## 29_破坏性更新_项目文件结构更改
 

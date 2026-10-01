@@ -1,11 +1,55 @@
 package BACnetCodec4cj.BACnet
 
-import BACnetCodec4cj.InterFaces.*
-import BACnetCodec4cj.BACnetCodecException.*
-import BACnetCodec4cj.Utility.*
+import BACnetCodec4cj.InterFaces.{ICodecContextSpecificData,ICodecPrimitiveData,IHaveTag,IHaveDataValue,BACnet_TagClass_Enum} 
+import BACnetCodec4cj.BACnetCodecException.DecodeException.DecodeException
+import BACnetCodec4cj.Utility.ByteBuf.ByteBuf
 import std.binary.*
 
-public class BACnet_Double <: BACnetApplicationDatatype & ICodecPrimitiveData<BACnetApplicationDatatype> & ICodecContextSpecificData & IHaveDataValue<Float64> {
+public class BACnet_Double <: ICodecPrimitiveData<BACnet_Double> 
+& ICodecContextSpecificData<BACnet_Double>
+& IHaveTag
+& IHaveDataValue<Float64> 
+{
+    private var _tagNumber: UInt8 = 5
+    public mut prop tagNumber: UInt8 {
+        get() {
+            return _tagNumber
+        }
+        set(arg_Value) {
+            _tagNumber = arg_Value
+        }
+    }
+
+    private var _tagClass: BACnet_TagClass_Enum = BACnet_TagClass_Enum.application_tag
+    public mut prop tagClass: BACnet_TagClass_Enum {
+        get() {
+            return _tagClass
+        }
+        set(arg_Value) {
+            _tagClass = arg_Value
+        }
+    }
+
+    private var _tagLength: UInt32 = 8
+    public mut prop tagLength: UInt32 {
+        get() {
+            return _tagLength
+        }
+        set(arg_Value) {
+            _tagLength = arg_Value
+        }
+    }
+
+    private var _applicationDatatype: BACnet_ApplicationDataTypes_Enum = BACnet_ApplicationDataTypes_Enum.double
+    public mut prop applicationDatatype: BACnet_ApplicationDataTypes_Enum {
+        get() {
+            return _applicationDatatype
+        }
+        set(arg_Value) {
+            _applicationDatatype = arg_Value
+        }
+    }
+
     private var _dataValue: Float64 = 0.0
     public mut prop dataValue: Float64 {
         get() {
@@ -32,7 +76,7 @@ public class BACnet_Double <: BACnetApplicationDatatype & ICodecPrimitiveData<BA
         this.applicationDatatype = BACnet_ApplicationDataTypes_Enum.double
     }
 
-    public static func decodingPrimitiveDataFromArrayByte(packet: ByteBuf): BACnetApplicationDatatype {
+    public static func decodingPrimitiveDataFromArrayByte(packet: ByteBuf): BACnet_Double {
         let _appTag = packet.read_UInt8_FromBuf();
         let _classBit = (_appTag & 0b0000_1000) >> 3
         if (_classBit == 1) {
@@ -58,20 +102,19 @@ public class BACnet_Double <: BACnetApplicationDatatype & ICodecPrimitiveData<BA
             _rtu.dataValue = packet.read_Float64_FromBuff()
             return _rtu
         } else {
-            packet.cursorMoveBackward(1)
-            let _rtu = BACnetApplicationDatatype.decodingFromArrayByte(packet)
-            return _rtu
+            throw DecodeException("解码错误:无法识别的BACnet_Double数据")
         }
     }
 
-    public func decodingContextSpecificDataFromArrayByte(packet: ByteBuf): Unit {
+    public static func decodingContextSpecificDataFromArrayByte(packet: ByteBuf,arg_tagNumber: UInt8): BACnet_Double {
         let _appTag = packet.read_UInt8_FromBuf();
 
         let _classBit = (_appTag & 0b0000_1000) >> 3
         if (_classBit == 0) {
             throw DecodeException("解码错误:使用上下文指定类型解码函数解码原语类型")
         }
-        this.tagClass = BACnet_TagClass_Enum.contextSpecific_tag
+        var _rtu = BACnet_Double()
+        _rtu.tagClass = BACnet_TagClass_Enum.contextSpecific_tag
 
         var _len = _appTag & 0b0000_0111
         if (_len != 0b0000_0101) {
@@ -79,19 +122,22 @@ public class BACnet_Double <: BACnetApplicationDatatype & ICodecPrimitiveData<BA
         }
 
         let _tagNum = readContextSpecificTagNumber(_appTag, packet)
-        this.tagNumber = _tagNum
+        _rtu.tagNumber = _tagNum
+        if(_tagNum != arg_tagNumber){
+            throw DecodeException("解码错误:上下文编号与预期不同")
+        }
 
         let _tagLen = UInt32(packet.read_UInt8_FromBuf());
-        this.tagLength = _tagLen
+        _rtu.tagLength = _tagLen
 
-        if (this.tagLength != 8) {
-            throw DecodeException("解码错误:无法识别长度为${this.tagLength}的BACnet_Double数据")
+        if (_rtu.tagLength != 8) {
+            throw DecodeException("解码错误:无法识别长度为${_rtu.tagLength}的BACnet_Double数据")
         }
-        this.dataValue = packet.read_Float64_FromBuff()
+        _rtu.dataValue = packet.read_Float64_FromBuff()
 
-        this.applicationDatatype = BACnet_ApplicationDataTypes_Enum.double
+        _rtu.applicationDatatype = BACnet_ApplicationDataTypes_Enum.double
 
-        return
+        return _rtu
     }
 
     public func encodingToPrimitiveData(): Array<Byte> {
@@ -116,9 +162,6 @@ public class BACnet_Double <: BACnetApplicationDatatype & ICodecPrimitiveData<BA
 
     public func encodingToContextSpecificData(): Array<Byte> {
         var _rtu: Array<Byte>
-        // if(this.tagLength != 8){
-        //     throw  DecodeException("解码错误:检测到AppTag长度为${this.tagLength},BACnet的Double量长度固定为8,${this.tagLength}是个无法识别的Bool数据长度")
-        // }
         this.tagLength = 8
         var _taghead_buf = encodingToApplicationDataTagHead(this.tagNumber, this.tagLength,
             BACnet_TagClass_Enum.contextSpecific_tag)

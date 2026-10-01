@@ -1,13 +1,56 @@
 package BACnetCodec4cj.BACnet
 
-import BACnetCodec4cj.InterFaces.*
-import BACnetCodec4cj.BACnetCodecException.*
-import BACnetCodec4cj.Utility.*
-import std.time.*
+import BACnetCodec4cj.InterFaces.{ICodecContextSpecificData,ICodecPrimitiveData,IHaveTag,IHaveDataValue,BACnet_TagClass_Enum} 
+import BACnetCodec4cj.BACnetCodecException.DecodeException.DecodeException
+import BACnetCodec4cj.Utility.ByteBuf.ByteBuf
+import std.time.{DateTime,TimeZone}
 
-public class BACnet_Date <: BACnetApplicationDatatype & ICodecPrimitiveData<BACnetApplicationDatatype> & ICodecContextSpecificData & IHaveDataValue<DateTime> {
+public class BACnet_Date <: ICodecPrimitiveData<BACnet_Date> 
+& ICodecContextSpecificData<BACnet_Date>
+& IHaveTag 
+& IHaveDataValue<DateTime> 
+{
+    private var _tagNumber: UInt8 = 10
+    public mut prop tagNumber: UInt8 {
+        get() {
+            return _tagNumber
+        }
+        set(arg_Value) {
+            _tagNumber = arg_Value
+        }
+    }
+
+    private var _tagClass: BACnet_TagClass_Enum = BACnet_TagClass_Enum.application_tag
+    public mut prop tagClass: BACnet_TagClass_Enum {
+        get() {
+            return _tagClass
+        }
+        set(arg_Value) {
+            _tagClass = arg_Value
+        }
+    }
+
+    private var _tagLength: UInt32 = 4
+    public mut prop tagLength: UInt32 {
+        get() {
+            return _tagLength
+        }
+        set(arg_Value) {
+            _tagLength = arg_Value
+        }
+    }
+
+    private var _applicationDatatype: BACnet_ApplicationDataTypes_Enum = BACnet_ApplicationDataTypes_Enum.date
+    public mut prop applicationDatatype: BACnet_ApplicationDataTypes_Enum {
+        get() {
+            return _applicationDatatype
+        }
+        set(arg_Value) {
+            _applicationDatatype = arg_Value
+        }
+    }
+
     //使用系统自带日期时间定义，当试图使用一些非法的日期值会直接抛出异常
-
     private var _dataValue: DateTime = DateTime.now()
     public mut prop dataValue: DateTime {
         get() {
@@ -34,7 +77,7 @@ public class BACnet_Date <: BACnetApplicationDatatype & ICodecPrimitiveData<BACn
         this.applicationDatatype = BACnet_ApplicationDataTypes_Enum.date
     }
 
-    public static func decodingPrimitiveDataFromArrayByte(packet: ByteBuf): BACnetApplicationDatatype {
+    public static func decodingPrimitiveDataFromArrayByte(packet: ByteBuf): BACnet_Date {
         let _appTag = packet.read_UInt8_FromBuf();
         let _classBit = (_appTag & 0b0000_1000) >> 3
         if (_classBit == 1) {
@@ -61,20 +104,22 @@ public class BACnet_Date <: BACnetApplicationDatatype & ICodecPrimitiveData<BACn
                 nanosecond: 0, timeZone: TimeZone.Local)
             return _rtu
         } else {
-            packet.cursorMoveBackward(1)
-            let _rtu = BACnetApplicationDatatype.decodingFromArrayByte(packet)
-            return _rtu
+            throw DecodeException("解码错误:无法识别的BACnet_Date数据")
+            // packet.cursorMoveBackward(1)
+            // let _rtu = BACnetApplicationDatatype.decodingFromArrayByte(packet)
+            // return _rtu
         }
     }
 
-    public func decodingContextSpecificDataFromArrayByte(packet: ByteBuf): Unit {
+    public static func decodingContextSpecificDataFromArrayByte(packet: ByteBuf,arg_tagNumber: UInt8): BACnet_Date {
         let _appTag = packet.read_UInt8_FromBuf();
 
         let _classBit = (_appTag & 0b0000_1000) >> 3
         if (_classBit == 0) {
             throw DecodeException("解码错误:使用上下文指定类型解码函数解码原语类型")
         }
-        this.tagClass = BACnet_TagClass_Enum.contextSpecific_tag
+        var _rtu = BACnet_Date()
+        _rtu.tagClass = BACnet_TagClass_Enum.contextSpecific_tag
 
         var _len = UInt32(_appTag & 0b0000_0111)
         if (_len != 4) {
@@ -82,19 +127,22 @@ public class BACnet_Date <: BACnetApplicationDatatype & ICodecPrimitiveData<BACn
         }
 
         let _tagNum = readContextSpecificTagNumber(_appTag, packet)
-        this.tagNumber = _tagNum
+        if(_tagNum != arg_tagNumber){
+            throw DecodeException("解码错误:上下文编号与预期不同")
+        }
+        _rtu.tagNumber = _tagNum
 
-        this.tagLength = _len
+        _rtu.tagLength = _len
         let _dataArray = packet.read_FromBuff(4)
         let _year = 1900 + Int64(_dataArray[0])
         let _month = Int64(_dataArray[1])
         let _day = Int64(_dataArray[2])
-        this.dataValue = DateTime.of(year: _year, month: _month, dayOfMonth: _day, hour: 0, minute: 0, second: 0,
+        _rtu.dataValue = DateTime.of(year: _year, month: _month, dayOfMonth: _day, hour: 0, minute: 0, second: 0,
             nanosecond: 0, timeZone: TimeZone.Local)
 
-        this.applicationDatatype = BACnet_ApplicationDataTypes_Enum.date
+        _rtu.applicationDatatype = BACnet_ApplicationDataTypes_Enum.date
 
-        return
+        return _rtu
     }
 
     public func encodingToPrimitiveData(): Array<Byte> {

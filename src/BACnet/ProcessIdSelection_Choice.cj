@@ -1,7 +1,10 @@
 package BACnetCodec4cj.BACnet
 
-import BACnetCodec4cj.InterFaces.*
-import BACnetCodec4cj.BACnetCodecException.*
+import BACnetCodec4cj.InterFaces.IFromString
+import BACnetCodec4cj.InterFaces.IFromUInt8
+import BACnetCodec4cj.InterFaces.IToUInt8
+import BACnetCodec4cj.BACnetCodecException.DecodeException.DecodeException
+import BACnetCodec4cj.BACnetCodecException.EncodeException.EncodeException
 
 public enum ProcessIdSelection_Choice <: IFromUInt8<ProcessIdSelection_Choice> & IToUInt8 & ToString & IFromString<ProcessIdSelection_Choice> {
     | null_value // null-value NULL

@@ -1,7 +1,7 @@
 package BACnetCodec4cj.Utility.ByteBuf
 
 import std.binary.*
-import BACnetCodec4cj.BACnetCodecException.*
+import BACnetCodec4cj.BACnetCodecException.UtilityException.ByteBufException
 
 
 public class ByteBuf {

@@ -1,22 +1,43 @@
 package BACnetCodec4cj.BACnet
 
 
-public enum BACnet_ApplicationDataTypes_Choice  {
+public enum BACnet_ApplicationDataTypes_Choice <: Equal<BACnet_ApplicationDataTypes_Choice> {
     //20.2.1.4 Application Tags 
     //The Tag Number field of an encoded BACnet application tag shall specify the application datatype as follows: 
-    | Null(BACnet_Null) //0
-    | Boolean(BACnet_Boolean) //1 
-    | UnsignedInteger(BACnet_UnsignedInteger) //2 
-    | SignedInteger(BACnet_SignedInteger) //3 (2's complement notation) 
-    | Real(BACnet_Real) //4 (ANSI/IEEE-754 floating point) 
-    | Double(BACnet_Double) //5 (ANSI/IEEE-754 double precision floating point) 
-    | OctetString(BACnet_OctetString) //6 
-    | CharacterString(BACnet_CharacterString) //7 
-    | BitString(BACnet_BitString) //8 
-    | Enumerated(BACnet_Enumerated) //9 
-    | Date(BACnet_Date) //10 
-    | Time(BACnet_OctetString) //11 
-    | BACnetObjectIdentifier(BACnet_ObjectIdentifier) //12  
+    | null(BACnet_Null) //0
+    | boolean(BACnet_Boolean) //1 
+    | unsigned_integer(BACnet_UnsignedInteger) //2 
+    | signed_integer(BACnet_SignedInteger) //3 (2's complement notation) 
+    | real(BACnet_Real) //4 (ANSI/IEEE-754 floating point) 
+    | double(BACnet_Double) //5 (ANSI/IEEE-754 double precision floating point) 
+    | octet_string(BACnet_OctetString) //6 
+    | character_string(BACnet_CharacterString) //7 
+    | bit_string(BACnet_BitString) //8 
+    | enumerated(BACnet_Enumerated) //9 
+    | date(BACnet_Date) //10 
+    | time(BACnet_Time) //11 
+    | bacnet_object_identifier(BACnet_ObjectIdentifier) //12  
+
+    public operator func ==(rhs: BACnet_ApplicationDataTypes_Choice): Bool {
+        var _rtu:Bool 
+        _rtu= match((this,rhs)){
+            case (null(x),null(y))=> true
+            case (boolean(x),boolean(y))=> x.dataValue==y.dataValue
+            case (unsigned_integer(x),unsigned_integer(y))=> x.dataValue==y.dataValue
+            case (signed_integer(x),signed_integer(y))=> x.dataValue==y.dataValue
+            case (real(x),real(y))=> x.dataValue==y.dataValue
+            case (double(x),double(y))=> x.dataValue==y.dataValue
+            case (octet_string(x),octet_string(y))=> x.dataValue==y.dataValue
+            case (character_string(x),character_string(y))=> x.dataValue==y.dataValue
+            case (bit_string(x),bit_string(y))=> x.dataValue==y.dataValue
+            case (enumerated(x),enumerated(y))=> x.dataValue==y.dataValue
+            case (date(x),date(y))=> x.dataValue==y.dataValue
+            case (time(x),time(y))=> x.dataValue==y.dataValue
+            case (bacnet_object_identifier(x),bacnet_object_identifier(y))=> x.dataValue==y.dataValue
+            case _=>false
+        }
+        return _rtu
+    }
 }
 
 /*

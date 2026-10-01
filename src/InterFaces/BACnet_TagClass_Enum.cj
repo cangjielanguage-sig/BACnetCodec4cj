@@ -1,17 +1,16 @@
-public package BACnetCodec4cj.BACnet
+package BACnetCodec4cj.InterFaces
 
-import BACnetCodec4cj.InterFaces.*
-import BACnetCodec4cj.BACnetCodecException.*
+import BACnetCodec4cj.BACnetCodecException.DecodeException.DecodeException
 
 public enum BACnet_TagClass_Enum <: ToString
-& IToUInt32
-&IFromUInt32<BACnet_TagClass_Enum> 
-&IFromString<BACnet_TagClass_Enum>
+& IToUInt8
+& IFromUInt8<BACnet_TagClass_Enum>
+& IFromString<BACnet_TagClass_Enum>
 {
     | application_tag
     | contextSpecific_tag
 
-    public static func fromUInt32(tag: UInt32): BACnet_TagClass_Enum {
+    public static func fromUInt8(tag: UInt8): BACnet_TagClass_Enum {
         match (tag) {
             case 0b0000_0000 => BACnet_TagClass_Enum.application_tag
             case 0b0000_1000 => BACnet_TagClass_Enum.contextSpecific_tag
@@ -20,7 +19,7 @@ public enum BACnet_TagClass_Enum <: ToString
         }
     }
 
-    public func toUInt32(): UInt32 {
+    public func toUInt8(): UInt8 {
         match (this) {
             case BACnet_TagClass_Enum.application_tag => 0b0000_0000
             case BACnet_TagClass_Enum.contextSpecific_tag => 0b0000_1000

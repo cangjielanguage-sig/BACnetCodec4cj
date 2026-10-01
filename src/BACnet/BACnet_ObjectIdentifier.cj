@@ -1,13 +1,56 @@
 package BACnetCodec4cj.BACnet
 
-import BACnetCodec4cj.InterFaces.*
-import BACnetCodec4cj.BACnetCodecException.*
-import BACnetCodec4cj.Utility.*
+import BACnetCodec4cj.InterFaces.{ICodecContextSpecificData,ICodecPrimitiveData,IHaveTag,IHaveDataValue,BACnet_TagClass_Enum} 
+import BACnetCodec4cj.BACnetCodecException.DecodeException.DecodeException
+import BACnetCodec4cj.Utility.ByteBuf.ByteBuf
 
 import std.binary.*
 
-public class BACnet_ObjectIdentifier <: BACnetApplicationDatatype & ICodecPrimitiveData<BACnetApplicationDatatype> & ICodecContextSpecificData & IHaveDataValue<BACnetObjectIdentifierStruct> {
-    //使用系统自带日期时间定义，当试图使用一些非法的日期值会直接抛出异常
+public class BACnet_ObjectIdentifier <: ICodecPrimitiveData<BACnet_ObjectIdentifier> 
+& ICodecContextSpecificData<BACnet_ObjectIdentifier>
+& IHaveTag 
+& IHaveDataValue<BACnetObjectIdentifierStruct> 
+{
+    
+    private var _tagNumber: UInt8 = 12
+    public mut prop tagNumber: UInt8 {
+        get() {
+            return _tagNumber
+        }
+        set(arg_Value) {
+            _tagNumber = arg_Value
+        }
+    }
+
+    private var _tagClass: BACnet_TagClass_Enum = BACnet_TagClass_Enum.application_tag
+    public mut prop tagClass: BACnet_TagClass_Enum {
+        get() {
+            return _tagClass
+        }
+        set(arg_Value) {
+            _tagClass = arg_Value
+        }
+    }
+
+    private var _tagLength: UInt32 = 4
+    public mut prop tagLength: UInt32 {
+        get() {
+            return _tagLength
+        }
+        set(arg_Value) {
+            _tagLength = arg_Value
+        }
+    }
+
+    private var _applicationDatatype: BACnet_ApplicationDataTypes_Enum = BACnet_ApplicationDataTypes_Enum.bacnet_object_identifier
+    public mut prop applicationDatatype: BACnet_ApplicationDataTypes_Enum {
+        get() {
+            return _applicationDatatype
+        }
+        set(arg_Value) {
+            _applicationDatatype = arg_Value
+        }
+    }
 
     private var _dataValue: BACnetObjectIdentifierStruct = BACnetObjectIdentifierStruct()
     public mut prop dataValue: BACnetObjectIdentifierStruct {
@@ -35,7 +78,7 @@ public class BACnet_ObjectIdentifier <: BACnetApplicationDatatype & ICodecPrimit
         this.applicationDatatype = BACnet_ApplicationDataTypes_Enum.bacnet_object_identifier
     }
 
-    public static func decodingPrimitiveDataFromArrayByte(packet: ByteBuf): BACnetApplicationDatatype {
+    public static func decodingPrimitiveDataFromArrayByte(packet: ByteBuf): BACnet_ObjectIdentifier {
         let _appTag = packet.read_UInt8_FromBuf();
         let _classBit = (_appTag & 0b0000_1000) >> 3
         if (_classBit == 1) {
@@ -64,20 +107,19 @@ public class BACnet_ObjectIdentifier <: BACnetApplicationDatatype & ICodecPrimit
 
             return _rtu
         } else {
-            packet.cursorMoveBackward(1)
-            let _rtu = BACnetApplicationDatatype.decodingFromArrayByte(packet)
-            return _rtu
+            throw DecodeException("解码错误:无法识别的BACnet_ObjectIdentifier数据")
         }
     }
 
-    public func decodingContextSpecificDataFromArrayByte(packet: ByteBuf): Unit {
+    public static func decodingContextSpecificDataFromArrayByte(packet: ByteBuf,arg_tagNumber: UInt8): BACnet_ObjectIdentifier {
         let _appTag = packet.read_UInt8_FromBuf();
 
         let _classBit = (_appTag & 0b0000_1000) >> 3
         if (_classBit == 0) {
             throw DecodeException("解码错误:使用上下文指定类型解码函数解码原语类型")
         }
-        this.tagClass = BACnet_TagClass_Enum.contextSpecific_tag
+        var _rtu = BACnet_ObjectIdentifier()
+        _rtu.tagClass = BACnet_TagClass_Enum.contextSpecific_tag
 
         var _len = UInt32(_appTag & 0b0000_0111)
         if (_len != 4) {
@@ -85,20 +127,23 @@ public class BACnet_ObjectIdentifier <: BACnetApplicationDatatype & ICodecPrimit
         }
 
         let _tagNum = readContextSpecificTagNumber(_appTag, packet)
-        this.tagNumber = _tagNum
+        _rtu.tagNumber = _tagNum
+        if(_tagNum != arg_tagNumber){
+            throw DecodeException("解码错误:上下文编号与预期不同")
+        }
 
-        this.tagLength = _len
+        _rtu.tagLength = _len
         //读取成一个32位（4字节）整数，方便后续掩码操作
         let _dataArray = packet.read_UInt32_FromBuff()
         //高10位，即31~22位是对象类型
         let _objectType = ObjectType_Enum.fromUInt32(
             UInt32((_dataArray & 0B1111_1111_1100_0000_0000_0000_0000_0000) >> 22))
         let _objectId = UInt32(_dataArray & 0B0000_0000_0011_1111_1111_1111_1111_1111)
-        this.dataValue = BACnetObjectIdentifierStruct(_objectType, _objectId)
+        _rtu.dataValue = BACnetObjectIdentifierStruct(_objectType, _objectId)
 
-        this.applicationDatatype = BACnet_ApplicationDataTypes_Enum.bacnet_object_identifier
+        _rtu.applicationDatatype = BACnet_ApplicationDataTypes_Enum.bacnet_object_identifier
 
-        return
+        return _rtu
     }
 
     public func encodingToPrimitiveData(): Array<Byte> {

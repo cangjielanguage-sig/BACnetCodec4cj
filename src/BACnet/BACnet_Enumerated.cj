@@ -1,11 +1,55 @@
 package BACnetCodec4cj.BACnet
 
-import BACnetCodec4cj.InterFaces.*
-import BACnetCodec4cj.BACnetCodecException.*
-import BACnetCodec4cj.Utility.*
+import BACnetCodec4cj.InterFaces.{ICodecContextSpecificData,ICodecPrimitiveData,IHaveTag,IHaveDataValue,BACnet_TagClass_Enum} 
+import BACnetCodec4cj.BACnetCodecException.DecodeException.DecodeException
+import BACnetCodec4cj.Utility.ByteBuf.ByteBuf
 import std.binary.*
 
-public class BACnet_Enumerated <: BACnetApplicationDatatype & ICodecPrimitiveData<BACnetApplicationDatatype> & ICodecContextSpecificData & IHaveDataValue<UInt32> {
+public class BACnet_Enumerated <: ICodecPrimitiveData<BACnet_Enumerated> 
+& ICodecContextSpecificData<BACnet_Enumerated>
+& IHaveTag
+& IHaveDataValue<UInt32> 
+{
+    private var _tagNumber: UInt8 = 9
+    public mut prop tagNumber: UInt8 {
+        get() {
+            return _tagNumber
+        }
+        set(arg_Value) {
+            _tagNumber = arg_Value
+        }
+    }
+
+    private var _tagClass: BACnet_TagClass_Enum = BACnet_TagClass_Enum.application_tag
+    public mut prop tagClass: BACnet_TagClass_Enum {
+        get() {
+            return _tagClass
+        }
+        set(arg_Value) {
+            _tagClass = arg_Value
+        }
+    }
+
+    private var _tagLength: UInt32 = 1
+    public mut prop tagLength: UInt32 {
+        get() {
+            return _tagLength
+        }
+        set(arg_Value) {
+            _tagLength = arg_Value
+        }
+    }
+
+    private var _applicationDatatype: BACnet_ApplicationDataTypes_Enum = BACnet_ApplicationDataTypes_Enum.enumerated
+    public mut prop applicationDatatype: BACnet_ApplicationDataTypes_Enum {
+        get() {
+            return _applicationDatatype
+        }
+        set(arg_Value) {
+            _applicationDatatype = arg_Value
+        }
+    }
+
     private var _dataValue: UInt32 = 0
     public mut prop dataValue: UInt32 {
         get() {
@@ -32,7 +76,7 @@ public class BACnet_Enumerated <: BACnetApplicationDatatype & ICodecPrimitiveDat
         this.applicationDatatype = BACnet_ApplicationDataTypes_Enum.enumerated
     }
 
-    public static func decodingPrimitiveDataFromArrayByte(packet: ByteBuf): BACnetApplicationDatatype {
+    public static func decodingPrimitiveDataFromArrayByte(packet: ByteBuf): BACnet_Enumerated {
         let _appTag = packet.read_UInt8_FromBuf();
         let _classBit = (_appTag & 0b0000_1000) >> 3
         if (_classBit == 1) {
@@ -55,19 +99,18 @@ public class BACnet_Enumerated <: BACnetApplicationDatatype & ICodecPrimitiveDat
             }
             return _rtu
         } else {
-            packet.cursorMoveBackward(1)
-            let _rtu = BACnetApplicationDatatype.decodingFromArrayByte(packet)
-            return _rtu
+            throw DecodeException("解码错误:无法识别的UnsignedInteger数据")
         }
     }
 
-    public func decodingContextSpecificDataFromArrayByte(packet: ByteBuf): Unit {
+    public static func decodingContextSpecificDataFromArrayByte(packet: ByteBuf,arg_tagNumber: UInt8): BACnet_Enumerated {
         let _appTag = packet.read_UInt8_FromBuf();
         let _classBit = (_appTag & 0b0000_1000) >> 3
         if (_classBit == 0) {
             throw DecodeException("解码错误:使用上下文指定类型解码函数解码原语类型")
         }
-        this.tagClass = BACnet_TagClass_Enum.contextSpecific_tag
+        var _rtu = BACnet_Enumerated()
+        _rtu.tagClass = BACnet_TagClass_Enum.contextSpecific_tag
 
         var _len = UInt32(_appTag & 0b0000_0111)
         if (_len < 1 || _len > 4) {
@@ -75,14 +118,17 @@ public class BACnet_Enumerated <: BACnetApplicationDatatype & ICodecPrimitiveDat
         }
 
         let _tagNum = readContextSpecificTagNumber(_appTag, packet)
-        this.tagNumber = _tagNum
+        _rtu.tagNumber = _tagNum
+        if(_tagNum != arg_tagNumber){
+            throw DecodeException("解码错误:上下文编号与预期不同")
+        }
 
-        this.tagLength = _len
-        this.dataValue = packet.read_UInt32_WithLength_FromBuff(Int64(_len))
+        _rtu.tagLength = _len
+        _rtu.dataValue = packet.read_UInt32_WithLength_FromBuff(Int64(_len))
 
-        this.applicationDatatype = BACnet_ApplicationDataTypes_Enum.enumerated
+        _rtu.applicationDatatype = BACnet_ApplicationDataTypes_Enum.enumerated
 
-        return
+        return _rtu
     }
 
     public func encodingToPrimitiveData(): Array<Byte> {

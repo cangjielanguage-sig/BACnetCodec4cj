@@ -1,7 +1,10 @@
 package BACnetCodec4cj.BACnet
 
-import BACnetCodec4cj.InterFaces.*
-import BACnetCodec4cj.BACnetCodecException.*
+import BACnetCodec4cj.InterFaces.IFromString
+import BACnetCodec4cj.InterFaces.IFromUInt8
+import BACnetCodec4cj.InterFaces.IToUInt8
+import BACnetCodec4cj.BACnetCodecException.DecodeException.DecodeException
+import BACnetCodec4cj.BACnetCodecException.EncodeException.EncodeException
 import std.convert.*
 
 public enum Confirmed_Service_ACK_Choice <: IFromUInt8<Confirmed_Service_ACK_Choice> & IToUInt8 & ToString & IFromString<Confirmed_Service_ACK_Choice> {

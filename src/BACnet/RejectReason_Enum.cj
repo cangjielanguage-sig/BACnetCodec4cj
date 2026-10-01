@@ -1,7 +1,10 @@
 public package BACnetCodec4cj.BACnet
 
-import BACnetCodec4cj.InterFaces.*
-import BACnetCodec4cj.BACnetCodecException.*
+import BACnetCodec4cj.InterFaces.IFromString
+import BACnetCodec4cj.InterFaces.IFromUInt32
+import BACnetCodec4cj.InterFaces.IToUInt32
+import BACnetCodec4cj.BACnetCodecException.DecodeException.DecodeException
+import BACnetCodec4cj.BACnetCodecException.EncodeException.EncodeException
 import std.convert.*
 
 public enum RejectReason_Enum <: IFromUInt32<RejectReason_Enum> & IToUInt32 & ToString & IFromString<RejectReason_Enum> {

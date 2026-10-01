@@ -1,12 +1,57 @@
 package BACnetCodec4cj.BACnet
 
-import BACnetCodec4cj.InterFaces.*
-import BACnetCodec4cj.BACnetCodecException.*
-import BACnetCodec4cj.Utility.*
+import BACnetCodec4cj.InterFaces.{ICodecContextSpecificData,ICodecPrimitiveData,IHaveTag,IHaveDataValue,BACnet_TagClass_Enum}
+import BACnetCodec4cj.BACnetCodecException.DecodeException.DecodeException
+import BACnetCodec4cj.BACnetCodecException.EncodeException.EncodeException
+import BACnetCodec4cj.Utility.ByteBuf.ByteBuf
 import std.binary.*
-import charset4cj.*
+import charset4cj.Charsets
 
-public class BACnet_CharacterString <: BACnetApplicationDatatype & ICodecPrimitiveData<BACnetApplicationDatatype> & ICodecContextSpecificData & IHaveDataValue<String> {
+public class BACnet_CharacterString <: ICodecPrimitiveData<BACnet_CharacterString> 
+& ICodecContextSpecificData <BACnet_CharacterString>
+& IHaveTag
+& IHaveDataValue<String> 
+{
+    private var _tagNumber: UInt8 = 7
+    public mut prop tagNumber: UInt8 {
+        get() {
+            return _tagNumber
+        }
+        set(arg_Value) {
+            _tagNumber = arg_Value
+        }
+    }
+
+    private var _tagClass: BACnet_TagClass_Enum = BACnet_TagClass_Enum.application_tag
+    public mut prop tagClass: BACnet_TagClass_Enum {
+        get() {
+            return _tagClass
+        }
+        set(arg_Value) {
+            _tagClass = arg_Value
+        }
+    }
+
+    private var _tagLength: UInt32 = 0
+    public mut prop tagLength: UInt32 {
+        get() {
+            return _tagLength
+        }
+        set(arg_Value) {
+            _tagLength = arg_Value
+        }
+    }
+
+    private var _applicationDatatype: BACnet_ApplicationDataTypes_Enum = BACnet_ApplicationDataTypes_Enum.character_string
+    public mut prop applicationDatatype: BACnet_ApplicationDataTypes_Enum {
+        get() {
+            return _applicationDatatype
+        }
+        set(arg_Value) {
+            _applicationDatatype = arg_Value
+        }
+    }
+
     private var _dataValue: String = ""
     public mut prop dataValue: String {
         get() {
@@ -80,22 +125,22 @@ public class BACnet_CharacterString <: BACnetApplicationDatatype & ICodecPrimiti
                     let _theCharSet = Charsets.WINDOWS_1252
                     _rtu = (_theCharSet.newDecoder().decode(_content), CharSet_Choice.ISO_8859_1)
                 //可能是忘写编码号了，会使用UTF_8来做解码
-                case _ =>
-                    let _content = arg_array[0..]
-                    _rtu = (String.fromUtf8(_content), CharSet_Choice.UTF_8)
-                //case _ => throw DecodeException("协议错误.无效字符集")
+                //case _ =>
+                    // let _content = arg_array[0..]
+                    // _rtu = (String.fromUtf8(_content), CharSet_Choice.UTF_8)
+                case _ => throw DecodeException("解码错误:无效字符集")
             }
         } catch (e: Exception) {
+            throw DecodeException("解码错误:字符串解码异常")
             //解码出现异常时，会使用UTF_8来做解码
-            try {
-                let _content = arg_array[1..]
-                _rtu = (String.fromUtf8(_content), CharSet_Choice.UTF_8)
-                return _rtu
-            } catch (e: Exception) {
-                //UTF_8解码仍然异常，没得救了
-                _rtu = ("String Decode ERROR 字符串解码异常", CharSet_Choice.UTF_8)
-                return _rtu
-            }
+            // try {
+            //     let _content = arg_array[1..]
+            //     _rtu = (String.fromUtf8(_content), CharSet_Choice.UTF_8)
+            //     return _rtu
+            // } catch (e: Exception) {
+            //     //UTF_8解码仍然异常，没得救了，抛异常
+            //     throw DecodeException("解码错误:字符串解码异常")
+            // }
         }
         return _rtu
     }
@@ -150,18 +195,20 @@ public class BACnet_CharacterString <: BACnetApplicationDatatype & ICodecPrimiti
                     _rtu_Data.copyTo(_rtu, 0, 1, _rtu_Data.size)
             }
         } catch (e: Exception) {
+            throw EncodeException("编码错误: BACnet_CharacterString编码异常")
             //编码出错了，则使用UTF_8编码字段
-            _rtu_Data = arg_string.toArray()
-            _rtu = Array<Byte>(_rtu_Data.size + 1, repeat: 0)
-            _rtu[0] = 0
-            _rtu_Data.copyTo(_rtu, 0, 1, _rtu_Data.size)
+            // this.encodeCharSet = CharSet_Choice.UTF_8
+            // _rtu_Data = arg_string.toArray()
+            // _rtu = Array<Byte>(_rtu_Data.size + 1, repeat: 0)
+            // _rtu[0] = 0
+            // _rtu_Data.copyTo(_rtu, 0, 1, _rtu_Data.size)
             //println(e)
         }
 
         return _rtu
     }
 
-    public static func decodingPrimitiveDataFromArrayByte(packet: ByteBuf): BACnetApplicationDatatype {
+    public static func decodingPrimitiveDataFromArrayByte(packet: ByteBuf): BACnet_CharacterString {
         let _appTag = packet.read_UInt8_FromBuf();
         let _classBit = (_appTag & 0b0000_1000) >> 3
         if (_classBit == 1) {
@@ -180,30 +227,32 @@ public class BACnet_CharacterString <: BACnetApplicationDatatype & ICodecPrimiti
             (_rtu.dataValue, _rtu.encodeCharSet) = decodingBACnetStringArray(_dataOct)
             return _rtu
         } else {
-            packet.cursorMoveBackward(1)
-            let _rtu = BACnetApplicationDatatype.decodingFromArrayByte(packet)
-            return _rtu
+            throw DecodeException("解码错误:无法识别的BACnet_CharacterString数据")
         }
     }
 
-    public func decodingContextSpecificDataFromArrayByte(packet: ByteBuf): Unit {
+    public static func decodingContextSpecificDataFromArrayByte(packet: ByteBuf, arg_tagNumber: UInt8): BACnet_CharacterString {
         let _appTag = packet.read_UInt8_FromBuf();
 
         let _classBit = (_appTag & 0b0000_1000) >> 3
         if (_classBit == 0) {
             throw DecodeException("解码错误:使用上下文指定类型解码函数解码原语类型")
         }
-        this.tagClass = BACnet_TagClass_Enum.contextSpecific_tag
+        var _rtu = BACnet_CharacterString()
+        _rtu.tagClass = BACnet_TagClass_Enum.contextSpecific_tag
 
         let _tagNum = readContextSpecificTagNumber(_appTag, packet)
-        this.tagNumber = _tagNum
+        if(_tagNum != arg_tagNumber){
+            throw DecodeException("解码错误:上下文编号与预期不同")
+        }
+        _rtu.tagNumber = _tagNum
         let _tagLen = readBACnetApplicationDataLength(_appTag, packet)
-        this.tagLength = _tagLen
+        _rtu.tagLength = _tagLen
 
         let _dataOct = packet.read_FromBuff(Int64(_tagLen))
-        (this.dataValue, this.encodeCharSet) = decodingBACnetStringArray(_dataOct)
-        this.applicationDatatype = BACnet_ApplicationDataTypes_Enum.character_string
-        return
+        (_rtu.dataValue, _rtu.encodeCharSet) = decodingBACnetStringArray(_dataOct)
+        _rtu.applicationDatatype = BACnet_ApplicationDataTypes_Enum.character_string
+        return _rtu
     }
 
     public func encodingToPrimitiveData(): Array<Byte> {

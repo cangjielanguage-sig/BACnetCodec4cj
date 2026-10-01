@@ -1,10 +1,54 @@
 package BACnetCodec4cj.BACnet
 
-import BACnetCodec4cj.InterFaces.*
-import BACnetCodec4cj.BACnetCodecException.*
-import BACnetCodec4cj.Utility.*
+import BACnetCodec4cj.InterFaces.{ICodecContextSpecificData,ICodecPrimitiveData,IHaveTag,IHaveDataValue,BACnet_TagClass_Enum} 
+import BACnetCodec4cj.BACnetCodecException.DecodeException.DecodeException
+import BACnetCodec4cj.Utility.ByteBuf.ByteBuf
 
-public class BACnet_BitString <: BACnetApplicationDatatype & ICodecPrimitiveData<BACnetApplicationDatatype> & IHaveDataValue<Array<Bool>> {
+public class BACnet_BitString <: ICodecContextSpecificData<BACnet_BitString> 
+& ICodecPrimitiveData<BACnet_BitString>
+& IHaveTag 
+& IHaveDataValue<Array<Bool>> 
+{
+    private var _tagNumber: UInt8 = 8
+    public mut prop tagNumber: UInt8 {
+        get() {
+            return _tagNumber
+        }
+        set(arg_Value) {
+            _tagNumber = arg_Value
+        }
+    }
+
+    private var _tagClass: BACnet_TagClass_Enum = BACnet_TagClass_Enum.application_tag
+    public mut prop tagClass: BACnet_TagClass_Enum {
+        get() {
+            return _tagClass
+        }
+        set(arg_Value) {
+            _tagClass = arg_Value
+        }
+    }
+
+    private var _tagLength: UInt32 = 0
+    public mut prop tagLength: UInt32 {
+        get() {
+            return _tagLength
+        }
+        set(arg_Value) {
+            _tagLength = arg_Value
+        }
+    }
+
+    private var _applicationDatatype: BACnet_ApplicationDataTypes_Enum = BACnet_ApplicationDataTypes_Enum.bit_string
+    public mut prop applicationDatatype: BACnet_ApplicationDataTypes_Enum {
+        get() {
+            return _applicationDatatype
+        }
+        set(arg_Value) {
+            _applicationDatatype = arg_Value
+        }
+    }
+
     private var _dataValue: Array<Bool> = Array<Bool>(0, repeat: false)
     public mut prop dataValue: Array<Bool> {
         get() {
@@ -78,7 +122,7 @@ public class BACnet_BitString <: BACnetApplicationDatatype & ICodecPrimitiveData
         return _rtu
     }
 
-    public static func decodingPrimitiveDataFromArrayByte(packet: ByteBuf): BACnetApplicationDatatype {
+    public static func decodingPrimitiveDataFromArrayByte(packet: ByteBuf): BACnet_BitString {
         let _appTag = packet.read_UInt8_FromBuf();
         let _classBit = (_appTag & 0b0000_1000) >> 3
         if (_classBit == 1) {
@@ -97,9 +141,7 @@ public class BACnet_BitString <: BACnetApplicationDatatype & ICodecPrimitiveData
             _rtu.dataValue = decodingArrayToBitArray(_dataOct)
             return _rtu
         } else {
-            packet.cursorMoveBackward(1)
-            let _rtu = BACnetApplicationDatatype.decodingFromArrayByte(packet)
-            return _rtu
+            throw DecodeException("解码错误:数据不是BACnet_BitString类型")
         }
     }
 
@@ -115,6 +157,44 @@ public class BACnet_BitString <: BACnetApplicationDatatype & ICodecPrimitiveData
         _value_Array.copyTo(_rtu, 0, _tagHead.size, _value_Array.size)
         return _rtu
     }
+
+    public static func decodingContextSpecificDataFromArrayByte(packet: ByteBuf,arg_tagNumber: UInt8): BACnet_BitString {
+
+        let _appTag = packet.read_UInt8_FromBuf();
+        let _classBit = (_appTag & 0b0000_1000) >> 3
+        if (_classBit == 0) {
+            throw DecodeException("解码错误:使用上下文指定编码解码函数解析原语类型")
+        }
+    
+        var _rtu = BACnet_BitString()
+        _rtu.tagClass = BACnet_TagClass_Enum.contextSpecific_tag
+        _rtu.applicationDatatype = BACnet_ApplicationDataTypes_Enum.bit_string
+        
+        let _tagNum = readContextSpecificTagNumber(_appTag, packet)
+        if(_tagNum != arg_tagNumber){
+            throw DecodeException("解码错误:上下文编号与预期不同")
+        }
+        _rtu.tagNumber = _tagNum
+        let _tagLen = readBACnetApplicationDataLength(_appTag, packet)
+        _rtu.tagLength = _tagLen
+        let _dataOct = packet.read_FromBuff(Int64(_tagLen))
+        _rtu.dataValue = decodingArrayToBitArray(_dataOct)
+        return _rtu
+    }
+
+    public func encodingToContextSpecificData(): Array<Byte> {
+
+        var _value_Array = encodingBitArrayToBytes(this.dataValue)
+        this.tagLength = UInt32(_value_Array.size)
+        let _tagHead = encodingToApplicationDataTagHead(this.tagNumber, this.tagLength,
+            BACnet_TagClass_Enum.application_tag)
+        let _rtu_len = _tagHead.size + _value_Array.size
+        var _rtu: Array<Byte> = Array<Byte>(_rtu_len, repeat: 0)
+        _tagHead.copyTo(_rtu, 0, 0, _tagHead.size)
+        _value_Array.copyTo(_rtu, 0, _tagHead.size, _value_Array.size)
+        return _rtu
+    }
+
 }
 
 /*

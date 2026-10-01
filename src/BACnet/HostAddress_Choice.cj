@@ -1,7 +1,10 @@
 package BACnetCodec4cj.BACnet
 
-import BACnetCodec4cj.InterFaces.*
-import BACnetCodec4cj.BACnetCodecException.*
+import BACnetCodec4cj.InterFaces.IFromString
+import BACnetCodec4cj.InterFaces.IFromUInt8
+import BACnetCodec4cj.InterFaces.IToUInt8
+import BACnetCodec4cj.BACnetCodecException.DecodeException.DecodeException
+import BACnetCodec4cj.BACnetCodecException.EncodeException.EncodeException
 
 public enum HostAddress_Choice <: IFromUInt8<HostAddress_Choice> & IToUInt8 & ToString & IFromString<HostAddress_Choice> {
     | none // none [0] NULL,

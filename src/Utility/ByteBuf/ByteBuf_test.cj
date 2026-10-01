@@ -1,7 +1,7 @@
 package BACnetCodec4cj.Utility.ByteBuf
 import std.convert.*
 import std.unittest
-import BACnetCodec4cj.BACnetCodecException.*
+import BACnetCodec4cj.BACnetCodecException.UtilityException.ByteBufException
 
 @Test
 func test_read_UInt8_FromBuf(){
